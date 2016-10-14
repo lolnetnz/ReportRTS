@@ -44,7 +44,6 @@ public class ReportRTS extends Plugin implements PluginMessageListener {
     public boolean debugMode;
     public boolean outdated;
     public boolean vanishSupport;
-    public boolean bungeeCordSupport;
     public boolean setupDone = true;
     public boolean ticketNagHeld;
     public boolean ticketPreventDuplicate;
@@ -349,5 +348,9 @@ public class ReportRTS extends Plugin implements PluginMessageListener {
                         && storagePrefix.equalsIgnoreCase("") && storageRefreshTime == 600);
         }
         return false;
+    }
+
+    public String getConsoleName() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

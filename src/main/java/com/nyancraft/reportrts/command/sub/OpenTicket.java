@@ -115,7 +115,8 @@ public class OpenTicket {
             RTSFunctions.messageStaff(Message.ticketOpen(user.getUsername(), Integer.toString(ticketId)), true);
         }
 
-        Ticket ticket = new Ticket(user.getUsername(), user.getUuid(), ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch(), location.getWorld().getName(), BungeeCord.getServer());
+        Ticket ticket;
+        ticket = new Ticket(user.getUsername(), user.getUuid(), ticketId, System.currentTimeMillis()/1000, message, 0, location , BungeeCord.getServer());
         plugin.getProxy().getPluginManager().callEvent(new TicketOpenEvent(ticket));
         plugin.tickets.put(ticketId, ticket);
 

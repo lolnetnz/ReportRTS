@@ -9,9 +9,7 @@ import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
-import org.json.simple.JSONObject;
 
-import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import net.md_5.bungee.api.ChatColor;
