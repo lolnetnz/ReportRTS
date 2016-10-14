@@ -8,10 +8,10 @@ import com.nyancraft.reportrts.event.TicketUnclaimEvent;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.io.IOException;
+import net.md_5.bungee.api.CommandSender;
+import nz.co.lolnet.Player;
 
 public class UnclaimTicket {
 
@@ -77,7 +77,7 @@ public class UnclaimTicket {
 
         }
 
-        Player player = sender.getServer().getPlayer(plugin.tickets.get(ticketId).getUUID());
+        Player player = Player.getPlayer(plugin.tickets.get(ticketId).getUUID());
         if(player != null) {
             player.sendMessage(Message.ticketUnclaimUser(plugin.tickets.get(ticketId).getStaffName(), ticketId));
             player.sendMessage(Message.ticketText(plugin.tickets.get(ticketId).getMessage()));
@@ -91,7 +91,7 @@ public class UnclaimTicket {
 
         RTSFunctions.messageStaff(Message.ticketUnclaim(plugin.tickets.get(ticketId).getStaffName(), args[1]), false);
 
-        plugin.getServer().getPluginManager().callEvent(new TicketUnclaimEvent(plugin.tickets.get(ticketId), plugin.tickets.get(ticketId).getStaffName(), sender));
+        plugin.getProxy().getPluginManager().callEvent(new TicketUnclaimEvent(plugin.tickets.get(ticketId), plugin.tickets.get(ticketId).getStaffName(), sender));
         plugin.tickets.get(ticketId).setStaffName(null);
 
         return true;

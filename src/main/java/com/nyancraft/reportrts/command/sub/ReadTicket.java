@@ -1,9 +1,5 @@
 package com.nyancraft.reportrts.command.sub;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
@@ -13,17 +9,17 @@ import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.CommandSender;
+import nz.co.lolnet.Player;
 
 public class ReadTicket {
-
+    
     private static ReportRTS plugin = ReportRTS.getPlugin();
     private static DataProvider data = plugin.getDataProvider();
     private static SimpleDateFormat sdf = new SimpleDateFormat("MMM.dd kk:mm z");
@@ -200,18 +196,7 @@ public class ReadTicket {
 
             substring = (ticket.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + ticket.getStaffName() : ChatColor.GRAY + substring;
             String bungeeServer = (ticket.getServer().equals(BungeeCord.getServer()) ? "" : "[" + ChatColor.GREEN + ticket.getServer() + ChatColor.RESET + "] ");
-            if(plugin.fancify && (sender instanceof Player) && ticket.getMessage().length() >= 20) {
-                PacketContainer chat = new PacketContainer(PacketType.Play.Server.CHAT);
-                chat.getChatComponents().write(0, WrappedChatComponent.fromJson("{\"text\":\"" + bungeeServer + ChatColor.GOLD + "#" + ticket.getId() + " "
-                        + RTSFunctions.getTimeAgo(ticket.getTimestamp()) + " by " + ((RTSFunctions.isUserOnline(ticket.getUUID())) ? ChatColor.GREEN : ChatColor.RED)
-                        + ticket.getName() + ChatColor.GOLD + " - " + "\", \"extra\":[{\"text\":\"" + JSONObject.escape(substring) + "\",\"color\":\"" + (ticket.getStatus() == 1 ? "light_purple" :"gray") + "\",\"hoverEvent\":" +
-                        "{\"action\":\"show_text\",\"value\":\"" + JSONObject.escape(RTSFunctions.separateText(ticket.getMessage(), 6)) + "\"}}]}"));
-                try {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket((Player) sender, chat);
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                    return false;
-                }
+            if(false) {
             } else {
                 sender.sendMessage(bungeeServer + ChatColor.GOLD + "#" + ticket.getId() + " " + RTSFunctions.getTimeAgo(ticket.getTimestamp())
                         + " by " + ((RTSFunctions.isUserOnline(ticket.getUUID())) ? ChatColor.GREEN : ChatColor.RED) + ticket.getName() + ChatColor.GOLD + " - " + substring);
@@ -256,18 +241,7 @@ public class ReadTicket {
             ChatColor online = (RTSFunctions.isUserOnline(ticket.getUUID()) ? ChatColor.GREEN : ChatColor.RED);
             String bungeeServer = (ticket.getServer().equals(BungeeCord.getServer()) ? "" :  "[" + ChatColor.GREEN + ticket.getServer() + ChatColor.RESET + "] ");
 
-            if(plugin.fancify && (sender instanceof Player) && ticket.getMessage().length() >= 20) {
-                PacketContainer chat = new PacketContainer(PacketType.Play.Server.CHAT);
-                chat.getChatComponents().write(0, WrappedChatComponent.fromJson("{\"text\":\"" + bungeeServer + ChatColor.GOLD + "#" + ticket.getId() + " "
-                        + sdf.format(new Date(ticket.getTimestamp() * 1000)) + " by " + (RTSFunctions.isUserOnline(ticket.getUUID()) ? ChatColor.GREEN : ChatColor.RED)
-                        + ticket.getName() + ChatColor.GOLD + " - " + "\", \"extra\":[{\"text\":\"" + JSONObject.escape(substring) + "\",\"color\":\"gray\",\"hoverEvent\":" +
-                        "{\"action\":\"show_text\",\"value\":\"" + JSONObject.escape(RTSFunctions.separateText(ticket.getMessage(), 6)) + "\"}}]}"));
-                try {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket((Player) sender, chat);
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                    return false;
-                }
+            if(false) {
             } else {
                 sender.sendMessage(bungeeServer + ChatColor.GOLD + "#" + ticket.getId() + " " + sdf.format(new Date(ticket.getTimestamp() * 1000))
                         + " by " + online + ticket.getName() + ChatColor.GOLD + " - " + ChatColor.GRAY + substring);
@@ -311,18 +285,7 @@ public class ReadTicket {
             ChatColor online = (RTSFunctions.isUserOnline(ticket.getUUID()) ? ChatColor.GREEN : ChatColor.RED);
             String bungeeServer = (ticket.getServer().equals(BungeeCord.getServer()) ? "" :  "[" + ChatColor.GREEN + ticket.getServer() + ChatColor.RESET + "] ");
 
-            if(plugin.fancify && (sender instanceof Player) && ticket.getMessage().length() >= 20) {
-                PacketContainer chat = new PacketContainer(PacketType.Play.Server.CHAT);
-                chat.getChatComponents().write(0, WrappedChatComponent.fromJson("{\"text\":\"" + bungeeServer + ChatColor.GOLD + "#" + ticket.getId() + " "
-                        + sdf.format(new Date(ticket.getTimestamp() * 1000)) + " by " + (RTSFunctions.isUserOnline(ticket.getUUID()) ? ChatColor.GREEN : ChatColor.RED)
-                        + ticket.getName() + ChatColor.GOLD + " - " + "\", \"extra\":[{\"text\":\"" + JSONObject.escape(substring) + "\",\"color\":\"gray\",\"hoverEvent\":" +
-                        "{\"action\":\"show_text\",\"value\":\"" + JSONObject.escape(RTSFunctions.separateText(ticket.getMessage(), 6)) + "\"}}]}"));
-                try {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket((Player) sender, chat);
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                    return false;
-                }
+            if(false) {
             } else {
                 sender.sendMessage(bungeeServer + ChatColor.GOLD + "#" + ticket.getId() + " " + sdf.format(new Date(ticket.getTimestamp() * 1000))
                         + " by " + online + ticket.getName() + ChatColor.GOLD + " - " + ChatColor.GRAY + substring);
@@ -365,18 +328,7 @@ public class ReadTicket {
             substring = RTSFunctions.shortenMessage(ticket.getMessage());
             substring = (ticket.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + ticket.getStaffName() : ChatColor.GRAY + substring;
 
-            if(plugin.fancify && (sender instanceof Player) && ticket.getMessage().length() >= 20) {
-                PacketContainer chat = new PacketContainer(PacketType.Play.Server.CHAT);
-                chat.getChatComponents().write(0, WrappedChatComponent.fromJson("{\"text\":\"" + ChatColor.GOLD + "#" + ticket.getId() + " "
-                        + sdf.format(new Date(ticket.getTimestamp() * 1000)) + " by " + ((RTSFunctions.isUserOnline(ticket.getUUID())) ? ChatColor.GREEN : ChatColor.RED)
-                        + ticket.getName() + ChatColor.GOLD + " - " + "\", \"extra\":[{\"text\":\"" +JSONObject.escape(substring) + "\",\"color\":\"gray\",\"hoverEvent\":" +
-                        "{\"action\":\"show_text\",\"value\":\"" + JSONObject.escape(RTSFunctions.separateText(ticket.getMessage(), 6)) + "\"}}]}"));
-                try {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket((Player) sender, chat);
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                    return false;
-                }
+            if(false) {
             } else {
                 sender.sendMessage(ChatColor.GOLD + "#" + ticket.getId() + " " + sdf.format(new Date(ticket.getTimestamp() * 1000))
                         + " by " + (RTSFunctions.isUserOnline(ticket.getUUID()) ? ChatColor.GREEN : ChatColor.RED) + ticket.getName() + ChatColor.GOLD +  " - " + substring);
@@ -420,18 +372,7 @@ public class ReadTicket {
             substring = (ticket.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + ticket.getStaffName() : ChatColor.GRAY + substring;
             String bungeeServer = (ticket.getServer().equals(BungeeCord.getServer()) ? "" : "[" + ChatColor.GREEN + ticket.getServer() + ChatColor.RESET + "] ");
 
-            if(plugin.fancify && (sender instanceof Player) && ticket.getMessage().length() >= 20) {
-                PacketContainer chat = new PacketContainer(PacketType.Play.Server.CHAT);
-                chat.getChatComponents().write(0, WrappedChatComponent.fromJson("{\"text\":\"" + bungeeServer + ChatColor.GOLD + "#" + ticket.getId() + " "
-                        + sdf.format(new Date(ticket.getTimestamp() * 1000)) + " by " + ((RTSFunctions.isUserOnline(ticket.getUUID())) ? ChatColor.GREEN : ChatColor.RED)
-                        + ticket.getName() + ChatColor.GOLD + " - " + "\", \"extra\":[{\"text\":\"" + JSONObject.escape(substring) + "\",\"color\":\"gray\",\"hoverEvent\":" +
-                        "{\"action\":\"show_text\",\"value\":\"" + JSONObject.escape(RTSFunctions.separateText(ticket.getMessage(), 6)) + "\"}}]}"));
-                try {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket((Player) sender, chat);
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                    return false;
-                }
+            if(false) {
             } else {
                 sender.sendMessage(ChatColor.GOLD + "#" + ticket.getId() + " " + sdf.format(new Date(ticket.getTimestamp() * 1000))
                         + " by " + (RTSFunctions.isUserOnline(ticket.getUUID()) ? ChatColor.GREEN : ChatColor.RED) + ticket.getName() + ChatColor.GOLD +  " - " + substring);
@@ -480,18 +421,7 @@ public class ReadTicket {
             ChatColor online = (RTSFunctions.isUserOnline(ticket.getUUID()) ? ChatColor.GREEN : ChatColor.RED);
             String bungeeServer = (ticket.getServer().equals(BungeeCord.getServer()) ? "" :  "[" + ChatColor.GREEN + ticket.getServer() + ChatColor.RESET + "] ");
 
-            if(plugin.fancify && (sender instanceof Player) && ticket.getMessage().length() >= 20) {
-                PacketContainer chat = new PacketContainer(PacketType.Play.Server.CHAT);
-                chat.getChatComponents().write(0, WrappedChatComponent.fromJson("{\"text\":\"" + bungeeServer + ChatColor.GOLD + "#" + ticket.getId() + " "
-                        + sdf.format(new Date(ticket.getTimestamp() * 1000)) + " by " + (RTSFunctions.isUserOnline(ticket.getUUID()) ? ChatColor.GREEN : ChatColor.RED)
-                        + ticket.getName() + ChatColor.GOLD + " - " + "\", \"extra\":[{\"text\":\"" + JSONObject.escape(substring) + "\",\"color\":\"gray\",\"hoverEvent\":" +
-                        "{\"action\":\"show_text\",\"value\":\"" + JSONObject.escape(RTSFunctions.separateText(ticket.getMessage(), 6)) + "\"}}]}"));
-                try {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket((Player) sender, chat);
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                    return false;
-                }
+            if(false) {
             } else {
                 sender.sendMessage(bungeeServer + ChatColor.GOLD + "#" + ticket.getId() + " " + sdf.format(new Date(ticket.getTimestamp() * 1000))
                         + " by " + online + ticket.getName() + ChatColor.GOLD + " - " + ChatColor.GRAY + substring);

@@ -11,13 +11,13 @@ import com.nyancraft.reportrts.event.TicketOpenEvent;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.Location;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.logging.Level;
+import net.md_5.bungee.api.CommandSender;
+import nz.co.lolnet.Location;
+import nz.co.lolnet.Player;
 
 public class OpenTicket {
 
@@ -49,7 +49,7 @@ public class OpenTicket {
         if(!(sender instanceof Player)) {
             // Sender is more than likely Console.
             user = data.getConsole();
-            location = plugin.getServer().getWorlds().get(0).getSpawnLocation();
+            location = new Location();
         }
         else {
             // Sender is a Player.
@@ -116,7 +116,7 @@ public class OpenTicket {
         }
 
         Ticket ticket = new Ticket(user.getUsername(), user.getUuid(), ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch(), location.getWorld().getName(), BungeeCord.getServer());
-        plugin.getServer().getPluginManager().callEvent(new TicketOpenEvent(ticket));
+        plugin.getProxy().getPluginManager().callEvent(new TicketOpenEvent(ticket));
         plugin.tickets.put(ticketId, ticket);
 
         return true;

@@ -4,10 +4,9 @@ import com.nyancraft.reportrts.data.Comment;
 import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.data.User;
 
-import org.bukkit.Location;
-
 import java.util.*;
 import java.util.logging.Logger;
+import nz.co.lolnet.Location;
 
 public interface DataProvider {
 

@@ -3,6 +3,7 @@ package com.nyancraft.reportrts.data;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.UUID;
+import nz.co.lolnet.Location;
 
 public class Ticket {
     
@@ -47,6 +48,10 @@ public class Ticket {
         this.pitch = pitch;
         this.staffTime = 0;
         comments = new TreeSet<>();
+    }
+
+    public Ticket(String username, UUID uuid, int ticketId, long l, String message, int i, Location location, String server) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     /**

@@ -50,7 +50,6 @@ public class ReportRTS extends Plugin implements PluginMessageListener {
     public boolean ticketPreventDuplicate;
     public boolean apiEnabled;
     public boolean legacyCommands;
-    public boolean fancify;
 
     public int maxTickets;
     public int ticketDelay;

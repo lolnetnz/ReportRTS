@@ -9,10 +9,10 @@ import com.nyancraft.reportrts.event.TicketReopenEvent;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.io.IOException;
+import net.md_5.bungee.api.CommandSender;
+import nz.co.lolnet.Player;
 
 public class ReopenTicket {
 
@@ -51,7 +51,7 @@ public class ReopenTicket {
             }
             RTSFunctions.messageStaff(Message.ticketReopen(sender.getName(), args[1]), true);
             // Let other plugins know the ticket was reopened.
-            plugin.getServer().getPluginManager().callEvent(new TicketReopenEvent(plugin.tickets.get(ticketId), sender));
+            plugin.getProxy().getPluginManager().callEvent(new TicketReopenEvent(plugin.tickets.get(ticketId), sender));
 
             return true;
         } else {
