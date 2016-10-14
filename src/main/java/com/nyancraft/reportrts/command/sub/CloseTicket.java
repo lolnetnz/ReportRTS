@@ -11,11 +11,11 @@ import com.nyancraft.reportrts.event.TicketCloseEvent;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.io.IOException;
 import java.util.TreeSet;
+import net.md_5.bungee.api.CommandSender;
+import nz.co.lolnet.Player;
 
 public class CloseTicket {
 
@@ -122,7 +122,7 @@ public class CloseTicket {
         Ticket ticket = null;
         if(plugin.tickets.containsKey(ticketId)) {
 
-            Player player = sender.getServer().getPlayer(plugin.tickets.get(ticketId).getUUID());
+            Player player = Player.getPlayer(plugin.tickets.get(ticketId).getUUID());
 
             if(online == 0) plugin.notifications.put(ticketId, plugin.tickets.get(ticketId).getUUID());
 
@@ -161,7 +161,7 @@ public class CloseTicket {
             if (ticket.getStaffName() == null) {
                 ticket.setStaffName(sender.getName());
             }
-            plugin.getServer().getPluginManager().callEvent(new TicketCloseEvent(ticket, sender));
+            plugin.getProxy().getPluginManager().callEvent(new TicketCloseEvent(ticket, sender));
         }
         return true;
     }

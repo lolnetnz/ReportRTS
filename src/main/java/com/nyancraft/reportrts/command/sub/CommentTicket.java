@@ -11,11 +11,11 @@ import com.nyancraft.reportrts.event.TicketCommentEvent;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.io.IOException;
 import java.util.TreeSet;
+import net.md_5.bungee.api.CommandSender;
+import nz.co.lolnet.Player;
 
 public class CommentTicket {
 
@@ -99,7 +99,7 @@ public class CommentTicket {
         ticket.setComments(comments);
         plugin.tickets.put(ticketId, ticket);
 
-        plugin.getServer().getPluginManager().callEvent(new TicketCommentEvent(plugin.tickets.get(ticketId), sender, comment));
+        plugin.getProxy().getPluginManager().callEvent(new TicketCommentEvent(plugin.tickets.get(ticketId), sender, comment));
 
         return true;
     }

@@ -1,7 +1,7 @@
 package com.nyancraft.reportrts.event;
 
 import com.nyancraft.reportrts.data.Ticket;
-import org.bukkit.command.CommandSender;
+import net.md_5.bungee.api.CommandSender;
 
 /**
  * Event called when a ticket is unclaimed, with the

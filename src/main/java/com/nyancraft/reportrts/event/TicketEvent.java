@@ -1,16 +1,13 @@
 package com.nyancraft.reportrts.event;
 
 import com.nyancraft.reportrts.data.Ticket;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
+import net.md_5.bungee.api.plugin.Event;
 
 /**
  * Base class for all event regarding Tickets.
  *
  */
 public abstract class TicketEvent extends Event {
-
-private static final HandlerList handlers = new HandlerList();
 	
 	/**
 	 * The ticket that the event regards.
@@ -33,13 +30,5 @@ private static final HandlerList handlers = new HandlerList();
 	 */
 	public Ticket getTicket(){
 		return this.ticket;
-	}
-	
-	public HandlerList getHandlers(){
-		return handlers;
-	}
-	
-	public static HandlerList getHandlerList(){
-		return handlers;
 	}
 }

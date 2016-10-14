@@ -1,16 +1,12 @@
 package com.nyancraft.reportrts.event;
 
-import org.bukkit.command.CommandSender;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
-
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.plugin.Event;
 /**
  * Event that is called when staff broadcasts a message.
  *
  */
 public class TicketBroadcastEvent extends Event {
-
-    private static final HandlerList handlers = new HandlerList();
 
     String message;
     CommandSender sender;
@@ -36,23 +32,6 @@ public class TicketBroadcastEvent extends Event {
      */
     public CommandSender getSender() {
         return sender;
-    }
-
-    /**
-     *
-     * @return
-     */
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public static HandlerList getHandlerList() {
-        return handlers;
     }
 
 }

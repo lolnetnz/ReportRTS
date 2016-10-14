@@ -1,8 +1,7 @@
 package com.nyancraft.reportrts.event;
 
-import org.bukkit.command.CommandSender;
-
 import com.nyancraft.reportrts.data.Ticket;
+import net.md_5.bungee.api.CommandSender;
 
 /**
  * Event that is called when a moderator

@@ -8,10 +8,10 @@ import com.nyancraft.reportrts.event.TicketClaimEvent;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.io.IOException;
+import net.md_5.bungee.api.CommandSender;
+import nz.co.lolnet.Player;
 
 public class ClaimTicket {
 
@@ -82,7 +82,7 @@ public class ClaimTicket {
 
         }
 
-        Player player = plugin.getServer().getPlayer(plugin.tickets.get(ticketId).getUUID());
+        Player player = Player.getPlayer(plugin.tickets.get(ticketId).getUUID());
         if(player != null) {
             player.sendMessage(Message.ticketClaimUser(name));
             player.sendMessage(Message.ticketText(plugin.tickets.get(ticketId).getMessage()));
@@ -102,7 +102,7 @@ public class ClaimTicket {
         RTSFunctions.messageStaff(Message.ticketClaim(name, args[1]), false);
 
         // Let other plugins know the request was claimed
-        plugin.getServer().getPluginManager().callEvent(new TicketClaimEvent(plugin.tickets.get(ticketId)));
+        plugin.getProxy().getPluginManager().callEvent(new TicketClaimEvent(plugin.tickets.get(ticketId)));
 
         return true;
     }

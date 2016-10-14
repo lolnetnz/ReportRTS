@@ -1,6 +1,6 @@
 package com.nyancraft.reportrts.event;
 
-import org.bukkit.command.CommandSender;
+import net.md_5.bungee.api.CommandSender;
 
 import com.nyancraft.reportrts.data.Ticket;
 

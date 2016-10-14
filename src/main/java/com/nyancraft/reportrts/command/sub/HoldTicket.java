@@ -10,10 +10,10 @@ import com.nyancraft.reportrts.event.TicketHoldEvent;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.io.IOException;
+import net.md_5.bungee.api.CommandSender;
+import nz.co.lolnet.Player;
 
 public class HoldTicket {
 
@@ -54,13 +54,13 @@ public class HoldTicket {
 
         if(plugin.tickets.containsKey(ticketId)) {
 
-            Player player = sender.getServer().getPlayer(plugin.tickets.get(ticketId).getUUID());
+            Player player = Player.getPlayer(plugin.tickets.get(ticketId).getUUID());
             if(player != null) {
                 player.sendMessage(Message.ticketHoldUser(sender.getName(), ticketId));
                 player.sendMessage(Message.ticketHoldText(plugin.tickets.get(ticketId).getMessage(), reason.trim()));
             }
 
-            plugin.getServer().getPluginManager().callEvent(new TicketHoldEvent(plugin.tickets.get(ticketId), reason, sender));
+            plugin.getProxy().getPluginManager().callEvent(new TicketHoldEvent(plugin.tickets.get(ticketId), reason, sender));
 
             plugin.tickets.remove(ticketId);
         }

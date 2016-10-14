@@ -9,10 +9,10 @@ import com.nyancraft.reportrts.event.TicketAssignEvent;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import net.md_5.bungee.api.CommandSender;
 
 import java.io.IOException;
+import nz.co.lolnet.Player;
 
 public class AssignTicket {
 
@@ -91,7 +91,7 @@ public class AssignTicket {
 
         }
 
-        Player player = sender.getServer().getPlayer(plugin.tickets.get(ticketId).getUUID());
+        Player player = Player.getPlayer(plugin.tickets.get(ticketId).getUUID());
         if(player != null) {
             player.sendMessage(Message.ticketAssignUser(assignee));
             player.sendMessage(Message.ticketText(plugin.tickets.get(ticketId).getMessage()));
@@ -108,7 +108,8 @@ public class AssignTicket {
         }
         RTSFunctions.messageStaff(Message.ticketAssign(assignee, ticketId), false);
         // Let other plugins know the request was assigned.
-        plugin.getServer().getPluginManager().callEvent(new TicketAssignEvent(plugin.tickets.get(ticketId), sender));
+        
+        plugin.getProxy().getPluginManager().callEvent(new TicketAssignEvent(plugin.tickets.get(ticketId), sender));
 
         return true;
     }

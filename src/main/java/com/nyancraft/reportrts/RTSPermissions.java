@@ -1,9 +1,10 @@
 package com.nyancraft.reportrts;
 
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+
 
 import com.nyancraft.reportrts.util.Message;
+import net.md_5.bungee.api.CommandSender;
+import nz.co.lolnet.Player;
 
 public class RTSPermissions {
 

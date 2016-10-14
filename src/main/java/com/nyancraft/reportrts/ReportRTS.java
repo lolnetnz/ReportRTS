@@ -13,8 +13,9 @@ import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.persistence.MySQLDataProvider;
 import com.nyancraft.reportrts.util.*;
+import net.md_5.bungee.api.plugin.Plugin;
 
-import net.milkbowl.vault.permission.Permission;
+import nz.co.lolnet.Permission;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
@@ -22,7 +23,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
-public class ReportRTS extends JavaPlugin implements PluginMessageListener {
+public class ReportRTS extends Plugin implements PluginMessageListener {
 
     private static ReportRTS plugin;
     private final Logger log = Logger.getLogger("Minecraft");
