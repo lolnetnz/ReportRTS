@@ -2,66 +2,72 @@ package com.nyancraft.reportrts.util;
 
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.ReportRTS;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.event.TabCompleteEvent;
+import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.event.EventHandler;
 
-public class TabCompleteHelper implements TabCompleter{
+public class TabCompleteHelper implements Listener {
 
     private ReportRTS plugin;
 
-    public TabCompleteHelper(ReportRTS plugin){
+    public TabCompleteHelper(ReportRTS plugin) {
         this.plugin = plugin;
     }
 
-    @Override
-    public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-        /** Argument checker, DO NOT LEAVE THIS UNCOMMENTED IN PRODUCTION
-        int tempI = -1;
-        for(String arg : args) {
-            tempI++;
-            System.out.println("Position: " + tempI + " | Actual Position: " + (tempI + 1) + " | Argument: " + arg);
+    @EventHandler
+    public void onTab(TabCompleteEvent event) {
+        if (!event.getSuggestions().isEmpty()) {
+            return; //If suggestions for this command are handled by other plugin don't add any
         }
-        /** LOOK ABOVE **/
-        if(args.length == 0 || (!args[0].equalsIgnoreCase(plugin.commandMap.get("readTicket")) && !args[0].equalsIgnoreCase(plugin.commandMap.get("closeTicket")) &&
-            !args[0].equalsIgnoreCase(plugin.commandMap.get("teleportToTicket")) && !args[0].equalsIgnoreCase(plugin.commandMap.get("holdTicket")) &&
-            !args[0].equalsIgnoreCase(plugin.commandMap.get("claimTicket")) && !args[0].equalsIgnoreCase(plugin.commandMap.get("unclaimTicket")) &&
-            !args[0].equalsIgnoreCase(plugin.commandMap.get("assignTicket")))) {
-                // If you got here then the sub-command you tried to tab-complete does not support it.
-                List<String> response = new ArrayList<>();
-                response.add("");
-                return response;
-        }
-        if(args.length < 2 || args.length >= 2 && (!RTSFunctions.isNumber(args[1]) || args[1].equalsIgnoreCase(sender.getName())) || plugin.tickets.size() < 1) {
+        /**
+         * Argument checker, DO NOT LEAVE THIS UNCOMMENTED IN PRODUCTION int
+         * tempI = -1; for(String arg : args) { tempI++;
+         * System.out.println("Position: " + tempI + " | Actual Position: " +
+         * (tempI + 1) + " | Argument: " + arg); } /** LOOK ABOVE *
+         */
+        String[] args = event.getCursor().split(" ");
+        if (args.length == 0 || (!args[0].equalsIgnoreCase(plugin.commandMap.get("readTicket")) && !args[0].equalsIgnoreCase(plugin.commandMap.get("closeTicket"))
+                && !args[0].equalsIgnoreCase(plugin.commandMap.get("teleportToTicket")) && !args[0].equalsIgnoreCase(plugin.commandMap.get("holdTicket"))
+                && !args[0].equalsIgnoreCase(plugin.commandMap.get("claimTicket")) && !args[0].equalsIgnoreCase(plugin.commandMap.get("unclaimTicket"))
+                && !args[0].equalsIgnoreCase(plugin.commandMap.get("assignTicket")))) {
+            // If you got here then the sub-command you tried to tab-complete does not support it.
 
-            if(args.length < 2 || args[1].isEmpty()) {
-                List<String> response = new ArrayList<>();
-                if(args.length >= 2) {
-                    response.add((args[1].equalsIgnoreCase(" ") ? " " : "") + plugin.tickets.keySet().toArray()[0].toString());
+            return;
+
+        }
+        if (args.length < 2 || args.length >= 2 && (!RTSFunctions.isNumber(args[1]) || (event.getSender() instanceof ProxiedPlayer && args[1].equalsIgnoreCase(((ProxiedPlayer) event.getSender()).getName()))) || plugin.tickets.size() < 1) {
+
+            if (args.length < 2 || args[1].isEmpty()) {
+
+                if (args.length >= 2) {
+                    event.getSuggestions().add((args[1].equalsIgnoreCase(" ") ? " " : "") + plugin.tickets.keySet().toArray()[0].toString());
                 } else {
-                    response.add(args[0] + " " + plugin.tickets.keySet().toArray()[0].toString());
+                    event.getSuggestions().add(args[0] + " " + plugin.tickets.keySet().toArray()[0].toString());
                 }
-                return response;
+                return;
             }
-            List<String> response = new ArrayList<>();
-            response.add("");
-            return response;
+            return;
         }
         final Set<Integer> keys = plugin.tickets.keySet();
         int initialKey = Integer.parseInt(args[1]);
-        if(initialKey <= 0) return null;
+        if (initialKey <= 0) {
+            return;
+        }
         int prevKey = 0;
-        for(int key : keys) {
-            if(!Integer.toString(key).startsWith(args[1]) && !(key == prevKey) || initialKey > key) {
+        for (int key : keys) {
+            if (!Integer.toString(key).startsWith(args[1]) && !(key == prevKey) || initialKey > key) {
                 continue;
             }
-            if(initialKey == key) {
-                for(int i : keys) {
-                    if(i <= initialKey) continue;
+            if (initialKey == key) {
+                for (int i : keys) {
+                    if (i <= initialKey) {
+                        continue;
+                    }
                     prevKey = i;
                     break;
                 }
@@ -70,9 +76,12 @@ public class TabCompleteHelper implements TabCompleter{
             prevKey = key;
             break;
         }
-        if(prevKey == 0) return null;
+        if (prevKey == 0) {
+            return;
+        }
         List<String> response = new ArrayList<>();
         response.add(Integer.toString(prevKey));
-        return response;
+        return;
     }
+
 }

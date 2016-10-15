@@ -2,7 +2,6 @@ package com.nyancraft.reportrts.api;
 
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.ReportRTS;
-import org.bukkit.Bukkit;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.BufferedReader;
@@ -10,6 +9,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.concurrent.TimeUnit;
 
 public class Request extends Thread {
 
@@ -87,15 +87,15 @@ public class Request extends Thread {
                 }
                 number = requestData[2];
                 data = requestData;
-                Bukkit.getScheduler().scheduleSyncDelayedTask(ReportRTS.getPlugin(), new Runnable(){
+                plugin.getProxy().getScheduler().schedule(ReportRTS.getPlugin(), new Runnable(){
                     public void run(){
                         if(data.length > 3){
-                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "complete " + number + " " + data[3]);
+                            plugin.getProxy().getPluginManager().dispatchCommand(plugin.getProxy().getConsole(), "complete " + number + " " + data[3]);
                         }else{
-                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "complete " + number);
+                            plugin.getProxy().getPluginManager().dispatchCommand(plugin.getProxy().getConsole(), "complete " + number);
                         }
                     }
-                }, 60L);
+                }, 3, TimeUnit.SECONDS);
                 out.writeBytes(Response.uncheckedResult());
                 break;
 
@@ -113,15 +113,15 @@ public class Request extends Thread {
                 }
                 number = requestData[2];
                 data = requestData;
-                Bukkit.getScheduler().scheduleSyncDelayedTask(ReportRTS.getPlugin(), new Runnable(){
+                plugin.getProxy().getScheduler().schedule(ReportRTS.getPlugin(), new Runnable(){
                     public void run(){
                         if(data.length > 3){
-                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "hold " + number + " " + data[3]);
+                            plugin.getProxy().getPluginManager().dispatchCommand(plugin.getProxy().getConsole(), "hold " + number + " " + data[3]);
                         }else{
-                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "hold " + number);
+                            plugin.getProxy().getPluginManager().dispatchCommand(plugin.getProxy().getConsole(), "hold " + number);
                         }
                     }
-                }, 60L);
+                }, 3, TimeUnit.SECONDS);
                 out.writeBytes(Response.uncheckedResult());
                 break;
 

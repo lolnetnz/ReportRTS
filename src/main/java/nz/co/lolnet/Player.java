@@ -23,28 +23,27 @@ import net.md_5.bungee.api.connection.Server;
  *
  * @author James
  */
-public class Player implements ProxiedPlayer{ // sender instanceof Player has to be true
+public class Player implements ProxiedPlayer {
+
+    public static Player getPlayer(ProxiedPlayer player) {
+        return new Player(player);
+    }
+// sender instanceof Player has to be true
 
     ProxiedPlayer player;
+
     public Player(ProxiedPlayer player) {
         this.player = player;
     }
-    
-    public static Player getPlayer(String playerName)
-    {
-        return null;
-    }
-    
-    public static Player getPlayer(UUID playerUUID)
-    {
-        return null;
-    }
-    
-    
 
-    
-    
-    
+    public static Player getPlayer(String playerName) {
+        return null;
+    }
+
+    public static Player getPlayer(UUID playerUUID) {
+        return null;
+    }
+
     @Override
     public String getDisplayName() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -242,5 +241,5 @@ public class Player implements ProxiedPlayer{ // sender instanceof Player has to
     public Location getLocation() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
 }

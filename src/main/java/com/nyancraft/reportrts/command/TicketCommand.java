@@ -3,19 +3,24 @@ package com.nyancraft.reportrts.command;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.command.sub.*;
 import com.nyancraft.reportrts.util.Message;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.plugin.Command;
 
-public class TicketCommand implements CommandExecutor {
+public class TicketCommand extends Command {
 
     private ReportRTS plugin;
 
     public TicketCommand(ReportRTS plugin) {
+        super("ticket");
         this.plugin = plugin;
     }
+    
+    @Override
+    public void execute(CommandSender cs, String[] strings) {
+        onCommand(cs, strings);
+    }
 
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, String[] args) {
 
         /** Argument checker, DO NOT LEAVE THIS UNCOMMENTED IN PRODUCTION *
         int i = -1;
@@ -36,73 +41,67 @@ public class TicketCommand implements CommandExecutor {
         /** Read a ticket. **/
         if(args[0].equalsIgnoreCase(plugin.commandMap.get("readTicket"))) {
             result = ReadTicket.handleCommand(sender, args);
-            if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
+            if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, "ticket", args);
             return result;
         }
         /** Open a ticket. **/
         if(args[0].equalsIgnoreCase(plugin.commandMap.get("openTicket"))) {
             result = OpenTicket.handleCommand(sender, args);
-            if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
+            if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, "ticket", args);
             return result;
         }
         /** Close a ticket. **/
         if(args[0].equalsIgnoreCase(plugin.commandMap.get("closeTicket"))) {
             result = CloseTicket.handleCommand(sender, args);
-            if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
+            if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, "ticket", args);
             return result;
         }
         /** Reopen a ticket. **/
         if(args[0].equalsIgnoreCase(plugin.commandMap.get("reopenTicket"))) {
             result = ReopenTicket.handleCommand(sender, args);
-            if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
+            if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, "ticket", args);
             return result;
         }
         /** Claim a ticket. **/
         if(args[0].equalsIgnoreCase(plugin.commandMap.get("claimTicket"))) {
             result = ClaimTicket.handleCommand(sender, args);
-            if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
+            if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, "ticket", args);
             return result;
         }
         /** Unclaim a ticket. **/
         if(args[0].equalsIgnoreCase(plugin.commandMap.get("unclaimTicket"))) {
             result = UnclaimTicket.handleCommand(sender, args);
-            if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
+            if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, "ticket", args);
             return result;
         }
         /** Hold a ticket. **/
         if(args[0].equalsIgnoreCase(plugin.commandMap.get("holdTicket"))) {
             result = HoldTicket.handleCommand(sender, args);
-            if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
-            return result;
-        }
-        /** Teleport to a ticket. **/
-        if(args[0].equalsIgnoreCase(plugin.commandMap.get("teleportToTicket"))) {
-            result = TeleportTicket.handleCommand(sender, args);
-            if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
+            if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, "ticket", args);
             return result;
         }
         /** Broadcast to staff. **/
         if(args[0].equalsIgnoreCase(plugin.commandMap.get("broadcastToStaff"))) {
             result = BroadcastMessage.handleCommand(sender, args);
-            if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
+            if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, "ticket", args);
             return result;
         }
         /** List staff. **/
         if(args[0].equalsIgnoreCase(plugin.commandMap.get("listStaff"))) {
             result = ListStaff.handleCommand(sender);
-            if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
+            if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, "ticket", args);
             return result;
         }
         /** Assign a ticket **/
         if(args[0].equalsIgnoreCase(plugin.commandMap.get("assignTicket"))) {
             result = AssignTicket.handleCommand(sender, args);
-            if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
+            if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, "ticket", args);
             return result;
         }
         /** Comment on a ticket. **/
         if(args[0].equalsIgnoreCase(plugin.commandMap.get("commentTicket"))) {
             result = CommentTicket.handleCommand(sender, args);
-            if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
+            if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, "ticket", args);
             return result;
         }
 

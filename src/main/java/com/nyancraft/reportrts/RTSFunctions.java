@@ -5,9 +5,8 @@ import java.util.*;
 
 import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.persistence.DataProvider;
-import org.bukkit.ChatColor;
-import org.bukkit.Sound;
-import org.bukkit.entity.Player;
+import net.md_5.bungee.api.ChatColor;
+import nz.co.lolnet.Player;
 
 public class RTSFunctions {
 
@@ -54,17 +53,15 @@ public class RTSFunctions {
 
         for(UUID uuid : ReportRTS.getPlugin().staff) {
 
-            Player player = ReportRTS.getPlugin().getServer().getPlayer(uuid);
+            Player player = Player.getPlayer(uuid);
 
             if(player == null) return;
 
             player.sendMessage(message);
-
-            if(ReportRTS.getPlugin().notificationSound && playSound) player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 0);
         }
 
         // Make sure Console sees this too!
-        plugin.getServer().getConsoleSender().sendMessage(message);
+        plugin.getProxy().getConsole().sendMessage(message);
 
     }
 
@@ -101,7 +98,7 @@ public class RTSFunctions {
      * @return boolean
      */
     public static boolean isUserOnline(UUID uuid){
-        return plugin.getServer().getPlayer(uuid) != null;
+        return Player.getPlayer(uuid) != null;
     }
 
     /**
@@ -139,7 +136,7 @@ public class RTSFunctions {
     }
 
     public static void populateStaffMap(){
-        for(Player player : ReportRTS.getPlugin().getServer().getOnlinePlayers()){
+        for(Player player : Player.getOnlinePlayers()){
             if(RTSPermissions.isStaff(player)) ReportRTS.getPlugin().staff.add(player.getUniqueId());
         }
     }

@@ -4,18 +4,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-import org.bukkit.block.Block;
-import org.bukkit.block.Sign;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
+
 
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
-import org.bukkit.event.player.PlayerQuitEvent;
+import java.util.concurrent.TimeUnit;
+import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.event.EventHandler;
+import net.md_5.bungee.event.EventPriority;
+import net.md_5.bungee.api.event.PostLoginEvent;
+import net.md_5.bungee.api.event.PlayerDisconnectEvent;
+import nz.co.lolnet.Player;
 
 public class RTSListener implements Listener {
 
@@ -25,34 +24,27 @@ public class RTSListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerJoin(PostLoginEvent event) {
         BungeeCord.triggerAutoSync();
         BungeeCord.processPendingRequests();
-        if(BungeeCord.getServer().equals("")) {
-            Bukkit.getScheduler().runTaskLaterAsynchronously(ReportRTS.getPlugin(), new Runnable() {
-                public void run(){
-                    BungeeCord.getServer();
-                }
-            }, 60L);
-        }
 
         if(!plugin.notifications.isEmpty()){
             Map<Integer, UUID> keys = new HashMap<>();
             for(Map.Entry<Integer, UUID> entry : plugin.notifications.entrySet()){
                 if(entry.getValue().equals(event.getPlayer().getUniqueId())){
-                    new LoginTask(plugin, event.getPlayer().getUniqueId(), entry).runTaskLater(plugin, 100L);
+                    plugin.getProxy().getScheduler().schedule(plugin, new LoginTask(plugin, event.getPlayer().getUniqueId(), entry), 5, TimeUnit.SECONDS);
                     keys.put(entry.getKey(), entry.getValue());
                 }
             }
             if(keys.size() >= 2) {
                 event.getPlayer().sendMessage(Message.ticketCloseOfflineMulti(keys.size(), (plugin.legacyCommands ? plugin.commandMap.get("readTicket") + " self" : "ticket " + plugin.commandMap.get("readTicket") + " self")));
                 for(Map.Entry<Integer, UUID> entry : keys.entrySet()){
-                    new LoginTask(plugin, event.getPlayer().getUniqueId(), entry).runTaskLater(plugin, 100L);
+                    plugin.getProxy().getScheduler().schedule(plugin, new LoginTask(plugin, event.getPlayer().getUniqueId(), entry), 5, TimeUnit.SECONDS);
                 }
             } else {
                 for(Map.Entry<Integer, UUID> entry : keys.entrySet()){
-                    new LoginTask(plugin, event.getPlayer().getUniqueId(), entry).runTaskLater(plugin, 100L);
+                    plugin.getProxy().getScheduler().schedule(plugin, new LoginTask(plugin, event.getPlayer().getUniqueId(), entry), 5, TimeUnit.SECONDS);
                 }
             }
 
@@ -62,13 +54,13 @@ public class RTSListener implements Listener {
                 Integer g = plugin.teleportMap.get(event.getPlayer().getUniqueId());
                 if(g != null){
                     event.getPlayer().sendMessage(Message.teleportXServer("/" + (plugin.legacyCommands ? plugin.commandMap.get("teleportToTicket") : "ticket " + plugin.commandMap.get("teleportToTicket")) + " " + Integer.toString(g)));
-                    Bukkit.dispatchCommand(event.getPlayer(), "ticket " + plugin.commandMap.get("teleportToTicket") + " " + Integer.toString(g));
+                    plugin.getProxy().getPluginManager().dispatchCommand(event.getPlayer(), "ticket " + plugin.commandMap.get("teleportToTicket") + " " + Integer.toString(g));
                     plugin.teleportMap.remove(event.getPlayer().getUniqueId());
                 }
             }
         }
 
-        if(!RTSPermissions.isStaff(event.getPlayer())) return;
+        if(!RTSPermissions.isStaff(Player.getPlayer(event.getPlayer()))) return;
 
         if(!plugin.staff.contains(event.getPlayer().getUniqueId())) plugin.staff.add(event.getPlayer().getUniqueId());
 
@@ -79,48 +71,10 @@ public class RTSListener implements Listener {
 
         if(openTickets > 0)
             event.getPlayer().sendMessage(Message.ticketUnresolved(openTickets, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))));
-
-        if(event.getPlayer().isOp()) {
-            if(plugin.outdated) event.getPlayer().sendMessage(Message.outdated(plugin.versionString));
-            if(!plugin.setupDone) event.getPlayer().sendMessage(Message.setup());
-        }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onSignChange(SignChangeEvent event) {
-
-        Block block = event.getBlock();
-        if(!(block.getState() instanceof Sign)) return;
-        if(!event.getLine(0).equalsIgnoreCase("[help]")) return;
-
-        // Check if player can open a ticket or not.
-        if(!RTSPermissions.canOpenTicket(event.getPlayer())) {
-            block.breakNaturally();
-            return;
-        }
-
-        // Check if the player has more open tickets than he or she is allowed.
-        if(RTSFunctions.getOpenTicketsByUser(event.getPlayer().getUniqueId()) >= plugin.maxTickets && !(ReportRTS.permission != null ? ReportRTS.permission.has(event.getPlayer(), "reportrts.command.modreq.unlimited") : event.getPlayer().hasPermission("reportrts.command.modreq.unlimited"))) {
-            event.getPlayer().sendMessage(Message.ticketTooMany());
-            block.breakNaturally();
-            return;
-        }
-
-        String[] text = new String[3]; System.arraycopy(event.getLines(), 1, text, 0, 3);
-        String message = RTSFunctions.cleanUpSign(text);
-        if(message.isEmpty()) {
-            event.getPlayer().sendMessage(Message.error("Help signs can't be empty."));
-            block.breakNaturally();
-            return;
-        }
-
-        // Fire the command to open a ticket.
-        plugin.getServer().dispatchCommand(event.getPlayer(), "ticket " + plugin.commandMap.get("openTicket") + " " + message);
-
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerQuit(PlayerQuitEvent event){
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerQuit(PlayerDisconnectEvent event){
         BungeeCord.triggerAutoSync();
         if(plugin.staff.contains(event.getPlayer().getUniqueId())) plugin.staff.remove(event.getPlayer().getUniqueId());
     }

@@ -13,17 +13,16 @@ import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.persistence.MySQLDataProvider;
 import com.nyancraft.reportrts.util.*;
+import java.util.concurrent.TimeUnit;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.api.plugin.PluginManager;
+import net.md_5.bungee.config.Configuration;
+import nz.co.lolnet.ConfigManager;
 
 import nz.co.lolnet.Permission;
+import nz.co.lolnet.Player;
 
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.messaging.PluginMessageListener;
-
-public class ReportRTS extends Plugin implements PluginMessageListener {
+public class ReportRTS extends Plugin {
 
     private static ReportRTS plugin;
     private final Logger log = Logger.getLogger("Minecraft");
@@ -38,7 +37,6 @@ public class ReportRTS extends Plugin implements PluginMessageListener {
     public ArrayList<UUID> staff = new ArrayList<>();
 
     public boolean notifyStaffOnNewRequest;
-    public boolean notificationSound;
     public boolean hideNotification;
     public boolean hideWhenOffline;
     public boolean debugMode;
@@ -93,19 +91,11 @@ public class ReportRTS extends Plugin implements PluginMessageListener {
         plugin = this;
         reloadSettings();
 
-        // Enable BungeeCord support if wanted.
-        if(bungeeCordSupport) {
-            if(getConfig().getString("bungeecord.serverName") == null || getConfig().getString("bungeecord.serverName").isEmpty()) {
-                plugin.getLogger().warning("BungeeCord support enabled, but server name is not set yet. Scheduling a name-update task.");
-                new BungeeNameTask(plugin).runTaskTimer(plugin, 160L, 480L);
-            } else {
-                BungeeCord.setServer(getConfig().getString("bungeecord.serverName"));
-            }
-        }
-        final PluginManager pm = getServer().getPluginManager();
+        
+        final PluginManager pm = plugin.getProxy().getPluginManager();
 
         // Register events that ReportRTS listens to.
-        pm.registerEvents(new RTSListener(plugin), plugin);
+        pm.registerListener(plugin, new RTSListener(plugin));
 
         // Ensure that storage information is not default as that may not work.
         if(assertConfigIsDefault("STORAGE")) {
@@ -113,12 +103,11 @@ public class ReportRTS extends Plugin implements PluginMessageListener {
         } else {
             if(!storageType.equalsIgnoreCase("MYSQL")) {
                 log.severe("Unsupported STORAGE type specified. Allowed types are: MySQL");
-                pm.disablePlugin(this);
+                return;
             }
             setDataProvider(new MySQLDataProvider(plugin));
             if(!provider.load()) {
                 log.severe("Encountered an error while attempting to connect to the data-provider.  Disabling...");
-                pm.disablePlugin(this);
                 return;
             }
             reloadSettings();
@@ -129,32 +118,19 @@ public class ReportRTS extends Plugin implements PluginMessageListener {
         outdated = !versionChecker.upToDate();
 
         // Enable fancier tickets if enabled and if ProtocolLib is enabled on the server.
-        if(fancify && pm.getPlugin("ProtocolLib") == null) {
-            log.warning("Fancy messages are enabled, but ProtocolLib was not found.");
-            fancify = false;
-        }
 
         // Register commands.
         if(legacyCommands) {
-            pm.registerEvents(new LegacyCommandListener(commandMap.get("readTicket"), commandMap.get("openTicket"), commandMap.get("closeTicket"), commandMap.get("reopenTicket"),
+            pm.registerListener(plugin,new LegacyCommandListener(commandMap.get("readTicket"), commandMap.get("openTicket"), commandMap.get("closeTicket"), commandMap.get("reopenTicket"),
                     commandMap.get("claimTicket"), commandMap.get("unclaimTicket"), commandMap.get("holdTicket"), commandMap.get("teleportToTicket"), commandMap.get("broadcastToStaff"),
-                    commandMap.get("listStaff"), commandMap.get("commentTicket")), plugin);
+                    commandMap.get("listStaff"), commandMap.get("commentTicket")));
         }
 
-        getCommand("reportrts").setExecutor(new ReportRTSCommand(plugin));
-        getCommand("ticket").setExecutor(new TicketCommand(plugin));
-        getCommand("ticket").setTabCompleter(new TabCompleteHelper(plugin));
+        plugin.getProxy().getPluginManager().registerCommand(plugin, new ReportRTSCommand(plugin));
+        plugin.getProxy().getPluginManager().registerCommand(plugin, new TicketCommand(plugin));
+        plugin.getProxy().getPluginManager().registerListener(plugin, new TabCompleteHelper(plugin));
 
-        // Set up Vault if it exists on the server.
-        if(pm.getPlugin("Vault") != null) setupPermissions();
-
-        // Attempt to set up Metrics.
-        try {
-            MetricsLite metrics = new MetricsLite(this);
-            metrics.start();
-        } catch(IOException e) {
-            log.info("Unable to submit stats!");
-        }
+        
 
         // Enable API. (Not recommended since it is very incomplete!)
         apiEnabled = false; // TODO: Remove hard-coded false when this works!
@@ -188,7 +164,7 @@ public class ReportRTS extends Plugin implements PluginMessageListener {
 
         // Enable nagging, staff will be reminded of unresolved tickets.
         if(ticketNagging > 0){
-            getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable(){
+            plugin.getProxy().getScheduler().schedule(plugin, new Runnable(){
                 public void run(){
                     int openTickets = tickets.size();
                     if(ticketNagHeld) {
@@ -202,22 +178,7 @@ public class ReportRTS extends Plugin implements PluginMessageListener {
                         if(openTickets > 0) RTSFunctions.messageStaff(Message.ticketUnresolved(openTickets, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
                     }
                 }
-            }, 120L, (ticketNagging * 60) * 20);
-        }
-
-        if(bungeeCordSupport) {
-            // Register BungeeCord channels.
-            getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-            getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", this);
-
-            // Schedule a offline-sync in case no players are online.
-            getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
-                public void run() {
-                    if(BungeeCord.isServerEmpty()) {
-                        RTSFunctions.sync();
-                    }
-                }
-            }, plugin.bungeeCordSync * 20, plugin.bungeeCordSync * 20);
+            }, 120L, (ticketNagging * 60), TimeUnit.SECONDS);
         }
     }
 
@@ -228,13 +189,11 @@ public class ReportRTS extends Plugin implements PluginMessageListener {
 
     public void reloadSettings() {
         reloadConfig();
-        getConfig().options().copyDefaults(true);
         assertConfigUpToDate();
         messageHandler.reloadMessageConfig();
         messageHandler.saveMessageConfig();
         messageHandler.reloadMessageMap();
         notifyStaffOnNewRequest = getConfig().getBoolean("notifyStaff");
-        notificationSound = getConfig().getBoolean("notifySound");
         hideNotification = getConfig().getBoolean("hideMessageIfEmpty");
         hideWhenOffline = getConfig().getBoolean("ticket.hideOffline");
         maxTickets = getConfig().getInt("ticket.max");
@@ -254,7 +213,6 @@ public class ReportRTS extends Plugin implements PluginMessageListener {
         storagePrefix = getConfig().getString("storage.prefix");
         debugMode = getConfig().getBoolean("debug");
         vanishSupport = getConfig().getBoolean("VanishSupport", false);
-        bungeeCordSupport = getConfig().getBoolean("bungeecord.enable", false);
         bungeeCordSync = getConfig().getLong("bungeecord.sync", 300L);
         bungeeCordServerPrefix = getConfig().getString("bungeecord.serverPrefix");
         apiEnabled =  false; // TODO: Change to this when it's ready: getConfig().getBoolean("api.enable", false);
@@ -262,7 +220,6 @@ public class ReportRTS extends Plugin implements PluginMessageListener {
         apiPassword = getConfig().getString("api.password");
         apiAllowedIPs = getConfig().getStringList("api.whitelist");
         legacyCommands = getConfig().getBoolean("command.legacy", false);
-        fancify = getConfig().getBoolean("ticket.fancify", true);
         commandMap.clear();
         // Register all commands/subcommands.
         commandMap.put("readTicket",getConfig().getString("command.readTicket"));
@@ -297,20 +254,6 @@ public class ReportRTS extends Plugin implements PluginMessageListener {
         this.provider = provider;
     }
 
-    private Boolean setupPermissions() {
-        RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(Permission.class);
-        if(permissionProvider != null) {
-            permission = permissionProvider.getProvider();
-        }
-        return (permission != null);
-    }
-
-    public void onPluginMessageReceived(String pluginChannel, Player player, byte[] bytes) {
-        if(!pluginChannel.equals("BungeeCord")) return;
-
-        BungeeCord.handleNotify(bytes);
-    }
-
     private void assertConfigUpToDate() {
         /**
          * What it does:
@@ -321,6 +264,9 @@ public class ReportRTS extends Plugin implements PluginMessageListener {
          * Since version:
          * 1.2.3
          */
+        
+        //disabled for now...
+        /*
         if(getConfig().getConfigurationSection("request") != null) {
             getConfig().createSection("ticket", getConfig().getConfigurationSection("request").getValues(false));
             getConfig().set("request", null);
@@ -328,7 +274,8 @@ public class ReportRTS extends Plugin implements PluginMessageListener {
         }
 
         // Save changes.
-        saveConfig();
+        saveConfig(getConfig());
+        */
     }
 
     private boolean assertConfigIsDefault(String path) {
@@ -352,5 +299,17 @@ public class ReportRTS extends Plugin implements PluginMessageListener {
 
     public String getConsoleName() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private Configuration reloadConfig() {
+        return ConfigManager.reloadConfig("config.yml");
+    }
+
+    private Configuration getConfig() {
+        return ConfigManager.reloadConfig("config.yml");
+    }
+
+    private void saveConfig(Configuration config) {
+        ConfigManager.saveConfig(config, "config.yml");
     }
 }
