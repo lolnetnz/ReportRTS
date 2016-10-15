@@ -5,34 +5,43 @@
  */
 package nz.co.lolnet;
 
+
+
 /**
  *
  * @author James
  */
 public class Location {
 
+    Player player;
+    public Location(Player player) {
+        this.player = player;
+    }
+    
+    
+
     public String getWorld() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return player.getServer().getInfo().getName();
     }
 
     public double getY() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return 0;
     }
 
     public double getX() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return 0;
     }
 
     public double getZ() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return 0;
     }
 
     public double getYaw() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return 0;
     }
 
     public double getPitch() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return 0;
     }
     
 }
