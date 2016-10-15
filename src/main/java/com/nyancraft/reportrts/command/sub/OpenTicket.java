@@ -18,6 +18,7 @@ import java.util.logging.Level;
 import net.md_5.bungee.api.CommandSender;
 import nz.co.lolnet.Location;
 import nz.co.lolnet.Player;
+import sun.security.pkcs11.P11TlsKeyMaterialGenerator;
 
 public class OpenTicket {
 
@@ -49,7 +50,7 @@ public class OpenTicket {
         if(!(sender instanceof Player)) {
             // Sender is more than likely Console.
             user = data.getConsole();
-            location = new Location();
+            location = new Location(Player.getPlayer(sender.getName()));
         }
         else {
             // Sender is a Player.
