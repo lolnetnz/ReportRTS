@@ -29,7 +29,7 @@ public class MessageHandler {
 
     public void reloadMessageConfig() {
         messageConfig = ConfigManager.reloadConfig("messages.yml");
-
+        messageFile = new File(ReportRTS.getPlugin().getDataFolder(), "messages.yml");
         // Ensure that the messages file is not from prior to the rewrite.
         if (messageConfig.getString("modreqFiledUser") != null) {
 

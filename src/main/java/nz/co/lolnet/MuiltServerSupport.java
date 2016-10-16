@@ -8,7 +8,9 @@ package nz.co.lolnet;
 import com.imaginarycode.minecraft.redisbungee.RedisBungee;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.util.BungeeCord;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,7 +33,7 @@ public class MuiltServerSupport implements Listener {
         com.imaginarycode.minecraft.redisbungee.RedisBungeeAPI api = com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi();
         JSONObject dataToSend = new JSONObject();
         dataToSend.put("Command", "requestPermissionsUpdate");
-        dataToSend.put("playerUUID", playerUUID);
+        dataToSend.put("PlayerUUID", playerUUID.toString());
         api.sendChannelMessage("ReportRTSBC", dataToSend.toJSONString());
     }
 
@@ -56,32 +58,35 @@ public class MuiltServerSupport implements Listener {
             object = (JSONObject) parser.parse(event.getMessage());
         } catch (ParseException ex) {
             Logger.getLogger(MuiltServerSupport.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(event.getMessage());
             return;
         }
         String command = (String) object.get("Command");
         if (command.equals("sendMessageToPlayer")) {
-            UUID playerUUID = (UUID) object.get("PlayerUUID");
+            
+            UUID playerUUID = UUID.fromString((String) object.get("PlayerUUID"));
             String message = (String) object.get("Message");
             ProxiedPlayer player = net.md_5.bungee.BungeeCord.getInstance().getPlayer(playerUUID);
             if (player != null) {
                 net.md_5.bungee.BungeeCord.getInstance().getPlayer(playerUUID).sendMessage(message);
             }
         } else if (command.equals("requestPermissionsUpdate")) {
-            UUID playerUUID = (UUID) object.get("PlayerUUID");
+            UUID playerUUID = UUID.fromString((String) object.get("PlayerUUID"));
             ProxiedPlayer player = net.md_5.bungee.BungeeCord.getInstance().getPlayer(playerUUID);
             if (player != null) {
                 com.imaginarycode.minecraft.redisbungee.RedisBungeeAPI api = com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi();
                 JSONObject dataToSend = new JSONObject();
                 dataToSend.put("Command", "requestPermissionsUpdateReply");
-                dataToSend.put("playerUUID", playerUUID);
-                dataToSend.put("Permissions", player.getPermissions());
+                dataToSend.put("PlayerUUID", playerUUID.toString());
+                List<String> permissions = new ArrayList<>(player.getPermissions());
+                dataToSend.put("Permissions", permissions);
                 api.sendChannelMessage("ReportRTSBC", dataToSend.toJSONString());
             }
         } else if (command.equals("requestPermissionsUpdateReply")) {
-            UUID playerUUID = (UUID) object.get("PlayerUUID");
+            UUID playerUUID = UUID.fromString((String) object.get("PlayerUUID"));
             if (RedisPlayer.redisPlayers.containsKey(playerUUID))
             {
-                RedisPlayer.redisPlayers.get(playerUUID).playerPermissions = (Collection<String>) object.get("Permissions");
+                RedisPlayer.redisPlayers.get(playerUUID).playerPermissions = (ArrayList<String>) object.get("Permissions");
             }
         }
     }

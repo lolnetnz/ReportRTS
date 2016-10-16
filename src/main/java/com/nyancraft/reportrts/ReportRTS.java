@@ -49,7 +49,6 @@ public class ReportRTS extends Plugin {
     public boolean apiEnabled;
     public boolean legacyCommands;
 
-    
     public int maxTickets;
     public int ticketDelay;
     public int ticketMinimumWords;
@@ -76,14 +75,13 @@ public class ReportRTS extends Plugin {
     private List<String> apiAllowedIPs = new ArrayList<>();
 
     private String serverIP;
-    
 
     public void onDisable() {
         provider.close();
-        if(apiEnabled) {
-            try{
+        if (apiEnabled) {
+            try {
                 apiServer.getListener().close();
-            }catch(IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -94,22 +92,21 @@ public class ReportRTS extends Plugin {
         plugin = this;
         reloadSettings();
 
-        
         final PluginManager pm = plugin.getProxy().getPluginManager();
 
         // Register events that ReportRTS listens to.
         pm.registerListener(plugin, new RTSListener(plugin));
 
         // Ensure that storage information is not default as that may not work.
-        if(assertConfigIsDefault("STORAGE")) {
+        if (assertConfigIsDefault("STORAGE")) {
             setupDone = false;
         } else {
-            if(!storageType.equalsIgnoreCase("MYSQL")) {
+            if (!storageType.equalsIgnoreCase("MYSQL")) {
                 log.severe("Unsupported STORAGE type specified. Allowed types are: MySQL");
                 return;
             }
             setDataProvider(new MySQLDataProvider(plugin));
-            if(!provider.load()) {
+            if (!provider.load()) {
                 log.severe("Encountered an error while attempting to connect to the data-provider.  Disabling...");
                 return;
             }
@@ -121,10 +118,13 @@ public class ReportRTS extends Plugin {
         outdated = !versionChecker.upToDate();
 
         // Enable fancier tickets if enabled and if ProtocolLib is enabled on the server.
-
         // Register commands.
-        if(legacyCommands) {
-            pm.registerListener(plugin,new LegacyCommandListener(commandMap.get("readTicket"), commandMap.get("openTicket"), commandMap.get("closeTicket"), commandMap.get("reopenTicket"),
+        if (debugMode) {
+            getLogger().info("legacyCommands =" + legacyCommands);
+        }
+        if (legacyCommands) {
+
+            pm.registerListener(plugin, new LegacyCommandListener(commandMap.get("readTicket"), commandMap.get("openTicket"), commandMap.get("closeTicket"), commandMap.get("reopenTicket"),
                     commandMap.get("claimTicket"), commandMap.get("unclaimTicket"), commandMap.get("holdTicket"), commandMap.get("teleportToTicket"), commandMap.get("broadcastToStaff"),
                     commandMap.get("listStaff"), commandMap.get("commentTicket")));
         }
@@ -133,32 +133,32 @@ public class ReportRTS extends Plugin {
         plugin.getProxy().getPluginManager().registerCommand(plugin, new TicketCommand(plugin));
         plugin.getProxy().getPluginManager().registerListener(plugin, new TabCompleteHelper(plugin));
 
-        
-
         // Enable API. (Not recommended since it is very incomplete!)
         apiEnabled = false; // TODO: Remove hard-coded false when this works!
-        if(apiEnabled) {
+        if (apiEnabled) {
             try {
                 Properties props = new Properties();
                 props.load(new FileReader("server.properties"));
                 serverIP = props.getProperty("server-ip", "ANY");
-                if(serverIP.isEmpty()) serverIP = "ANY";
+                if (serverIP.isEmpty()) {
+                    serverIP = "ANY";
+                }
                 try {
                     MessageDigest md = MessageDigest.getInstance("SHA-256");
                     apiPassword = apiPassword + "ReportRTS";
                     md.update(apiPassword.getBytes("UTF-8"));
                     byte[] hash = md.digest();
                     StringBuffer sb = new StringBuffer();
-                    for(byte b : hash) {
+                    for (byte b : hash) {
                         sb.append(String.format("%02x", b));
                     }
                     apiPassword = sb.toString();
-                } catch(NoSuchAlgorithmException e) {
+                } catch (NoSuchAlgorithmException e) {
                     log.warning("[ReportRTS] Unable to hash password, consider disabling the API!");
                     e.printStackTrace();
                 }
                 apiServer = new ApiServer(plugin, serverIP, apiPort, apiAllowedIPs, apiPassword);
-            } catch(IOException e) {
+            } catch (IOException e) {
                 log.warning("[ReportRTS] Unable to start API server!");
                 e.printStackTrace();
             }
@@ -166,19 +166,21 @@ public class ReportRTS extends Plugin {
         }
 
         // Enable nagging, staff will be reminded of unresolved tickets.
-        if(ticketNagging > 0){
-            plugin.getProxy().getScheduler().schedule(plugin, new Runnable(){
-                public void run(){
+        if (ticketNagging > 0) {
+            plugin.getProxy().getScheduler().schedule(plugin, new Runnable() {
+                public void run() {
                     int openTickets = tickets.size();
-                    if(ticketNagHeld) {
+                    if (ticketNagHeld) {
                         int heldTickets = getDataProvider().countTickets(2);
-                        if(heldTickets > 0) {
-                            if(openTickets > 0) RTSFunctions.messageStaff(Message.ticketUnresolvedHeld(openTickets, heldTickets, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
-                        } else {
-                            if(openTickets > 0) RTSFunctions.messageStaff(Message.ticketUnresolved(openTickets, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
+                        if (heldTickets > 0) {
+                            if (openTickets > 0) {
+                                RTSFunctions.messageStaff(Message.ticketUnresolvedHeld(openTickets, heldTickets, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
+                            }
+                        } else if (openTickets > 0) {
+                            RTSFunctions.messageStaff(Message.ticketUnresolved(openTickets, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
                         }
-                    } else {
-                        if(openTickets > 0) RTSFunctions.messageStaff(Message.ticketUnresolved(openTickets, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
+                    } else if (openTickets > 0) {
+                        RTSFunctions.messageStaff(Message.ticketUnresolved(openTickets, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
                     }
                 }
             }, 120L, (ticketNagging * 60), TimeUnit.SECONDS);
@@ -219,25 +221,25 @@ public class ReportRTS extends Plugin {
         vanishSupport = getConfig().getBoolean("VanishSupport", false);
         bungeeCordSync = getConfig().getLong("bungeecord.sync", 300L);
         bungeeCordServerPrefix = getConfig().getString("bungeecord.serverPrefix");
-        apiEnabled =  false; // TODO: Change to this when it's ready: getConfig().getBoolean("api.enable", false);
+        apiEnabled = false; // TODO: Change to this when it's ready: getConfig().getBoolean("api.enable", false);
         apiPort = getConfig().getInt("api.port", 25567);
         apiPassword = getConfig().getString("api.password");
         apiAllowedIPs = getConfig().getStringList("api.whitelist");
         legacyCommands = getConfig().getBoolean("command.legacy", false);
         commandMap.clear();
         // Register all commands/subcommands.
-        commandMap.put("readTicket",getConfig().getString("command.readTicket"));
-        commandMap.put("openTicket",getConfig().getString("command.openTicket"));
-        commandMap.put("closeTicket",getConfig().getString("command.closeTicket"));
-        commandMap.put("reopenTicket",getConfig().getString("command.reopenTicket"));
-        commandMap.put("claimTicket",getConfig().getString("command.claimTicket"));
-        commandMap.put("unclaimTicket",getConfig().getString("command.unclaimTicket"));
-        commandMap.put("holdTicket",getConfig().getString("command.holdTicket"));
-        commandMap.put("teleportToTicket",getConfig().getString("command.teleportToTicket"));
-        commandMap.put("broadcastToStaff",getConfig().getString("command.broadcastToStaff"));
-        commandMap.put("listStaff",getConfig().getString("command.listStaff"));
-        commandMap.put("assignTicket",getConfig().getString("command.assignTicket"));
-        commandMap.put("commentTicket",getConfig().getString("command.commentTicket"));
+        commandMap.put("readTicket", getConfig().getString("command.readTicket"));
+        commandMap.put("openTicket", getConfig().getString("command.openTicket"));
+        commandMap.put("closeTicket", getConfig().getString("command.closeTicket"));
+        commandMap.put("reopenTicket", getConfig().getString("command.reopenTicket"));
+        commandMap.put("claimTicket", getConfig().getString("command.claimTicket"));
+        commandMap.put("unclaimTicket", getConfig().getString("command.unclaimTicket"));
+        commandMap.put("holdTicket", getConfig().getString("command.holdTicket"));
+        commandMap.put("teleportToTicket", getConfig().getString("command.teleportToTicket"));
+        commandMap.put("broadcastToStaff", getConfig().getString("command.broadcastToStaff"));
+        commandMap.put("listStaff", getConfig().getString("command.listStaff"));
+        commandMap.put("assignTicket", getConfig().getString("command.assignTicket"));
+        commandMap.put("commentTicket", getConfig().getString("command.commentTicket"));
         // Commands registered!
     }
 
@@ -254,21 +256,19 @@ public class ReportRTS extends Plugin {
     }
 
     public void setDataProvider(DataProvider provider) {
-        if(this.provider != null) this.provider.close();
+        if (this.provider != null) {
+            this.provider.close();
+        }
         this.provider = provider;
     }
 
     private void assertConfigUpToDate() {
         /**
-         * What it does:
-         * - - - - -
-         * Checks if the mapping "requests" is located in the config
-         * and replaces it with "ticket".
-         * - - - - -
-         * Since version:
+         * What it does: - - - - - Checks if the mapping "requests" is located
+         * in the config and replaces it with "ticket". - - - - - Since version:
          * 1.2.3
          */
-        
+
         //disabled for now...
         /*
         if(getConfig().getConfigurationSection("request") != null) {
@@ -279,18 +279,16 @@ public class ReportRTS extends Plugin {
 
         // Save changes.
         saveConfig(getConfig());
-        */
+         */
     }
 
     private boolean assertConfigIsDefault(String path) {
         /**
-         * What it does:
-         * - - - - -
-         * Checks if the specified configuration section is default,
-         * returns a boolean depending on the result.
+         * What it does: - - - - - Checks if the specified configuration section
+         * is default, returns a boolean depending on the result.
          */
 
-        switch(path.toUpperCase()) {
+        switch (path.toUpperCase()) {
 
             case "STORAGE":
 

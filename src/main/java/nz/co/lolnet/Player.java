@@ -5,6 +5,8 @@
  */
 package nz.co.lolnet;
 
+import com.nyancraft.reportrts.ReportRTS;
+import com.nyancraft.reportrts.util.BungeeCord;
 import java.net.InetSocketAddress;
 import java.util.Collection;
 import java.util.HashMap;
@@ -32,7 +34,7 @@ public class Player implements ProxiedPlayer {
 // sender instanceof Player has to be true
 
     public static Iterable<Player> getOnlinePlayers() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return players.values();
     }
 
     static HashMap<UUID, Player> players = new HashMap<>();

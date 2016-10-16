@@ -205,7 +205,7 @@ public class RedisPlayer implements ProxiedPlayer {
         JSONObject dataToSend = new JSONObject();
         dataToSend.put("Command", "sendMessageToPlayer");
         dataToSend.put("playerName", playerName);
-        dataToSend.put("playerUUID", playerUUID);
+        dataToSend.put("PlayerUUID", playerUUID.toString());
         dataToSend.put("Message", string);
         api.sendChannelMessage("ReportRTSBC", dataToSend.toJSONString());
 
