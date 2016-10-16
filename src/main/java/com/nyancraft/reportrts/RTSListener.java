@@ -26,9 +26,12 @@ public class RTSListener implements Listener {
     
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerJoin(PostLoginEvent event) {
+        System.out.println("OnPlayerJoin Event ReportRTS");
         if (MuiltServerSupport.enabled) {
             MuiltServerSupport.requestPermissionsUpdate(event.getPlayer().getUniqueId());
         }
+        int createUser = plugin.getDataProvider().createUser(event.getPlayer().getUniqueId());
+        System.out.println(createUser);
         BungeeCord.triggerAutoSync();
         BungeeCord.processPendingRequests();
         

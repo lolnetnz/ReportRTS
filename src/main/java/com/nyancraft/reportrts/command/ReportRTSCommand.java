@@ -18,6 +18,7 @@ import com.nyancraft.reportrts.util.Message;
 import com.nyancraft.reportrts.util.BungeeCord;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import nz.co.lolnet.Player;
 
@@ -333,12 +334,12 @@ public class ReportRTSCommand extends Command{
                 break;
 
             case "DUTY":
-                if(!(sender instanceof Player)){
+                if(!(sender instanceof ProxiedPlayer)){
                     sender.sendMessage("[ReportRTS] You cannot change your duty status from the console.");
                     return true;
                 }
-                Player player1 = (Player) sender;
-                if(!RTSPermissions.isStaff((Player) sender)) return true;
+                Player player1 = Player.getPlayer(sender.getName());
+                if(!RTSPermissions.isStaff(player1)) return true;
                 if(args.length <= 1){
                     if(plugin.staff.contains(player1.getUniqueId()))
                         sender.sendMessage(ChatColor.GREEN + "You are currently on duty.");

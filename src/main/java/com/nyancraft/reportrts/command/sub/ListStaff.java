@@ -6,6 +6,7 @@ import com.nyancraft.reportrts.util.Message;
 
 import java.util.UUID;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import nz.co.lolnet.Player;
 
 public class ListStaff {
@@ -27,8 +28,8 @@ public class ListStaff {
         for(UUID uuid : plugin.staff) {
             Player player = Player.getPlayer(uuid);
             if(player == null) return false;
-            if(plugin.vanishSupport && sender instanceof Player) {
-                if(!((Player) sender).canSee(player)) continue;
+            if(plugin.vanishSupport && sender instanceof ProxiedPlayer) {
+                if(!(Player.getPlayer(sender.getName())).canSee(player)) continue;
             }
             staff.append(player.getDisplayName());
             staff.append(separator);

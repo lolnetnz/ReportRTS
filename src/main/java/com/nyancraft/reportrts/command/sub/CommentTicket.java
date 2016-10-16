@@ -15,6 +15,7 @@ import com.nyancraft.reportrts.util.Message;
 import java.io.IOException;
 import java.util.TreeSet;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import nz.co.lolnet.Player;
 
 public class CommentTicket {
@@ -48,13 +49,13 @@ public class CommentTicket {
             return true;
         }
 
-        User user = sender instanceof Player ? data.getUser(((Player) sender).getUniqueId(), 0, true) : data.getConsole();
+        User user = sender instanceof ProxiedPlayer ? data.getUser((Player.getPlayer(sender.getName())).getUniqueId(), 0, true) : data.getConsole();
         if(user.getUsername() == null) {
             sender.sendMessage(Message.error("user.getUsername() returned NULL! Are you using plugins to modify names?"));
             return true;
         }
 
-        if(sender instanceof Player && plugin.tickets.get(ticketId).getUUID() != ((Player) sender).getUniqueId() && !RTSPermissions.isStaff((Player) sender)) {
+        if(sender instanceof ProxiedPlayer && plugin.tickets.get(ticketId).getUUID() != (Player.getPlayer(sender.getName())).getUniqueId() && !RTSPermissions.isStaff(Player.getPlayer(sender.getName()))) {
             sender.sendMessage(Message.errorTicketOwner());
             return true;
         }
@@ -69,7 +70,7 @@ public class CommentTicket {
 
         String comment = RTSFunctions.implode(args, " ").trim();
 
-        String name = sender instanceof Player ? plugin.staff.contains(user.getUuid()) ? sender.getName() + " - Staff" : sender.getName() : sender.getName();
+        String name = sender instanceof ProxiedPlayer ? plugin.staff.contains(user.getUuid()) ? sender.getName() + " - Staff" : sender.getName() : sender.getName();
 
         long timestamp = System.currentTimeMillis() / 1000;
 

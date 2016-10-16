@@ -13,6 +13,7 @@ import com.nyancraft.reportrts.util.Message;
 
 import java.io.IOException;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import nz.co.lolnet.Player;
 
 public class HoldTicket {
@@ -41,7 +42,7 @@ public class HoldTicket {
             reason = reason.substring(args[1].length()).trim();
         }
 
-        User user = sender instanceof Player ? data.getUser(((Player) sender).getUniqueId(), 0, true) : data.getConsole();
+        User user = sender instanceof ProxiedPlayer ? data.getUser((Player.getPlayer(sender.getName())).getUniqueId(), 0, true) : data.getConsole();
         if(user.getUsername() == null) {
             sender.sendMessage(Message.error("user.getUsername() returned NULL! Are you using plugins to modify names?"));
             return true;

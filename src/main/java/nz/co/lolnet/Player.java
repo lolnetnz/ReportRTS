@@ -31,7 +31,7 @@ public class Player implements ProxiedPlayer {
     public static Player getPlayer(ProxiedPlayer player) {
         return new Player(player);
     }
-// sender instanceof Player has to be true
+// sender instanceof ProxiedPlayer has to be true
 
     public static Iterable<Player> getOnlinePlayers() {
         return players.values();
@@ -67,7 +67,12 @@ public class Player implements ProxiedPlayer {
     }
 
     public static Player getPlayer(UUID playerUUID) {
-        return players.get(playerUUID);
+        Player player = players.get(playerUUID);
+        if (player == null && ReportRTS.getPlugin().getProxy().getPlayer(playerUUID) != null)
+        {
+            player = new Player(ReportRTS.getPlugin().getProxy().getPlayer(playerUUID));
+        }
+        return player;
 
     }
 
@@ -286,14 +291,6 @@ public class Player implements ProxiedPlayer {
         return null;
     }
 
-    public boolean canSee(Player player) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    public Location getLocation() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
     String getCurrentServerName() {
         if (player != null) {
             return player.getServer().getInfo().getName();
@@ -301,6 +298,10 @@ public class Player implements ProxiedPlayer {
             return playerR.getCurrentServerName();
         }
         return null;
+    }
+
+    public boolean canSee(Player player) {
+        return true;
     }
 
 }

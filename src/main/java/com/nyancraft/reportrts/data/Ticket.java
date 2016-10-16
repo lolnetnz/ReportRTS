@@ -50,8 +50,17 @@ public class Ticket {
         comments = new TreeSet<>();
     }
 
-    public Ticket(String username, UUID uuid, int ticketId, long l, String message, int i, Location location, String server) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Ticket(String name, UUID uuid, int id, long timestamp, String text, int status, Location location, String server) {
+        this.name = name;
+        this.uuid = uuid;
+        this.id = id;
+        this.timestamp = timestamp;
+        this.text = text;
+        this.status = status;
+        this.world = server;
+        this.server = server;
+        this.staffTime = 0;
+        comments = new TreeSet<>();
     }
 
     /**

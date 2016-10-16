@@ -11,6 +11,7 @@ import com.nyancraft.reportrts.util.Message;
 
 import java.io.IOException;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import nz.co.lolnet.Player;
 
 public class UnclaimTicket {
@@ -39,11 +40,11 @@ public class UnclaimTicket {
             return true;
         }
         // CONSOLE overrides all.
-        if(sender instanceof Player) {
-            if(!((Player)sender).getUniqueId().equals(plugin.tickets.get(ticketId).getStaffUuid()) && !RTSPermissions.canBypassClaim(sender)) return true;
+        if(sender instanceof ProxiedPlayer) {
+            if(!(Player.getPlayer(sender.getName())).getUniqueId().equals(plugin.tickets.get(ticketId).getStaffUuid()) && !RTSPermissions.canBypassClaim(sender)) return true;
         }
 
-        switch(data.setTicketStatus(ticketId, (sender instanceof Player) ? ((Player) sender).getUniqueId() : data.getConsole().getUuid(),
+        switch(data.setTicketStatus(ticketId, (sender instanceof ProxiedPlayer) ? (Player.getPlayer(sender.getName())).getUniqueId() : data.getConsole().getUuid(),
                 sender.getName(), 0, false, System.currentTimeMillis() / 1000)) {
 
             case -3:

@@ -11,6 +11,7 @@ import com.nyancraft.reportrts.util.Message;
 
 import java.io.IOException;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import nz.co.lolnet.Player;
 
 public class ClaimTicket {
@@ -49,7 +50,7 @@ public class ClaimTicket {
 
         long timestamp = System.currentTimeMillis() / 1000;
 
-        switch(data.setTicketStatus(ticketId, (sender instanceof Player) ? ((Player) sender).getUniqueId() : data.getConsole().getUuid(),
+        switch(data.setTicketStatus(ticketId, (sender instanceof ProxiedPlayer) ? (Player.getPlayer(sender.getName())).getUniqueId() : data.getConsole().getUuid(),
                 sender.getName(), 1, false, System.currentTimeMillis() / 1000)) {
 
             case -3:
@@ -90,7 +91,7 @@ public class ClaimTicket {
 
         plugin.tickets.get(ticketId).setStatus(1);
         // Workaround for CONSOLE.
-        plugin.tickets.get(ticketId).setStaffUuid((!(sender instanceof Player) ? data.getConsole().getUuid() : ((Player) sender).getUniqueId()));
+        plugin.tickets.get(ticketId).setStaffUuid((!(sender instanceof ProxiedPlayer) ? data.getConsole().getUuid() : (Player.getPlayer(sender.getName())).getUniqueId()));
         plugin.tickets.get(ticketId).setStaffTime(timestamp);
         plugin.tickets.get(ticketId).setStaffName(name);
 

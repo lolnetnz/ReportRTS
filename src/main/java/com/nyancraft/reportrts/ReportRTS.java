@@ -21,7 +21,6 @@ import nz.co.lolnet.ConfigManager;
 import nz.co.lolnet.MuiltServerSupport;
 
 import nz.co.lolnet.Permission;
-import nz.co.lolnet.Player;
 
 public class ReportRTS extends Plugin {
 
@@ -300,7 +299,7 @@ public class ReportRTS extends Plugin {
     }
 
     public String getConsoleName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return "console";
     }
 
     private Configuration reloadConfig() {

@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import nz.co.lolnet.Player;
 
 public class ReadTicket {
@@ -107,7 +108,7 @@ public class ReadTicket {
         }
 
         // If the user does not have access to readAll then ensure that the ticket is owned by that player.
-        if(restrict && !ticket.getUUID().equals(sender instanceof Player ? ((Player) sender).getUniqueId() : data.getConsole().getUuid())) {
+        if(restrict && !ticket.getUUID().equals(sender instanceof ProxiedPlayer ? (Player.getPlayer(sender.getName())).getUniqueId() : data.getConsole().getUuid())) {
             sender.sendMessage(Message.errorTicketOwner());
             return true;
         }
@@ -399,8 +400,8 @@ public class ReadTicket {
         // Set cursor position.
         int i = (page * plugin.ticketsPerPage) - plugin.ticketsPerPage;
 
-        LinkedHashMap<Integer, Ticket> tickets = data.getOpenedBy(sender instanceof Player ?
-                ((Player) sender).getUniqueId() : plugin.getDataProvider().getConsole().getUuid(), i, plugin.ticketsPerPage);
+        LinkedHashMap<Integer, Ticket> tickets = data.getOpenedBy(sender instanceof ProxiedPlayer ?
+                (Player.getPlayer(sender.getName())).getUniqueId() : plugin.getDataProvider().getConsole().getUuid(), i, plugin.ticketsPerPage);
 
         if(tickets ==  null) {
             sender.sendMessage(Message.error("Can't read closed tickets, see console for errors."));
