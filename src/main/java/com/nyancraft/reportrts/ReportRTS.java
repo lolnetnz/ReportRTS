@@ -18,6 +18,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
 import net.md_5.bungee.config.Configuration;
 import nz.co.lolnet.ConfigManager;
+import nz.co.lolnet.MuiltServerSupport;
 
 import nz.co.lolnet.Permission;
 import nz.co.lolnet.Player;
@@ -48,6 +49,7 @@ public class ReportRTS extends Plugin {
     public boolean apiEnabled;
     public boolean legacyCommands;
 
+    
     public int maxTickets;
     public int ticketDelay;
     public int ticketMinimumWords;
@@ -74,6 +76,7 @@ public class ReportRTS extends Plugin {
     private List<String> apiAllowedIPs = new ArrayList<>();
 
     private String serverIP;
+    
 
     public void onDisable() {
         provider.close();
@@ -180,6 +183,7 @@ public class ReportRTS extends Plugin {
                 }
             }, 120L, (ticketNagging * 60), TimeUnit.SECONDS);
         }
+        new MuiltServerSupport().setup();
     }
 
     public void reloadPlugin() {

@@ -6,6 +6,7 @@
 package nz.co.lolnet;
 
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
@@ -19,59 +20,42 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
+import org.json.simple.JSONObject;
 
 /**
  *
  * @author James
  */
-public class Player implements ProxiedPlayer {
+public class RedisPlayer implements ProxiedPlayer {
 
-    public static Player getPlayer(ProxiedPlayer player) {
-        return new Player(player);
-    }
-// sender instanceof Player has to be true
+    public static HashMap<UUID, RedisPlayer> redisPlayers = new HashMap<>();
+    String playerName;
+    UUID playerUUID;
+    Collection<String> playerPermissions;
 
-    public static Iterable<Player> getOnlinePlayers() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    static HashMap<UUID, Player> players = new HashMap<>();
-
-    ProxiedPlayer player;
-    RedisPlayer playerR;
-
-    public Player(ProxiedPlayer player) {
-        this.player = player;
+    public RedisPlayer(String playerName) {
+        this.playerName = playerName;
+        this.playerUUID = getUniqueId();
+        redisPlayers.put(playerUUID, this);
     }
 
-    public Player(String playerName) {
-        this.player = null;
-        this.playerR = new RedisPlayer(playerName);
+    public RedisPlayer(UUID playerUUID) {
+        this.playerUUID = playerUUID;
+        playerName = getName();
+        redisPlayers.put(playerUUID, this);
     }
 
-    public Player(UUID playerUUID) {
-        this.player = null;
-        this.playerR = new RedisPlayer(playerUUID);
+    public static void removePlayer(UUID playerUUID) {
+        redisPlayers.remove(playerUUID);
     }
 
-    public static Player getPlayer(String playerName) {
-        for (Player player : players.values()) {
-            if (player.getName().equals(playerName)) {
-                return player;
-
-            }
-        }
-        return null;
-    }
-
-    public static Player getPlayer(UUID playerUUID) {
-        return players.get(playerUUID);
-
+    public boolean isOnline() {
+        return com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi().isPlayerOnline(playerUUID);
     }
 
     @Override
     public String getDisplayName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getName();
     }
 
     @Override
@@ -136,17 +120,15 @@ public class Player implements ProxiedPlayer {
 
     @Override
     public String getUUID() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getUniqueId().toString();
     }
 
     @Override
     public UUID getUniqueId() {
-        if (player != null) {
-            return player.getUniqueId();
-        } else if (playerR != null) {
-            return playerR.getUniqueId();
+        if (playerUUID == null && playerName != null && isOnline()) {
+            this.playerUUID = com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi().getUuidFromName(playerName);
         }
-        return null;
+        return playerUUID;
     }
 
     @Override
@@ -211,21 +193,21 @@ public class Player implements ProxiedPlayer {
 
     @Override
     public String getName() {
-        if (player != null) {
-            return player.getName();
-        } else if (playerR != null) {
-            return playerR.getName();
+        if (playerName == null && playerUUID != null && isOnline()) {
+            this.playerName = com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi().getNameFromUuid(playerUUID);
         }
-        return null;
+        return playerName;
     }
 
     @Override
     public void sendMessage(String string) {
-        if (player != null) {
-            player.sendMessage(string);
-        } else if (playerR != null) {
-            player.sendMessage(string);
-        }
+        com.imaginarycode.minecraft.redisbungee.RedisBungeeAPI api = com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi();
+        JSONObject dataToSend = new JSONObject();
+        dataToSend.put("Command", "sendMessageToPlayer");
+        dataToSend.put("playerName", playerName);
+        dataToSend.put("playerUUID", playerUUID);
+        dataToSend.put("Message", string);
+        api.sendChannelMessage("ReportRTSBC", dataToSend.toJSONString());
 
     }
 
@@ -261,12 +243,7 @@ public class Player implements ProxiedPlayer {
 
     @Override
     public boolean hasPermission(String string) {
-        if (player != null) {
-            return player.hasPermission(string);
-        } else if (playerR != null) {
-            return playerR.hasPermission(string);
-        }
-        return false;
+        return playerPermissions.contains(string);
     }
 
     @Override
@@ -276,27 +253,21 @@ public class Player implements ProxiedPlayer {
 
     @Override
     public Collection<String> getPermissions() {
-        if (player != null) {
-            return player.getPermissions();
-        } else if (playerR != null) {
-            return playerR.getPermissions();
+        if (playerPermissions == null) {
+            updatePermissions();
         }
-        return null;
+        return playerPermissions;
     }
 
-    public boolean canSee(Player player) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    public Location getLocation() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private void updatePermissions() {
+        MuiltServerSupport.requestPermissionsUpdate(playerUUID);
     }
 
     String getCurrentServerName() {
-        if (player != null) {
-            return player.getServer().getInfo().getName();
-        } else if (playerR != null) {
-            return playerR.getCurrentServerName();
+        for (String serverName : com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi().getServerToPlayers().keySet()) {
+            if (com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi().getServerToPlayers().get(serverName).contains(playerUUID)) {
+                return serverName;
+            }
         }
         return null;
     }

@@ -21,7 +21,7 @@ public class Location {
     
 
     public String getWorld() {
-        return player.getServer().getInfo().getName();
+        return player.getCurrentServerName();
     }
 
     public double getY() {
