@@ -3,6 +3,7 @@ package com.nyancraft.reportrts.command;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.command.sub.*;
 import com.nyancraft.reportrts.util.Message;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 
@@ -17,7 +18,11 @@ public class TicketCommand extends Command {
     
     @Override
     public void execute(CommandSender cs, String[] strings) {
-        onCommand(cs, strings);
+        boolean onCommand = onCommand(cs, strings);
+        if (!onCommand)
+        {
+            cs.sendMessage(ChatColor.RED + "Command requires more words");
+        }
     }
 
     public boolean onCommand(CommandSender sender, String[] args) {

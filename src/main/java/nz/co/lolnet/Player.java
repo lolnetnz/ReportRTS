@@ -57,11 +57,15 @@ public class Player implements ProxiedPlayer {
     }
 
     public static Player getPlayer(String playerName) {
-        for (Player player : players.values()) {
-            if (player.getName().equals(playerName)) {
-                return player;
+        for (Player player1 : players.values()) {
+            if (player1.getName().equals(playerName)) {
+                return player1;
 
             }
+        }
+        if (ReportRTS.getPlugin().getProxy().getPlayer(playerName) != null)
+        {
+            return new Player(ReportRTS.getPlugin().getProxy().getPlayer(playerName));
         }
         return null;
     }
