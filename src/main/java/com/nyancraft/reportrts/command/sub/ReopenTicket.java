@@ -28,6 +28,10 @@ public class ReopenTicket {
      */
     public static boolean handleCommand(CommandSender sender, String[] args) {
 
+        if(args.length < 1 ) {
+            return false;
+        }
+        
         if(args.length < 2 || !RTSFunctions.isNumber(args[1])) {
             sender.sendMessage(Message.errorTicketNaN(args[1]));
             return true;
