@@ -25,7 +25,12 @@
             <id>dmulloy2-repo</id>
             <url>http://repo.dmulloy2.net/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>LX_Gaming-Repo</id>
+            <url>https://raw.githubusercontent.com/LXGaming/repo/master/maven/</url>
+        </repository>
     </repositories>
+    
     <dependencies>
         <dependency>
             <groupId>com.imaginarycode.minecraft</groupId>
@@ -63,6 +68,13 @@
             <version>20030203.000129</version>
             <type>jar</type>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.lxgaming</groupId>
+            <artifactId>bungeeplayer</artifactId>
+            <version>1.0.0</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/BungeePlayer-1.0.0.jar</systemPath>
         </dependency>
     </dependencies>
     <profiles>

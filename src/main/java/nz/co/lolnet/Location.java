@@ -5,6 +5,8 @@
  */
 package nz.co.lolnet;
 
+import io.github.lxgaming.bungeeplayer.BungeePlayer;
+
 
 
 /**
@@ -19,29 +21,29 @@ public class Location {
     }
     
     
-
+    
     public String getWorld() {
-        return player.getCurrentServerName();
+        return player.getCurrentServerName() + "(" +BungeePlayer.getApi().getData().getPlayer(player).getLocation().getDimension() +")";
     }
 
     public double getY() {
-        return 0;
+        return BungeePlayer.getApi().getData().getPlayer(player).getLocation().getY();
     }
 
     public double getX() {
-        return 0;
+        return BungeePlayer.getApi().getData().getPlayer(player).getLocation().getX();
     }
 
     public double getZ() {
-        return 0;
+        return BungeePlayer.getApi().getData().getPlayer(player).getLocation().getZ();
     }
 
     public double getYaw() {
-        return 0;
+        return BungeePlayer.getApi().getData().getPlayer(player).getLocation().getYaw();
     }
 
     public double getPitch() {
-        return 0;
+        return BungeePlayer.getApi().getData().getPlayer(player).getLocation().getPitch();
     }
     
 }
