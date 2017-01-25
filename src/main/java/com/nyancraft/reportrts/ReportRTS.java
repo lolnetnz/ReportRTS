@@ -88,6 +88,7 @@ public class ReportRTS extends Plugin {
     }
 
     public void onEnable() {
+        permission = new Permission();
         plugin = this;
         reloadSettings();
 

@@ -27,7 +27,7 @@ import net.md_5.bungee.api.connection.Server;
  * @author James
  */
 public class Player implements ProxiedPlayer {
-
+    
     public static Player getPlayer(ProxiedPlayer player) {
         return new Player(player);
     }
@@ -272,6 +272,9 @@ public class Player implements ProxiedPlayer {
 
     @Override
     public boolean hasPermission(String string) {
+        if (Permission.debug) {
+            return true;
+        }
         if (player != null) {
             return player.hasPermission(string);
         } else if (playerR != null) {

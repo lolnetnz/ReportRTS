@@ -61,6 +61,13 @@ public class Ticket {
         this.server = server;
         this.staffTime = 0;
         comments = new TreeSet<>();
+        
+        this.x = (int) location.getX();
+        this.y = (int) location.getY();
+        this.z = (int) location.getZ();
+        this.world = location.getWorld();
+        this.yaw = (float) location.getYaw();
+        this.pitch = (float) location.getPitch();
     }
 
     /**

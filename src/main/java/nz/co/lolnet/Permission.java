@@ -13,12 +13,17 @@ import net.md_5.bungee.api.CommandSender;
  */
 public class Permission {
 
+    static boolean debug = false;
+
     public boolean playerHas(Player player, String permission) {
         return player.hasPermission(permission);
     }
 
     public boolean has(CommandSender sender, String permission) {
+        if (Permission.debug) {
+            return true;
+        }
         return sender.hasPermission(permission);
     }
-    
+
 }

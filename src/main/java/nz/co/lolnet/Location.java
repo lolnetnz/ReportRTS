@@ -18,6 +18,7 @@ public class Location {
     Player player;
     public Location(Player player) {
         this.player = player;
+        System.out.println(BungeePlayer.getApi().getData().getPlayer(player).getLocation().getX());
     }
     
     
