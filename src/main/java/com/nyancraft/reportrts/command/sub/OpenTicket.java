@@ -47,8 +47,6 @@ public class OpenTicket {
         User user = new User();
         user.setUsername(sender.getName());
         Location location = null;
-
-        System.out.println(sender instanceof ProxiedPlayer);
         if(!(sender instanceof ProxiedPlayer)) {
             // Sender is more than likely Console.
             user = data.getConsole();
@@ -60,7 +58,6 @@ public class OpenTicket {
             user = data.getUser(player.getUniqueId(), 0, true);
             location = new Location(Player.getPlayer(player));
         }
-        System.out.println("" + user);
 
         // The user is banned and can not create a ticket.
         if(user.getBanned()) {
