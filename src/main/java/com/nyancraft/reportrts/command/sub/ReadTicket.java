@@ -138,7 +138,7 @@ public class ReadTicket {
 
         // Compile a response for the user.
         sender.sendMessage(ChatColor.AQUA + "--------- " + "Ticket #" + ticket.getId() + " - " + statusColor + status + ChatColor.AQUA + " ---------");
-        sender.sendMessage(ChatColor.YELLOW + "Opened by" + online + " " + ticket.getName() + ChatColor.YELLOW + " at " +  ChatColor.GREEN + date + ChatColor.YELLOW + " at X:" + ChatColor.GREEN + ticket.getX() + ChatColor.YELLOW + ", Y:" + ChatColor.GREEN + ticket.getY() + ChatColor.YELLOW + ", Z:" + ChatColor.GREEN + ticket.getZ());
+        sender.sendMessage(ChatColor.YELLOW + "Opened by" + online + " " + ticket.getName() + ChatColor.YELLOW + " at " +  ChatColor.GREEN + date + ChatColor.YELLOW + " at Server:" +ChatColor.GREEN  + ticket.getWorld()+  ChatColor.YELLOW + " X:" + ChatColor.GREEN + ticket.getX() + ChatColor.YELLOW + ", Y:" + ChatColor.GREEN + ticket.getY() + ChatColor.YELLOW + ", Z:" + ChatColor.GREEN + ticket.getZ());
         sender.sendMessage(ChatColor.GRAY + ticket.getMessage());
 
         if(ticket.getStatus() == 1) {

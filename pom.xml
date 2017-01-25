@@ -17,17 +17,13 @@
             <id>vault-repo</id>
             <url>http://nexus.theyeticave.net/content/repositories/pub_releases</url>
         </repository>
-        <!--<repository>
-            <id>shadowvolt-repo</id>
-            <url>http://ci.shadowvolt.com/plugin/repository/everything/</url>
-        </repository>-->
         <repository>
             <id>dmulloy2-repo</id>
             <url>http://repo.dmulloy2.net/content/groups/public/</url>
         </repository>
         <repository>
             <id>LX_Gaming-Repo</id>
-            <url>https://raw.githubusercontent.com/LXGaming/repo/master/maven/</url>
+            <url>https://lxgaming.github.io/repo/maven</url>
         </repository>
     </repositories>
     
@@ -73,8 +69,7 @@
             <groupId>io.github.lxgaming</groupId>
             <artifactId>bungeeplayer</artifactId>
             <version>1.0.0</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/BungeePlayer-1.0.0.jar</systemPath>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
     <profiles>

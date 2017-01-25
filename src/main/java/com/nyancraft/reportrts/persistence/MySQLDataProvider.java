@@ -571,7 +571,7 @@ public class MySQLDataProvider implements DataProvider {
             ps.setDouble(7, location.getYaw());
             ps.setDouble(8, location.getPitch());
             ps.setString(9, message);
-            ps.setString(10, BungeeCord.getServer());
+            ps.setString(10, location.getServer());
 
             int result = ps.executeUpdate();
 

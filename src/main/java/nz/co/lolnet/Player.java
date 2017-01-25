@@ -310,5 +310,5 @@ public class Player implements ProxiedPlayer {
     public boolean canSee(Player player) {
         return true;
     }
-
+    
 }

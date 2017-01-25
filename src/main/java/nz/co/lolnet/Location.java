@@ -46,5 +46,9 @@ public class Location {
     public double getPitch() {
         return BungeePlayer.getApi().getData().getPlayer(player).getLocation().getPitch();
     }
+
+    public String getServer() {
+        return player.getCurrentServerName();
+    }
     
 }
