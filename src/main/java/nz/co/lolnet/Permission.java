@@ -16,20 +16,18 @@ public class Permission {
     static boolean debug = false;
 
     public boolean playerHas(Player player, String permission) {
-        if (player.hasPermission("reportrts.*")) {
+        if (player.getPermissions().contains("reportrts.*") || player.hasPermission("reportrts.*")) {
             return true;
         }
-        return player.hasPermission(permission);
+
+        return player.getPermissions().contains(permission) || player.hasPermission(permission);
     }
 
     public boolean has(CommandSender sender, String permission) {
-        if (Permission.debug) {
+        if (sender.getPermissions().contains("reportrts.*") || sender.hasPermission("reportrts.*")) {
             return true;
         }
-        if (sender.hasPermission("reportrts.*")) {
-            return true;
-        }
-        return sender.hasPermission(permission);
+        return sender.getPermissions().contains(permission) || sender.hasPermission(permission);
     }
 
 }
