@@ -194,12 +194,8 @@ public class ReadTicket {
             substring = RTSFunctions.shortenMessage(ticket.getMessage());
 
             substring = (ticket.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + ticket.getStaffName() : ChatColor.GRAY + substring;
-            String bungeeServer = (ticket.getServer().equals(BungeeCord.getServer()) ? "" : "[" + ChatColor.GREEN + ticket.getServer() + ChatColor.RESET + "] ");
-            if(false) {
-            } else {
-                sender.sendMessage(bungeeServer + ChatColor.GOLD + "#" + ticket.getId() + " " + RTSFunctions.getTimeAgo(ticket.getTimestamp())
+            sender.sendMessage(ChatColor.GOLD + "#" + ticket.getId() + " " + RTSFunctions.getTimeAgo(ticket.getTimestamp())
                         + " by " + ((RTSFunctions.isUserOnline(ticket.getUUID())) ? ChatColor.GREEN : ChatColor.RED) + ticket.getName() + ChatColor.GOLD + " - " + substring);
-            }
         }
 
         return true;
