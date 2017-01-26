@@ -35,7 +35,7 @@ public class OpenTicket {
     public static boolean handleCommand(CommandSender sender, String[] args) {
 
         if(!RTSPermissions.canOpenTicket(sender)) return true;
-        if(args.length < 2) return false;
+        //if(args.length < 2) return false;
 
         // Check if ticket message is too short.
         if(plugin.ticketMinimumWords > (args.length - 1)) {
