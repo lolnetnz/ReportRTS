@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import nz.co.lolnet.Location;
+import nz.co.lolnet.PlayerTicketLocation;
 import nz.co.lolnet.Player;
 import sun.security.pkcs11.P11TlsKeyMaterialGenerator;
 
@@ -46,17 +46,17 @@ public class OpenTicket {
         // Store these variables, we're gonna need them.
         User user = new User();
         user.setUsername(sender.getName());
-        Location location = null;
+        PlayerTicketLocation location = null;
         if(!(sender instanceof ProxiedPlayer)) {
             // Sender is more than likely Console.
             user = data.getConsole();
-            location = new Location(Player.getPlayer(sender.getName()));
+            location = new PlayerTicketLocation(Player.getPlayer(sender.getName()));
         }
         else {
             // Sender is a Player.
             ProxiedPlayer player = (ProxiedPlayer) sender;
             user = data.getUser(player.getUniqueId(), 0, true);
-            location = new Location(Player.getPlayer(player));
+            location = new PlayerTicketLocation(Player.getPlayer(player));
         }
 
         // The user is banned and can not create a ticket.

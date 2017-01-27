@@ -5,6 +5,8 @@
  */
 package nz.co.lolnet;
 
+import com.imaginarycode.minecraft.redisbungee.RedisBungee;
+import com.imaginarycode.minecraft.redisbungee.RedisBungeeAPI;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.util.BungeeCord;
 import java.net.InetSocketAddress;
@@ -12,6 +14,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ChatMessageType;
@@ -27,20 +30,36 @@ import net.md_5.bungee.api.connection.Server;
  * @author James
  */
 public class Player implements ProxiedPlayer {
-    
+
+    private static HashMap<UUID, Player> players = new HashMap<>();
+
+    private static void checkEveryoneIsAdded() {
+        RedisBungeeAPI api = RedisBungee.getApi();
+        Set<UUID> humanPlayersOnline = api.getPlayersOnline();
+        for (UUID uuid : humanPlayersOnline) {
+            
+        }
+    }
+
+    ProxiedPlayer player;
+    RedisPlayer playerR;
+
     public static Player getPlayer(ProxiedPlayer player) {
+        String playerName = player.getName();
+        for (Player player1 : players.values()) {
+            if (player1.getName().equals(playerName)) {
+                return player1;
+
+            }
+        }
         return new Player(player);
     }
 // sender instanceof ProxiedPlayer has to be true
 
-    public static Iterable<Player> getOnlinePlayers() {
+    public static Collection<Player> getOnlinePlayers() {
+        checkEveryoneIsAdded();
         return players.values();
     }
-
-    static HashMap<UUID, Player> players = new HashMap<>();
-
-    ProxiedPlayer player;
-    RedisPlayer playerR;
 
     public Player(ProxiedPlayer player) {
         this.player = player;
@@ -63,8 +82,7 @@ public class Player implements ProxiedPlayer {
 
             }
         }
-        if (ReportRTS.getPlugin().getProxy().getPlayer(playerName) != null)
-        {
+        if (ReportRTS.getPlugin().getProxy().getPlayer(playerName) != null) {
             return new Player(ReportRTS.getPlugin().getProxy().getPlayer(playerName));
         }
         return null;
@@ -72,9 +90,11 @@ public class Player implements ProxiedPlayer {
 
     public static Player getPlayer(UUID playerUUID) {
         Player player = players.get(playerUUID);
-        if (player == null && ReportRTS.getPlugin().getProxy().getPlayer(playerUUID) != null)
-        {
-            player = new Player(ReportRTS.getPlugin().getProxy().getPlayer(playerUUID));
+        if (player == null) {
+            if (com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi().isPlayerOnline(playerUUID)) {
+                player = new Player(playerUUID);
+                players.put(playerUUID, player);
+            }
         }
         return player;
 
@@ -235,7 +255,7 @@ public class Player implements ProxiedPlayer {
         if (player != null) {
             player.sendMessage(string);
         } else if (playerR != null) {
-            player.sendMessage(string);
+            playerR.sendMessage(string);
         }
 
     }
@@ -310,5 +330,5 @@ public class Player implements ProxiedPlayer {
     public boolean canSee(Player player) {
         return true;
     }
-    
+
 }

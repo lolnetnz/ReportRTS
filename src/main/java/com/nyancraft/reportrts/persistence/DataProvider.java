@@ -6,7 +6,7 @@ import com.nyancraft.reportrts.data.User;
 
 import java.util.*;
 import java.util.logging.Logger;
-import nz.co.lolnet.Location;
+import nz.co.lolnet.PlayerTicketLocation;
 
 public interface DataProvider {
 
@@ -65,7 +65,7 @@ public interface DataProvider {
      * @param message ticket message
      * @return ticket ID
      */
-    public int createTicket(User user, Location location, String message);
+    public int createTicket(User user, PlayerTicketLocation location, String message);
 
     /**
      * Count all tickets of a specific status.

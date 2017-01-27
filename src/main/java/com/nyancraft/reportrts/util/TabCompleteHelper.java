@@ -26,8 +26,7 @@ public class TabCompleteHelper implements Listener {
         }
 
         String[] args = event.getCursor().split(" ");
-        
-        
+
         //Argument checker, DO NOT LEAVE THIS UNCOMMENTED IN PRODUCTION 
         /*int tempI = -1;
         for (String arg : args) {
@@ -38,22 +37,21 @@ public class TabCompleteHelper implements Listener {
         /**
          * LOOK ABOVE *
          */
-        
-        
         if (args.length == 0) {
             return;
         }
         args[0] = args[0].replaceFirst("/", "");
-        System.out.println(plugin.commandMap.get("readTicket"));
-        if (args[0].startsWith("com"))
-        {
-            event.getSuggestions().add("/" + "compass");
+        if (args.length == 1 && !event.getCursor().contains(" ")) {
+            if (args[0].startsWith("com")) {
+                event.getSuggestions().add("/" + "compass");
+            }
+            for (String command : plugin.commandMap.values()) {
+                if (command.toLowerCase().startsWith(args[0].toLowerCase()) && !command.equalsIgnoreCase(args[0])) {
+                    event.getSuggestions().add("/" + command);
+                }
+            }
         }
-        for (String command : plugin.commandMap.values()) {
-            if (command.toLowerCase().startsWith(args[0].toLowerCase()) && !command.equalsIgnoreCase(args[0])) {
-                event.getSuggestions().add("/" + command);
-            } 
-        }
+
         if ((!args[0].equalsIgnoreCase(plugin.commandMap.get("readTicket")) && !args[0].equalsIgnoreCase(plugin.commandMap.get("closeTicket"))
                 && !args[0].equalsIgnoreCase(plugin.commandMap.get("teleportToTicket")) && !args[0].equalsIgnoreCase(plugin.commandMap.get("holdTicket"))
                 && !args[0].equalsIgnoreCase(plugin.commandMap.get("claimTicket")) && !args[0].equalsIgnoreCase(plugin.commandMap.get("unclaimTicket"))

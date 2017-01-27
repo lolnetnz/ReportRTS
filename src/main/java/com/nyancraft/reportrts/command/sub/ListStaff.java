@@ -25,7 +25,7 @@ public class ListStaff {
         StringBuilder staff = new StringBuilder();
         String separator = Message.staffListSeparator();
 
-        for(UUID uuid : plugin.staff) {
+        for(UUID uuid : plugin.staff.getAll()) {
             Player player = Player.getPlayer(uuid);
             if(player == null) return false;
             if(plugin.vanishSupport && sender instanceof ProxiedPlayer) {

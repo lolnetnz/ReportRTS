@@ -10,7 +10,7 @@ import com.nyancraft.reportrts.util.BungeeCord;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import nz.co.lolnet.Location;
+import nz.co.lolnet.PlayerTicketLocation;
 import nz.co.lolnet.Player;
 
 public class MySQLDataProvider implements DataProvider {
@@ -551,7 +551,7 @@ public class MySQLDataProvider implements DataProvider {
     }
 
     @Override
-    public int createTicket(User user, Location location, String message) {
+    public int createTicket(User user, PlayerTicketLocation location, String message) {
 
         if(!isLoaded()) return 0;
 

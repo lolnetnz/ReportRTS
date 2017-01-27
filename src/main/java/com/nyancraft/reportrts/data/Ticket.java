@@ -3,7 +3,7 @@ package com.nyancraft.reportrts.data;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.UUID;
-import nz.co.lolnet.Location;
+import nz.co.lolnet.PlayerTicketLocation;
 
 public class Ticket {
     
@@ -50,7 +50,7 @@ public class Ticket {
         comments = new TreeSet<>();
     }
 
-    public Ticket(String name, UUID uuid, int id, long timestamp, String text, int status, Location location, String server) {
+    public Ticket(String name, UUID uuid, int id, long timestamp, String text, int status, PlayerTicketLocation location, String server) {
         this.name = name;
         this.uuid = uuid;
         this.id = id;

@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.TreeSet;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import nz.co.lolnet.MuiltServerSupport;
 import nz.co.lolnet.Player;
 
 public class CloseTicket {
@@ -60,7 +61,7 @@ public class CloseTicket {
                 }
                 RTSFunctions.messageStaff(Message.ticketClose(args[1],"Cancellation System"), false);
                 sender.sendMessage(Message.ticketCloseUser(args[1], "Cancellation System"));
-
+                MuiltServerSupport.syncDatabase();
                 return true;
             } else {
                 sender.sendMessage(Message.errorPermission("reportrts.command.close or reportrts.command.close.self"));
@@ -164,6 +165,7 @@ public class CloseTicket {
             }
             plugin.getProxy().getPluginManager().callEvent(new TicketCloseEvent(ticket, sender));
         }
+        MuiltServerSupport.syncDatabase();
         return true;
     }
 }

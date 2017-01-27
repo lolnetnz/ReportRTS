@@ -6,10 +6,12 @@
 package nz.co.lolnet;
 
 import com.imaginarycode.minecraft.redisbungee.RedisBungee;
+import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.util.BungeeCord;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -34,6 +36,13 @@ public class MuiltServerSupport implements Listener {
         JSONObject dataToSend = new JSONObject();
         dataToSend.put("Command", "requestPermissionsUpdate");
         dataToSend.put("PlayerUUID", playerUUID.toString());
+        api.sendChannelMessage("ReportRTSBC", dataToSend.toJSONString());
+    }
+
+    public static void syncDatabase() {
+        com.imaginarycode.minecraft.redisbungee.RedisBungeeAPI api = com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi();
+        JSONObject dataToSend = new JSONObject();
+        dataToSend.put("Command", "syncDatabase");
         api.sendChannelMessage("ReportRTSBC", dataToSend.toJSONString());
     }
 
@@ -63,7 +72,7 @@ public class MuiltServerSupport implements Listener {
         }
         String command = (String) object.get("Command");
         if (command.equals("sendMessageToPlayer")) {
-            
+
             UUID playerUUID = UUID.fromString((String) object.get("PlayerUUID"));
             String message = (String) object.get("Message");
             ProxiedPlayer player = net.md_5.bungee.BungeeCord.getInstance().getPlayer(playerUUID);
@@ -84,10 +93,18 @@ public class MuiltServerSupport implements Listener {
             }
         } else if (command.equals("requestPermissionsUpdateReply")) {
             UUID playerUUID = UUID.fromString((String) object.get("PlayerUUID"));
-            if (RedisPlayer.redisPlayers.containsKey(playerUUID))
-            {
+            if (RedisPlayer.redisPlayers.containsKey(playerUUID)) {
                 RedisPlayer.redisPlayers.get(playerUUID).playerPermissions = (ArrayList<String>) object.get("Permissions");
             }
+        } else if (command.equals("syncDatabase")) {
+            RTSFunctions.sync();
+        } else if (command.equals("syncStaffList")) {
+            List<String> staffList = (ArrayList<String>) object.get("StaffList");
+            HashSet<UUID> newstaff = new HashSet<>();
+            for (String uuid : staffList) {
+                newstaff.add(UUID.fromString(uuid));
+            }
+            Staff.update(newstaff);
         }
     }
 }

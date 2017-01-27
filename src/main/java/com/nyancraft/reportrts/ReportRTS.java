@@ -21,6 +21,7 @@ import nz.co.lolnet.ConfigManager;
 import nz.co.lolnet.MuiltServerSupport;
 
 import nz.co.lolnet.Permission;
+import nz.co.lolnet.Staff;
 
 public class ReportRTS extends Plugin {
 
@@ -34,7 +35,7 @@ public class ReportRTS extends Plugin {
     public Map<Integer, UUID> notifications = new HashMap<>();
     public Map<UUID, Integer> teleportMap = new HashMap<>();
     public Map<String, String> commandMap = new HashMap<>();
-    public ArrayList<UUID> staff = new ArrayList<>();
+    public static Staff staff = new Staff();
 
     public boolean notifyStaffOnNewRequest;
     public boolean hideNotification;

@@ -51,7 +51,7 @@ public class RTSFunctions {
      */
     public static void messageStaff(String message, boolean playSound) {
 
-        for(UUID uuid : ReportRTS.getPlugin().staff) {
+        for(UUID uuid : ReportRTS.getPlugin().staff.getAll()) {
 
             Player player = Player.getPlayer(uuid);
 
