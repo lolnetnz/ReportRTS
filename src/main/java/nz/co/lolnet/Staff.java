@@ -58,11 +58,11 @@ public class Staff {
         return result;
     }
 
-    public static UUID[] getAll() {
-        return (UUID[]) staff.toArray();
+    public static HashSet<UUID> getAll() {
+        return staff;
     }
 
     public void clear() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       return;
     }
 }

@@ -16,10 +16,14 @@ public class Permission {
     static boolean debug = false;
 
     public boolean playerHas(Player player, String permission) {
+        if (player.getPermissions() == null) {
+            return false;
+        }
         if (player.getPermissions().contains("reportrts.*") || player.hasPermission("reportrts.*")) {
+            System.out.println(player.getName() + permission + true);
             return true;
         }
-
+        
         return player.getPermissions().contains(permission) || player.hasPermission(permission);
     }
 

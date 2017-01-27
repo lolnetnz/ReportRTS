@@ -21,6 +21,7 @@ import nz.co.lolnet.ConfigManager;
 import nz.co.lolnet.MuiltServerSupport;
 
 import nz.co.lolnet.Permission;
+import nz.co.lolnet.Player;
 import nz.co.lolnet.Staff;
 
 public class ReportRTS extends Plugin {

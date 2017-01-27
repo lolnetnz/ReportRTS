@@ -97,14 +97,12 @@ public class MuiltServerSupport implements Listener {
                 RedisPlayer.redisPlayers.get(playerUUID).playerPermissions = (ArrayList<String>) object.get("Permissions");
             }
         } else if (command.equals("syncDatabase")) {
-            RTSFunctions.sync();
+            RTSFunctions.sync(false);
         } else if (command.equals("syncStaffList")) {
             List<String> staffList = (ArrayList<String>) object.get("StaffList");
-            HashSet<UUID> newstaff = new HashSet<>();
             for (String uuid : staffList) {
-                newstaff.add(UUID.fromString(uuid));
+                Staff.add(UUID.fromString(uuid));
             }
-            Staff.update(newstaff);
         }
     }
 }

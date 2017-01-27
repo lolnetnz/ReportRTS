@@ -8,7 +8,6 @@ package nz.co.lolnet;
 import com.imaginarycode.minecraft.redisbungee.RedisBungee;
 import com.imaginarycode.minecraft.redisbungee.RedisBungeeAPI;
 import com.nyancraft.reportrts.ReportRTS;
-import com.nyancraft.reportrts.util.BungeeCord;
 import java.net.InetSocketAddress;
 import java.util.Collection;
 import java.util.HashMap;
@@ -37,17 +36,23 @@ public class Player implements ProxiedPlayer {
         RedisBungeeAPI api = RedisBungee.getApi();
         Set<UUID> humanPlayersOnline = api.getPlayersOnline();
         for (UUID uuid : humanPlayersOnline) {
-            
+            getPlayer(uuid);
+        }
+        for (Player player : players.values()) {
+            if (!player.isOnline()) {
+                players.remove(player.getUniqueId());
+            }
         }
     }
 
+    
     ProxiedPlayer player;
     RedisPlayer playerR;
 
     public static Player getPlayer(ProxiedPlayer player) {
         String playerName = player.getName();
         for (Player player1 : players.values()) {
-            if (player1.getName().equals(playerName)) {
+            if (player1.getName().equals(playerName) && (player1.player != null)) {
                 return player1;
 
             }
@@ -93,6 +98,7 @@ public class Player implements ProxiedPlayer {
         if (player == null) {
             if (com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi().isPlayerOnline(playerUUID)) {
                 player = new Player(playerUUID);
+                player.getPermissions();
                 players.put(playerUUID, player);
             }
         }
@@ -165,6 +171,7 @@ public class Player implements ProxiedPlayer {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Deprecated
     @Override
     public String getUUID() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -329,6 +336,10 @@ public class Player implements ProxiedPlayer {
 
     public boolean canSee(Player player) {
         return true;
+    }
+
+    private boolean isOnline() {
+        return RedisBungee.getApi().getPlayersOnline().contains(getUniqueId());
     }
 
 }
