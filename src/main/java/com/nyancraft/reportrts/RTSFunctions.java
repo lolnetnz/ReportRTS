@@ -56,7 +56,6 @@ public class RTSFunctions {
      */
     public static void messageStaff(String message, boolean playSound) {
 
-        System.out.println(ReportRTS.getPlugin().staff.getAll());
         for (UUID uuid : ReportRTS.getPlugin().staff.getAll()) {
 
             Player player = Player.getPlayer(uuid);
@@ -167,7 +166,7 @@ public class RTSFunctions {
     public static void populateStaffMap() {
         for (Player player : Player.getOnlinePlayers()) {
             if (RTSPermissions.isStaff(player)) {
-                ReportRTS.getPlugin().staff.add(player.getUniqueId());
+                ReportRTS.getPlugin().staff.add(player.getUniqueId(),true);
             }
         }
     }

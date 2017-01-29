@@ -19,7 +19,7 @@ public class Staff {
 
     private static HashSet<UUID> staff = new HashSet<>();
 
-    private static void update() {
+    private static void updateStaffListToOtherServers() {
         List<String> staffUUID = new ArrayList<>();
         for (UUID playerUUID : getAll()) {
             staffUUID.add(playerUUID.toString());
@@ -31,28 +31,29 @@ public class Staff {
         api.sendChannelMessage("ReportRTSBC", dataToSend.toJSONString());
 
     }
-    
-    protected static void update(HashSet<UUID> newSet)
-    {
+
+    protected static void update(HashSet<UUID> newSet) {
         staff = newSet;
     }
-    
+
     public static boolean contains(UUID playerUUID) {
         boolean result = staff.contains(playerUUID);
         return result;
     }
 
-    public static boolean add(UUID playerUUID) {
+    public static boolean add(UUID playerUUID, boolean update) {
         boolean result = staff.add(playerUUID);
-        update();
+        if (update) {
+            updateStaffListToOtherServers();
+        }
 
         return result;
     }
 
-    public static boolean remove(UUID playerUUID) {
+    public static boolean remove(UUID playerUUID, boolean update) {
         boolean result = staff.remove(playerUUID);
-        if (result) {
-            update();
+        if (result && update) {
+            updateStaffListToOtherServers();
         }
 
         return result;
@@ -63,6 +64,6 @@ public class Staff {
     }
 
     public void clear() {
-       return;
+        return;
     }
 }

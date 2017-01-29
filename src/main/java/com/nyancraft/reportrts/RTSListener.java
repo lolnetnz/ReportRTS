@@ -71,7 +71,7 @@ public class RTSListener implements Listener {
         }
         
         if (!plugin.staff.contains(event.getPlayer().getUniqueId())) {
-            plugin.staff.add(event.getPlayer().getUniqueId());
+            plugin.staff.add(event.getPlayer().getUniqueId(),true);
         }
         
         int openTickets = plugin.tickets.size();
@@ -89,7 +89,7 @@ public class RTSListener implements Listener {
     public void onPlayerQuit(PlayerDisconnectEvent event) {
         BungeeCord.triggerAutoSync();
         if (plugin.staff.contains(event.getPlayer().getUniqueId())) {
-            plugin.staff.remove(event.getPlayer().getUniqueId());
+            plugin.staff.remove(event.getPlayer().getUniqueId(),true);
         }
         RedisPlayer.removePlayer(event.getPlayer().getUniqueId());
     }

@@ -8,10 +8,8 @@ package nz.co.lolnet;
 import com.imaginarycode.minecraft.redisbungee.RedisBungee;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.ReportRTS;
-import com.nyancraft.reportrts.util.BungeeCord;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -101,7 +99,7 @@ public class MuiltServerSupport implements Listener {
         } else if (command.equals("syncStaffList")) {
             List<String> staffList = (ArrayList<String>) object.get("StaffList");
             for (String uuid : staffList) {
-                Staff.add(UUID.fromString(uuid));
+                Staff.add(UUID.fromString(uuid),false);
             }
         }
     }

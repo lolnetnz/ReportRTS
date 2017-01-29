@@ -8,8 +8,6 @@ package nz.co.lolnet;
 import io.github.lxgaming.bungeeplayer.BungeePlayer;
 import io.github.lxgaming.bungeeplayer.Location;
 
-
-
 /**
  *
  * @author James
@@ -17,20 +15,21 @@ import io.github.lxgaming.bungeeplayer.Location;
 public class PlayerTicketLocation {
 
     Player player;
-    Location location;
+    Location location = null;
+
     public PlayerTicketLocation(Player player) {
         this.player = player;
-        this.location = BungeePlayer.getApi().getData().getPlayer(player).getLocation();
-        if (this.location == null)
-        {
-            this.location = new Location(); 
+        if (BungeePlayer.getApi().getData().getPlayer(player) != null) {
+            this.location = BungeePlayer.getApi().getData().getPlayer(player).getLocation();
+        }
+
+        if (this.location == null) {
+            this.location = new Location();
         }
     }
-    
-    
-    
+
     public String getWorld() {
-        return player.getCurrentServerName() + "(" +location.getDimension() +")";
+        return player.getCurrentServerName() + "(" + location.getDimension() + ")";
     }
 
     public double getY() {
@@ -56,5 +55,5 @@ public class PlayerTicketLocation {
     public String getServer() {
         return player.getCurrentServerName();
     }
-    
+
 }

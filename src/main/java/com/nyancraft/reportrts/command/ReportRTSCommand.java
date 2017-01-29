@@ -353,10 +353,10 @@ public class ReportRTSCommand extends Command{
                     return true;
                 }
                 if(duty.equalsIgnoreCase("on")){
-                    if(!plugin.staff.contains(player1.getUniqueId())) plugin.staff.add(player1.getUniqueId());
+                    if(!plugin.staff.contains(player1.getUniqueId())) plugin.staff.add(player1.getUniqueId(),true);
                     sender.sendMessage(ChatColor.YELLOW + "You are now on duty.");
                 }else{
-                    if(plugin.staff.contains(player1.getUniqueId())) plugin.staff.remove(player1.getUniqueId());
+                    if(plugin.staff.contains(player1.getUniqueId())) plugin.staff.remove(player1.getUniqueId(),true);
                     sender.sendMessage(ChatColor.YELLOW + "You are now off duty.");
                 }
                 break;

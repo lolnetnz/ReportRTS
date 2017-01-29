@@ -20,7 +20,6 @@ public class Permission {
             return false;
         }
         if (player.getPermissions().contains("reportrts.*") || player.hasPermission("reportrts.*")) {
-            System.out.println(player.getName() + permission + true);
             return true;
         }
         

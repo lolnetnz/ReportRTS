@@ -32,17 +32,14 @@ public class Player implements ProxiedPlayer {
 
     private static HashMap<UUID, Player> players = new HashMap<>();
 
-    private static void checkEveryoneIsAdded() {
+    private static void resyncPlayerList() {
+        HashMap<UUID, Player> players = new HashMap<>();
         RedisBungeeAPI api = RedisBungee.getApi();
         Set<UUID> humanPlayersOnline = api.getPlayersOnline();
         for (UUID uuid : humanPlayersOnline) {
-            getPlayer(uuid);
+            players.put(uuid, getPlayer(uuid));
         }
-        for (Player player : players.values()) {
-            if (!player.isOnline()) {
-                players.remove(player.getUniqueId());
-            }
-        }
+        Player.players = players;
     }
 
     
@@ -62,7 +59,7 @@ public class Player implements ProxiedPlayer {
 // sender instanceof ProxiedPlayer has to be true
 
     public static Collection<Player> getOnlinePlayers() {
-        checkEveryoneIsAdded();
+        resyncPlayerList();
         return players.values();
     }
 
