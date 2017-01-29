@@ -5,9 +5,6 @@
  */
 package nz.co.lolnet;
 
-import io.github.lxgaming.bungeeplayer.BungeePlayer;
-import io.github.lxgaming.bungeeplayer.Location;
-
 /**
  *
  * @author James
@@ -15,41 +12,54 @@ import io.github.lxgaming.bungeeplayer.Location;
 public class PlayerTicketLocation {
 
     Player player;
-    Location location = null;
+    int dimension = 0;
+    double x = 0;
+    double y = 0;
+    double z = 0;
+    double yaw = 0;
+    double pitch = 0;
 
     public PlayerTicketLocation(Player player) {
         this.player = player;
-        if (BungeePlayer.getApi().getData().getPlayer(player) != null) {
-            this.location = BungeePlayer.getApi().getData().getPlayer(player).getLocation();
+        try {
+            if (io.github.lxgaming.bungeeplayer.BungeePlayer.getApi().getData().getPlayer(player) != null) {
+                io.github.lxgaming.bungeeplayer.Location location = io.github.lxgaming.bungeeplayer.BungeePlayer.getApi().getData().getPlayer(player).getLocation();
+                if (location != null) {
+                    this.dimension = location.getDimension();
+                    this.x = location.getX();
+                    this.y = location.getY();
+                    this.z = location.getZ();
+                    this.yaw = location.getYaw();
+                    this.pitch = location.getPitch();
+                }
+            }
+        } catch (Exception e) { //This is here incaase the plugin is not installed
         }
 
-        if (this.location == null) {
-            this.location = new Location();
-        }
     }
 
     public String getWorld() {
-        return player.getCurrentServerName() + "(" + location.getDimension() + ")";
+        return player.getCurrentServerName() + "(" + this.dimension + ")";
     }
 
     public double getY() {
-        return location.getY();
+        return this.y;
     }
 
     public double getX() {
-        return location.getX();
+        return this.y;
     }
 
     public double getZ() {
-        return location.getZ();
+        return this.z;
     }
 
     public double getYaw() {
-        return location.getYaw();
+        return this.yaw;
     }
 
     public double getPitch() {
-        return location.getPitch();
+        return this.pitch;
     }
 
     public String getServer() {
