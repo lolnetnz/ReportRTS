@@ -176,16 +176,16 @@ public class ReportRTS extends Plugin {
                         int heldTickets = getDataProvider().countTickets(2);
                         if (heldTickets > 0) {
                             if (openTickets > 0) {
-                                RTSFunctions.messageStaff(Message.ticketUnresolvedHeld(openTickets, heldTickets, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
+                                RTSFunctions.messageStaff(Message.ticketUnresolvedHeld(openTickets, heldTickets, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false, true);
                             }
                         } else if (openTickets > 0) {
-                            RTSFunctions.messageStaff(Message.ticketUnresolved(openTickets, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
+                            RTSFunctions.messageStaff(Message.ticketUnresolved(openTickets, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false, true);
                         }
                     } else if (openTickets > 0) {
-                        RTSFunctions.messageStaff(Message.ticketUnresolved(openTickets, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
+                        RTSFunctions.messageStaff(Message.ticketUnresolved(openTickets, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false, true);
                     }
                 }
-            }, 120L, (ticketNagging * 60), TimeUnit.SECONDS);
+            }, 120L, (ticketNagging), TimeUnit.SECONDS);
         }
         new MuiltServerSupport().setup();
     }

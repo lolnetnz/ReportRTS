@@ -5,7 +5,9 @@ import java.util.*;
 
 import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.persistence.DataProvider;
+import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import nz.co.lolnet.Player;
 
 public class RTSFunctions {
@@ -54,17 +56,27 @@ public class RTSFunctions {
      * @param message - message to be displayed
      * @param playSound - boolean play sound or not.
      */
+    
     public static void messageStaff(String message, boolean playSound) {
+        messageStaff(message, playSound, false);
+    }
+    
+    public static void messageStaff(String message, boolean playSound, boolean localBungeeOnly) {
 
         for (UUID uuid : ReportRTS.getPlugin().staff.getAll()) {
 
-            Player player = Player.getPlayer(uuid);
-
-            if (player == null) {
-                return;
+            if (localBungeeOnly) {
+                ProxiedPlayer player = BungeeCord.getInstance().getPlayer(uuid);
+                if (player != null) {
+                    player.sendMessage(message);
+                }
+            } else {
+                Player player = Player.getPlayer(uuid);
+                if (player != null) {
+                    player.sendMessage(message);
+                }
             }
 
-            player.sendMessage(message);
         }
 
         // Make sure Console sees this too!
@@ -166,7 +178,7 @@ public class RTSFunctions {
     public static void populateStaffMap() {
         for (Player player : Player.getOnlinePlayers()) {
             if (RTSPermissions.isStaff(player)) {
-                ReportRTS.getPlugin().staff.add(player.getUniqueId(),true);
+                ReportRTS.getPlugin().staff.add(player.getUniqueId(), true);
             }
         }
     }
