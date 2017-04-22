@@ -29,10 +29,12 @@ public class Ticket {
     private UUID uuid;
     private UUID staffUuid;
     private boolean notified;
+    
+    private User staff;
 
     private TreeSet<Comment> comments;
 
-    public Ticket(String name, UUID uuid, int id, long timestamp, String text, int status, int x, int y, int z, float yaw, float pitch, String world, String server){
+    public Ticket(String name, UUID uuid, int id, long timestamp, String text, int status, int x, int y, int z, float yaw, float pitch, String world, String server, User staff){
         this.name = name;
         this.uuid = uuid;
         this.id = id;
@@ -48,9 +50,10 @@ public class Ticket {
         this.pitch = pitch;
         this.staffTime = 0;
         comments = new TreeSet<>();
+        this.staff = staff;
     }
 
-    public Ticket(String name, UUID uuid, int id, long timestamp, String text, int status, PlayerTicketLocation location, String server) {
+    public Ticket(String name, UUID uuid, int id, long timestamp, String text, int status, PlayerTicketLocation location, String server, User staff) {
         this.name = name;
         this.uuid = uuid;
         this.id = id;
@@ -68,6 +71,7 @@ public class Ticket {
         this.world = location.getWorld();
         this.yaw = (float) location.getYaw();
         this.pitch = (float) location.getPitch();
+        this.staff = staff;
     }
 
     /**
@@ -231,6 +235,10 @@ public class Ticket {
      */
     public void setName(String name){
         this.name = name;
+    }
+
+    public User getStaff() {
+        return staff;
     }
 
     /**

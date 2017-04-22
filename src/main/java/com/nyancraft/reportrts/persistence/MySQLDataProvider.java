@@ -395,6 +395,12 @@ public class MySQLDataProvider implements DataProvider {
 
             while(rs.next()) {
 
+                int staffid = rs.getInt("staffId");
+                User staff = null;
+                if (staffid > 0)
+                {
+                    staff = getUser(null, rs.getInt("staffId"), false);
+                }
                 Ticket ticket = new Ticket(
                         rs.getString("name"),
                         UUID.fromString(rs.getString("uuid")),
@@ -408,14 +414,15 @@ public class MySQLDataProvider implements DataProvider {
                         rs.getInt("yaw"),
                         rs.getInt("pitch"),
                         rs.getString("world"),
-                        rs.getString("server")
+                        rs.getString("server"),
+                        staff
                 );
 
                 // Attach comments if there are any.
                 if(comments.containsKey(rs.getInt(1))) ticket.setComments(comments.get(rs.getInt(1)));
 
                 if(rs.getInt("status") > 0) {
-                    User staff = getUser(null, rs.getInt("staffId"), false);
+                    staff = getUser(null, rs.getInt("staffId"), false);
                     ticket.setStaffName(staff.getUsername());
                     ticket.setStaffTime(rs.getLong("staffTime"));
                     ticket.setStaffUuid(staff.getUuid());
@@ -858,6 +865,12 @@ public class MySQLDataProvider implements DataProvider {
 
             while(rs.next()) {
 
+                int staffid = rs.getInt("staffId");
+                User staff = null;
+                if (staffid > 0)
+                {
+                    staff = getUser(null, rs.getInt("staffId"), false);
+                }
                 Ticket ticket = new Ticket(
                         rs.getString("name"),
                         UUID.fromString(rs.getString("uuid")),
@@ -871,11 +884,12 @@ public class MySQLDataProvider implements DataProvider {
                         rs.getInt("yaw"),
                         rs.getInt("pitch"),
                         rs.getString("world"),
-                        rs.getString("server")
+                        rs.getString("server"),
+                        staff
                 );
 
                 if(rs.getInt("status") > 0) {
-                    User staff = getUser(null, rs.getInt("staffId"), false);
+                    staff = getUser(null, rs.getInt("staffId"), false);
                     ticket.setStaffName(staff.getUsername());
                     ticket.setStaffTime(rs.getLong("staffTime"));
                     ticket.setStaffUuid(staff.getUuid());
@@ -905,6 +919,12 @@ public class MySQLDataProvider implements DataProvider {
 
             while(rs.next()) {
 
+                int staffid = rs.getInt("staffId");
+                User staff = null;
+                if (staffid > 0)
+                {
+                    staff = getUser(null, rs.getInt("staffId"), false);
+                }
                 Ticket ticket = new Ticket(
                         rs.getString("name"),
                         UUID.fromString(rs.getString("uuid")),
@@ -918,11 +938,12 @@ public class MySQLDataProvider implements DataProvider {
                         rs.getInt("yaw"),
                         rs.getInt("pitch"),
                         rs.getString("world"),
-                        rs.getString("server")
+                        rs.getString("server"),
+                        staff
                 );
 
                 if(rs.getInt("status") > 0) {
-                    User staff = getUser(null, rs.getInt("staffId"), false);
+                    staff = getUser(null, rs.getInt("staffId"), false);
                     ticket.setStaffName(staff.getUsername());
                     ticket.setStaffTime(rs.getLong("staffTime"));
                     ticket.setStaffUuid(staff.getUuid());
@@ -950,6 +971,12 @@ public class MySQLDataProvider implements DataProvider {
 
             if(!rs.next()) return null;
 
+            int staffid = rs.getInt("staffId");
+                User staff = null;
+                if (staffid > 0)
+                {
+                    staff = getUser(null, rs.getInt("staffId"), false);
+                }
             Ticket ticket = new Ticket(
                     rs.getString("name"),
                     UUID.fromString(rs.getString("uuid")),
@@ -963,7 +990,8 @@ public class MySQLDataProvider implements DataProvider {
                     rs.getFloat("yaw"),
                     rs.getFloat("pitch"),
                     rs.getString("world"),
-                    rs.getString("server")
+                    rs.getString("server"),
+                    staff
             );
 
             if(!comments.isEmpty()) ticket.setComments(comments);
@@ -1012,6 +1040,12 @@ public class MySQLDataProvider implements DataProvider {
                 ResultSet rs = ps.executeQuery();
 
                 while(rs.next()) {
+                    int staffid = rs.getInt("staffId");
+                User staff = null;
+                if (staffid > 0)
+                {
+                    staff = getUser(null, rs.getInt("staffId"), false);
+                }
                     Ticket ticket = new Ticket(
                             rs.getString("name"),
                             UUID.fromString(rs.getString("uuid")),
@@ -1025,7 +1059,8 @@ public class MySQLDataProvider implements DataProvider {
                             rs.getFloat("yaw"),
                             rs.getFloat("pitch"),
                             rs.getString("world"),
-                            rs.getString("server")
+                            rs.getString("server"),
+                            staff
                     );
 
                     if(rs.getInt("notified") > 0) ticket.setNotified(true);
@@ -1053,6 +1088,12 @@ public class MySQLDataProvider implements DataProvider {
                 ResultSet rs = ps.executeQuery();
 
                 while(rs.next()) {
+                    int staffid = rs.getInt("staffId");
+                User staff = null;
+                if (staffid > 0)
+                {
+                    staff = getUser(null, rs.getInt("staffId"), false);
+                }
                     Ticket ticket = new Ticket(
                             rs.getString("name"),
                             UUID.fromString(rs.getString("uuid")),
@@ -1066,7 +1107,8 @@ public class MySQLDataProvider implements DataProvider {
                             rs.getFloat("yaw"),
                             rs.getFloat("pitch"),
                             rs.getString("world"),
-                            rs.getString("server")
+                            rs.getString("server"),
+                            staff
                     );
 
                     if(rs.getInt("notified") > 0) ticket.setNotified(true);

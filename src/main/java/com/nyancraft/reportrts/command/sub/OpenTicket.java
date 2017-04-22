@@ -117,7 +117,7 @@ public class OpenTicket {
         }
 
         Ticket ticket;
-        ticket = new Ticket(user.getUsername(), user.getUuid(), ticketId, System.currentTimeMillis()/1000, message, 0, location , BungeeCord.getServer());
+        ticket = new Ticket(user.getUsername(), user.getUuid(), ticketId, System.currentTimeMillis()/1000, message, 0, location , BungeeCord.getServer(),null);
         plugin.getProxy().getPluginManager().callEvent(new TicketOpenEvent(ticket));
         plugin.tickets.put(ticketId, ticket);
 

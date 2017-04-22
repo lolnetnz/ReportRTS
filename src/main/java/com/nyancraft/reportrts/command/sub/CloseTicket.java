@@ -160,9 +160,8 @@ public class CloseTicket {
                 ticket.setComments(comments);
             }
 
-            if (ticket.getStaffName() == null) {
-                ticket.setStaffName(sender.getName());
-            }
+            ticket.setStaffName(sender.getName());
+            
             plugin.getProxy().getPluginManager().callEvent(new TicketCloseEvent(ticket, sender));
         }
         MuiltServerSupport.syncDatabase();

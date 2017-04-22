@@ -146,12 +146,14 @@ public class ReadTicket {
             sender.sendMessage(ChatColor.LIGHT_PURPLE + String.format("Claimed for: %d hours, %d minutes, %d seconds",
                     Millis/(1000*60*60), (Millis%(1000*60*60))/(1000*60), ((Millis%(1000*60*60))%(1000*60))/1000) + " by " + ticket.getStaffName());
         }
+        
+        if(ticket.getStatus() == 3 && ticket.getStaff() != null) {
+            sender.sendMessage(ChatColor.LIGHT_PURPLE + String.format("Closed by " +ticket.getStaff().getUsername() ));
+        }
 
         if(ticket.getComments() != null && !ticket.getComments().isEmpty()) {
             sender.sendMessage(ChatColor.YELLOW + "Comments: ");
-            Iterator it = ticket.getComments().iterator();
-            while(it.hasNext()) {
-                Comment comment = (Comment) it.next();
+            for (Comment comment : ticket.getComments()) {
                 sender.sendMessage(ChatColor.GOLD + comment.getName() + ChatColor.YELLOW + ": " + ChatColor.GREEN + comment.getComment());
             }
 
