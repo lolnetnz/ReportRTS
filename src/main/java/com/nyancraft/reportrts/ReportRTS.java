@@ -185,7 +185,7 @@ public class ReportRTS extends Plugin {
                         RTSFunctions.messageStaff(Message.ticketUnresolved(openTickets, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false, true);
                     }
                 }
-            }, 120L, (ticketNagging), TimeUnit.SECONDS);
+            }, 120L, (ticketNagging), TimeUnit.MINUTES);
         }
         new MuiltServerSupport().setup();
     }
