@@ -250,6 +250,11 @@ public class RedisPlayer implements ProxiedPlayer {
     public void setPermission(String string, boolean bln) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    
+    @Override
+    public boolean isConnected() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
     @Override
     public Collection<String> getPermissions() {
