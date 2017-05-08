@@ -48,6 +48,7 @@ public class MuiltServerSupport implements Listener {
         RedisBungee.getApi().registerPubSubChannels("ReportRTSBC");
         ReportRTS.getPlugin().getProxy().getPluginManager().registerListener(ReportRTS.getPlugin(), this);
         enabled = true;
+        ReportRTS.getPlugin().getProxy().getPluginManager().registerListener(ReportRTS.getPlugin(), new MyListener());
     }
 
     public static Collection<String> getListOfPlayersOnline() {
@@ -64,11 +65,12 @@ public class MuiltServerSupport implements Listener {
         try {
             object = (JSONObject) parser.parse(event.getMessage());
         } catch (ParseException ex) {
-            Logger.getLogger(MuiltServerSupport.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println(event.getMessage());
             return;
         }
         String command = (String) object.get("Command");
+        if (command == null) {
+            return;
+        }
         if (command.equals("sendMessageToPlayer")) {
 
             UUID playerUUID = UUID.fromString((String) object.get("PlayerUUID"));
@@ -99,7 +101,7 @@ public class MuiltServerSupport implements Listener {
         } else if (command.equals("syncStaffList")) {
             List<String> staffList = (ArrayList<String>) object.get("StaffList");
             for (String uuid : staffList) {
-                Staff.add(UUID.fromString(uuid),false);
+                Staff.add(UUID.fromString(uuid), false);
             }
         }
     }

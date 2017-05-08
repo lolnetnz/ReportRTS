@@ -3,7 +3,6 @@ package com.nyancraft.reportrts.command.sub;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
-import com.nyancraft.reportrts.data.Comment;
 import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.data.NotificationType;
 import com.nyancraft.reportrts.data.User;
@@ -19,7 +18,6 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import nz.co.lolnet.PlayerTicketLocation;
 import nz.co.lolnet.Player;
-import sun.security.pkcs11.P11TlsKeyMaterialGenerator;
 
 public class OpenTicket {
 
@@ -117,7 +115,14 @@ public class OpenTicket {
         }
 
         Ticket ticket;
-        ticket = new Ticket(user.getUsername(), user.getUuid(), ticketId, System.currentTimeMillis()/1000, message, 0, location , BungeeCord.getServer(),null);
+        String serverName = "";
+        if (sender instanceof ProxiedPlayer) {
+            try {
+                serverName = ((ProxiedPlayer) sender).getServer().getInfo().getName();
+            } catch (Exception e) {
+            }
+        }
+        ticket = new Ticket(user.getUsername(), user.getUuid(), ticketId, System.currentTimeMillis()/1000, message, 0, location , serverName ,null);
         plugin.getProxy().getPluginManager().callEvent(new TicketOpenEvent(ticket));
         plugin.tickets.put(ticketId, ticket);
 
