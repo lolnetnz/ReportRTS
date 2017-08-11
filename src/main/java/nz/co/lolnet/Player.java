@@ -5,8 +5,6 @@
  */
 package nz.co.lolnet;
 
-import com.imaginarycode.minecraft.redisbungee.RedisBungee;
-import com.imaginarycode.minecraft.redisbungee.RedisBungeeAPI;
 import com.nyancraft.reportrts.ReportRTS;
 import java.net.InetSocketAddress;
 import java.util.Collection;
@@ -15,6 +13,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.Title;
@@ -30,19 +29,29 @@ import net.md_5.bungee.api.connection.Server;
  */
 public class Player implements ProxiedPlayer {
 
+    static boolean redisNotFound = false;
     private static HashMap<UUID, Player> players = new HashMap<>();
 
     private static void resyncPlayerList() {
         HashMap<UUID, Player> players = new HashMap<>();
-        RedisBungeeAPI api = RedisBungee.getApi();
-        Set<UUID> humanPlayersOnline = api.getPlayersOnline();
-        for (UUID uuid : humanPlayersOnline) {
-            players.put(uuid, getPlayer(uuid));
+        try {
+            com.imaginarycode.minecraft.redisbungee.RedisBungeeAPI api = com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi();
+            Set<UUID> humanPlayersOnline = api.getPlayersOnline();
+            for (UUID uuid : humanPlayersOnline) {
+                players.put(uuid, getPlayer(uuid));
+            }
+        } catch (NoClassDefFoundError e) {
+            redisNotFound = true;
         }
+        if (redisNotFound) {
+            for (ProxiedPlayer player : BungeeCord.getInstance().getPlayers()) {
+                players.put(player.getUniqueId(), getPlayer(player.getUniqueId()));
+            }
+        }
+
         Player.players = players;
     }
 
-    
     ProxiedPlayer player;
     RedisPlayer playerR;
 
@@ -311,7 +320,7 @@ public class Player implements ProxiedPlayer {
     public void setPermission(String string, boolean bln) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     @Override
     public boolean isConnected() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -339,9 +348,11 @@ public class Player implements ProxiedPlayer {
     public boolean canSee(Player player) {
         return true;
     }
-
+    
+    /*
     private boolean isOnline() {
         return RedisBungee.getApi().getPlayersOnline().contains(getUniqueId());
     }
+     */
 
 }
