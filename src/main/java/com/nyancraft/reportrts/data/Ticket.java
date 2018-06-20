@@ -3,6 +3,7 @@ package com.nyancraft.reportrts.data;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.UUID;
+import nz.co.lolnet.PlayerTicketLocation;
 
 public class Ticket {
     
@@ -28,10 +29,12 @@ public class Ticket {
     private UUID uuid;
     private UUID staffUuid;
     private boolean notified;
+    
+    private User staff;
 
     private TreeSet<Comment> comments;
 
-    public Ticket(String name, UUID uuid, int id, long timestamp, String text, int status, int x, int y, int z, float yaw, float pitch, String world, String server){
+    public Ticket(String name, UUID uuid, int id, long timestamp, String text, int status, int x, int y, int z, float yaw, float pitch, String world, String server, User staff){
         this.name = name;
         this.uuid = uuid;
         this.id = id;
@@ -47,6 +50,28 @@ public class Ticket {
         this.pitch = pitch;
         this.staffTime = 0;
         comments = new TreeSet<>();
+        this.staff = staff;
+    }
+
+    public Ticket(String name, UUID uuid, int id, long timestamp, String text, int status, PlayerTicketLocation location, String server, User staff) {
+        this.name = name;
+        this.uuid = uuid;
+        this.id = id;
+        this.timestamp = timestamp;
+        this.text = text;
+        this.status = status;
+        this.world = server;
+        this.server = server;
+        this.staffTime = 0;
+        comments = new TreeSet<>();
+        
+        this.x = (int) location.getX();
+        this.y = (int) location.getY();
+        this.z = (int) location.getZ();
+        this.world = location.getWorld();
+        this.yaw = (float) location.getYaw();
+        this.pitch = (float) location.getPitch();
+        this.staff = staff;
     }
 
     /**
@@ -210,6 +235,10 @@ public class Ticket {
      */
     public void setName(String name){
         this.name = name;
+    }
+
+    public User getStaff() {
+        return staff;
     }
 
     /**

@@ -1,9 +1,12 @@
 package com.nyancraft.reportrts.command;
 
+import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.ReportRTS;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.event.ChatEvent;
+import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.event.EventHandler;
+import nz.co.lolnet.MuiltServerSupport;
 
 public class LegacyCommandListener implements Listener {
 
@@ -32,53 +35,63 @@ public class LegacyCommandListener implements Listener {
         this.listStaff = listStaff;
         this.commentTicket = commentTicket;
     }
+    
     @EventHandler
-    public void onPlayerCommandPreprocessEvent(PlayerCommandPreprocessEvent event) {
-        if(event.getMessage().length() < 1) return;
+    public void onPlayerCommandPreprocessEvent(ChatEvent event) {
+        if(event.isCancelled() || !event.isCommand() || event.getMessage().length() < 1) return;
         // Please don't use this unless you have to. :(
         if(event.getMessage().split(" ")[0].equalsIgnoreCase("/" + readTicket)) {
-            ReportRTS.getPlugin().getServer().dispatchCommand(event.getPlayer(), "ticket " + event.getMessage().replaceFirst("/", ""));
+            RTSFunctions.sync();
+            ReportRTS.getPlugin().getProxy().getPluginManager().dispatchCommand((CommandSender) event.getSender(), "ticket " + event.getMessage().replaceFirst("/", ""));
             event.setCancelled(true);
         }
         if(event.getMessage().split(" ")[0].equalsIgnoreCase("/" + openTicket)) {
-            ReportRTS.getPlugin().getServer().dispatchCommand(event.getPlayer(), "ticket " + event.getMessage().replaceFirst("/", ""));
+            ReportRTS.getPlugin().getProxy().getPluginManager().dispatchCommand((CommandSender) event.getSender(), "ticket " + event.getMessage().replaceFirst("/", ""));
             event.setCancelled(true);
+            RTSFunctions.sync();
         }
         if(event.getMessage().split(" ")[0].equalsIgnoreCase("/" + closeTicket)) {
-            ReportRTS.getPlugin().getServer().dispatchCommand(event.getPlayer(), "ticket " + event.getMessage().replaceFirst("/", ""));
+            ReportRTS.getPlugin().getProxy().getPluginManager().dispatchCommand((CommandSender) event.getSender(), "ticket " + event.getMessage().replaceFirst("/", ""));
             event.setCancelled(true);
         }
         if(event.getMessage().split(" ")[0].equalsIgnoreCase("/" + reopenTicket)) {
-            ReportRTS.getPlugin().getServer().dispatchCommand(event.getPlayer(), "ticket " + event.getMessage().replaceFirst("/", ""));
+            ReportRTS.getPlugin().getProxy().getPluginManager().dispatchCommand((CommandSender) event.getSender(), "ticket " + event.getMessage().replaceFirst("/", ""));
             event.setCancelled(true);
+            RTSFunctions.sync();
         }
         if(event.getMessage().split(" ")[0].equalsIgnoreCase("/" + claimTicket)) {
-            ReportRTS.getPlugin().getServer().dispatchCommand(event.getPlayer(), "ticket " + event.getMessage().replaceFirst("/", ""));
+            RTSFunctions.sync();
+            ReportRTS.getPlugin().getProxy().getPluginManager().dispatchCommand((CommandSender) event.getSender(), "ticket " + event.getMessage().replaceFirst("/", ""));
             event.setCancelled(true);
+            RTSFunctions.sync();
         }
         if(event.getMessage().split(" ")[0].equalsIgnoreCase("/" + unclaimTicket)) {
-            ReportRTS.getPlugin().getServer().dispatchCommand(event.getPlayer(), "ticket " + event.getMessage().replaceFirst("/", ""));
+            RTSFunctions.sync();
+            ReportRTS.getPlugin().getProxy().getPluginManager().dispatchCommand((CommandSender) event.getSender(), "ticket " + event.getMessage().replaceFirst("/", ""));
             event.setCancelled(true);
+            RTSFunctions.sync();
         }
         if(event.getMessage().split(" ")[0].equalsIgnoreCase("/" + holdTicket)) {
-            ReportRTS.getPlugin().getServer().dispatchCommand(event.getPlayer(), "ticket " + event.getMessage().replaceFirst("/", ""));
+            ReportRTS.getPlugin().getProxy().getPluginManager().dispatchCommand((CommandSender) event.getSender(), "ticket " + event.getMessage().replaceFirst("/", ""));
             event.setCancelled(true);
+            RTSFunctions.sync();
         }
         if(event.getMessage().split(" ")[0].equalsIgnoreCase("/" + teleportToTicket)) {
-            ReportRTS.getPlugin().getServer().dispatchCommand(event.getPlayer(), "ticket " + event.getMessage().replaceFirst("/", ""));
+            ReportRTS.getPlugin().getProxy().getPluginManager().dispatchCommand((CommandSender) event.getSender(), "ticket " + event.getMessage().replaceFirst("/", ""));
             event.setCancelled(true);
         }
         if(event.getMessage().split(" ")[0].equalsIgnoreCase("/" + broadcastToStaff)) {
-            ReportRTS.getPlugin().getServer().dispatchCommand(event.getPlayer(), "ticket " + event.getMessage().replaceFirst("/", ""));
+            ReportRTS.getPlugin().getProxy().getPluginManager().dispatchCommand((CommandSender) event.getSender(), "ticket " + event.getMessage().replaceFirst("/", ""));
             event.setCancelled(true);
         }
         if(event.getMessage().split(" ")[0].equalsIgnoreCase("/" + listStaff)) {
-            ReportRTS.getPlugin().getServer().dispatchCommand(event.getPlayer(), "ticket " + event.getMessage().replaceFirst("/", ""));
+            ReportRTS.getPlugin().getProxy().getPluginManager().dispatchCommand((CommandSender) event.getSender(), "ticket " + event.getMessage().replaceFirst("/", ""));
             event.setCancelled(true);
         }
         if(event.getMessage().split(" ")[0].equalsIgnoreCase("/" + commentTicket)) {
-            ReportRTS.getPlugin().getServer().dispatchCommand(event.getPlayer(), "ticket " + event.getMessage().replaceFirst("/", ""));
+            ReportRTS.getPlugin().getProxy().getPluginManager().dispatchCommand((CommandSender) event.getSender(), "ticket " + event.getMessage().replaceFirst("/", ""));
             event.setCancelled(true);
+            RTSFunctions.sync();
         }
     }
 }

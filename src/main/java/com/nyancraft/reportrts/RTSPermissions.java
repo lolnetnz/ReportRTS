@@ -1,9 +1,11 @@
 package com.nyancraft.reportrts;
 
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+
 
 import com.nyancraft.reportrts.util.Message;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import nz.co.lolnet.Player;
 
 public class RTSPermissions {
 
@@ -48,7 +50,7 @@ public class RTSPermissions {
     }
 
     public static boolean canCloseOwnTicket(CommandSender sender) {
-        if(!(sender instanceof Player)) return false;
+        if(!(sender instanceof ProxiedPlayer)) return false;
         if(ReportRTS.permission != null) return ReportRTS.permission.has(sender, "reportrts.command.close.self");
         return sender.hasPermission("reportrts.command.close.self");
     }

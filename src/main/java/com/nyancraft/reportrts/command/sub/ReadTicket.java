@@ -1,9 +1,5 @@
 package com.nyancraft.reportrts.command.sub;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
@@ -13,17 +9,16 @@ import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.json.simple.JSONObject;
 
-import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import nz.co.lolnet.Player;
 
 public class ReadTicket {
-
+    
     private static ReportRTS plugin = ReportRTS.getPlugin();
     private static DataProvider data = plugin.getDataProvider();
     private static SimpleDateFormat sdf = new SimpleDateFormat("MMM.dd kk:mm z");
@@ -113,7 +108,7 @@ public class ReadTicket {
         }
 
         // If the user does not have access to readAll then ensure that the ticket is owned by that player.
-        if(restrict && !ticket.getUUID().equals(sender instanceof Player ? ((Player) sender).getUniqueId() : data.getConsole().getUuid())) {
+        if(restrict && !ticket.getUUID().equals(sender instanceof ProxiedPlayer ? (Player.getPlayer(sender.getName())).getUniqueId() : data.getConsole().getUuid())) {
             sender.sendMessage(Message.errorTicketOwner());
             return true;
         }
@@ -143,7 +138,7 @@ public class ReadTicket {
 
         // Compile a response for the user.
         sender.sendMessage(ChatColor.AQUA + "--------- " + "Ticket #" + ticket.getId() + " - " + statusColor + status + ChatColor.AQUA + " ---------");
-        sender.sendMessage(ChatColor.YELLOW + "Opened by" + online + " " + ticket.getName() + ChatColor.YELLOW + " at " +  ChatColor.GREEN + date + ChatColor.YELLOW + " at X:" + ChatColor.GREEN + ticket.getX() + ChatColor.YELLOW + ", Y:" + ChatColor.GREEN + ticket.getY() + ChatColor.YELLOW + ", Z:" + ChatColor.GREEN + ticket.getZ());
+        sender.sendMessage(ChatColor.YELLOW + "Opened by" + online + " " + ticket.getName() + ChatColor.YELLOW + " at " +  ChatColor.GREEN + date + ChatColor.YELLOW + " at Server:" +ChatColor.GREEN  + ticket.getWorld()+  ChatColor.YELLOW + " X:" + ChatColor.GREEN + ticket.getX() + ChatColor.YELLOW + ", Y:" + ChatColor.GREEN + ticket.getY() + ChatColor.YELLOW + ", Z:" + ChatColor.GREEN + ticket.getZ());
         sender.sendMessage(ChatColor.GRAY + ticket.getMessage());
 
         if(ticket.getStatus() == 1) {
@@ -151,12 +146,14 @@ public class ReadTicket {
             sender.sendMessage(ChatColor.LIGHT_PURPLE + String.format("Claimed for: %d hours, %d minutes, %d seconds",
                     Millis/(1000*60*60), (Millis%(1000*60*60))/(1000*60), ((Millis%(1000*60*60))%(1000*60))/1000) + " by " + ticket.getStaffName());
         }
+        
+        if(ticket.getStatus() == 3 && ticket.getStaff() != null) {
+            sender.sendMessage(ChatColor.LIGHT_PURPLE + String.format("Closed by " +ticket.getStaff().getUsername() ));
+        }
 
         if(ticket.getComments() != null && !ticket.getComments().isEmpty()) {
             sender.sendMessage(ChatColor.YELLOW + "Comments: ");
-            Iterator it = ticket.getComments().iterator();
-            while(it.hasNext()) {
-                Comment comment = (Comment) it.next();
+            for (Comment comment : ticket.getComments()) {
                 sender.sendMessage(ChatColor.GOLD + comment.getName() + ChatColor.YELLOW + ": " + ChatColor.GREEN + comment.getComment());
             }
 
@@ -199,23 +196,8 @@ public class ReadTicket {
             substring = RTSFunctions.shortenMessage(ticket.getMessage());
 
             substring = (ticket.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + ticket.getStaffName() : ChatColor.GRAY + substring;
-            String bungeeServer = (ticket.getServer().equals(BungeeCord.getServer()) ? "" : "[" + ChatColor.GREEN + ticket.getServer() + ChatColor.RESET + "] ");
-            if(plugin.fancify && (sender instanceof Player) && ticket.getMessage().length() >= 20) {
-                PacketContainer chat = new PacketContainer(PacketType.Play.Server.CHAT);
-                chat.getChatComponents().write(0, WrappedChatComponent.fromJson("{\"text\":\"" + bungeeServer + ChatColor.GOLD + "#" + ticket.getId() + " "
-                        + RTSFunctions.getTimeAgo(ticket.getTimestamp()) + " by " + ((RTSFunctions.isUserOnline(ticket.getUUID())) ? ChatColor.GREEN : ChatColor.RED)
-                        + ticket.getName() + ChatColor.GOLD + " - " + "\", \"extra\":[{\"text\":\"" + JSONObject.escape(substring) + "\",\"color\":\"" + (ticket.getStatus() == 1 ? "light_purple" :"gray") + "\",\"hoverEvent\":" +
-                        "{\"action\":\"show_text\",\"value\":\"" + JSONObject.escape(RTSFunctions.separateText(ticket.getMessage(), 6)) + "\"}}]}"));
-                try {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket((Player) sender, chat);
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                    return false;
-                }
-            } else {
-                sender.sendMessage(bungeeServer + ChatColor.GOLD + "#" + ticket.getId() + " " + RTSFunctions.getTimeAgo(ticket.getTimestamp())
+            sender.sendMessage(ChatColor.GOLD + "#" + ticket.getId() + " " + RTSFunctions.getTimeAgo(ticket.getTimestamp())
                         + " by " + ((RTSFunctions.isUserOnline(ticket.getUUID())) ? ChatColor.GREEN : ChatColor.RED) + ticket.getName() + ChatColor.GOLD + " - " + substring);
-            }
         }
 
         return true;
@@ -256,18 +238,7 @@ public class ReadTicket {
             ChatColor online = (RTSFunctions.isUserOnline(ticket.getUUID()) ? ChatColor.GREEN : ChatColor.RED);
             String bungeeServer = (ticket.getServer().equals(BungeeCord.getServer()) ? "" :  "[" + ChatColor.GREEN + ticket.getServer() + ChatColor.RESET + "] ");
 
-            if(plugin.fancify && (sender instanceof Player) && ticket.getMessage().length() >= 20) {
-                PacketContainer chat = new PacketContainer(PacketType.Play.Server.CHAT);
-                chat.getChatComponents().write(0, WrappedChatComponent.fromJson("{\"text\":\"" + bungeeServer + ChatColor.GOLD + "#" + ticket.getId() + " "
-                        + sdf.format(new Date(ticket.getTimestamp() * 1000)) + " by " + (RTSFunctions.isUserOnline(ticket.getUUID()) ? ChatColor.GREEN : ChatColor.RED)
-                        + ticket.getName() + ChatColor.GOLD + " - " + "\", \"extra\":[{\"text\":\"" + JSONObject.escape(substring) + "\",\"color\":\"gray\",\"hoverEvent\":" +
-                        "{\"action\":\"show_text\",\"value\":\"" + JSONObject.escape(RTSFunctions.separateText(ticket.getMessage(), 6)) + "\"}}]}"));
-                try {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket((Player) sender, chat);
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                    return false;
-                }
+            if(false) {
             } else {
                 sender.sendMessage(bungeeServer + ChatColor.GOLD + "#" + ticket.getId() + " " + sdf.format(new Date(ticket.getTimestamp() * 1000))
                         + " by " + online + ticket.getName() + ChatColor.GOLD + " - " + ChatColor.GRAY + substring);
@@ -311,18 +282,7 @@ public class ReadTicket {
             ChatColor online = (RTSFunctions.isUserOnline(ticket.getUUID()) ? ChatColor.GREEN : ChatColor.RED);
             String bungeeServer = (ticket.getServer().equals(BungeeCord.getServer()) ? "" :  "[" + ChatColor.GREEN + ticket.getServer() + ChatColor.RESET + "] ");
 
-            if(plugin.fancify && (sender instanceof Player) && ticket.getMessage().length() >= 20) {
-                PacketContainer chat = new PacketContainer(PacketType.Play.Server.CHAT);
-                chat.getChatComponents().write(0, WrappedChatComponent.fromJson("{\"text\":\"" + bungeeServer + ChatColor.GOLD + "#" + ticket.getId() + " "
-                        + sdf.format(new Date(ticket.getTimestamp() * 1000)) + " by " + (RTSFunctions.isUserOnline(ticket.getUUID()) ? ChatColor.GREEN : ChatColor.RED)
-                        + ticket.getName() + ChatColor.GOLD + " - " + "\", \"extra\":[{\"text\":\"" + JSONObject.escape(substring) + "\",\"color\":\"gray\",\"hoverEvent\":" +
-                        "{\"action\":\"show_text\",\"value\":\"" + JSONObject.escape(RTSFunctions.separateText(ticket.getMessage(), 6)) + "\"}}]}"));
-                try {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket((Player) sender, chat);
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                    return false;
-                }
+            if(false) {
             } else {
                 sender.sendMessage(bungeeServer + ChatColor.GOLD + "#" + ticket.getId() + " " + sdf.format(new Date(ticket.getTimestamp() * 1000))
                         + " by " + online + ticket.getName() + ChatColor.GOLD + " - " + ChatColor.GRAY + substring);
@@ -365,18 +325,7 @@ public class ReadTicket {
             substring = RTSFunctions.shortenMessage(ticket.getMessage());
             substring = (ticket.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + ticket.getStaffName() : ChatColor.GRAY + substring;
 
-            if(plugin.fancify && (sender instanceof Player) && ticket.getMessage().length() >= 20) {
-                PacketContainer chat = new PacketContainer(PacketType.Play.Server.CHAT);
-                chat.getChatComponents().write(0, WrappedChatComponent.fromJson("{\"text\":\"" + ChatColor.GOLD + "#" + ticket.getId() + " "
-                        + sdf.format(new Date(ticket.getTimestamp() * 1000)) + " by " + ((RTSFunctions.isUserOnline(ticket.getUUID())) ? ChatColor.GREEN : ChatColor.RED)
-                        + ticket.getName() + ChatColor.GOLD + " - " + "\", \"extra\":[{\"text\":\"" +JSONObject.escape(substring) + "\",\"color\":\"gray\",\"hoverEvent\":" +
-                        "{\"action\":\"show_text\",\"value\":\"" + JSONObject.escape(RTSFunctions.separateText(ticket.getMessage(), 6)) + "\"}}]}"));
-                try {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket((Player) sender, chat);
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                    return false;
-                }
+            if(false) {
             } else {
                 sender.sendMessage(ChatColor.GOLD + "#" + ticket.getId() + " " + sdf.format(new Date(ticket.getTimestamp() * 1000))
                         + " by " + (RTSFunctions.isUserOnline(ticket.getUUID()) ? ChatColor.GREEN : ChatColor.RED) + ticket.getName() + ChatColor.GOLD +  " - " + substring);
@@ -420,18 +369,7 @@ public class ReadTicket {
             substring = (ticket.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + ticket.getStaffName() : ChatColor.GRAY + substring;
             String bungeeServer = (ticket.getServer().equals(BungeeCord.getServer()) ? "" : "[" + ChatColor.GREEN + ticket.getServer() + ChatColor.RESET + "] ");
 
-            if(plugin.fancify && (sender instanceof Player) && ticket.getMessage().length() >= 20) {
-                PacketContainer chat = new PacketContainer(PacketType.Play.Server.CHAT);
-                chat.getChatComponents().write(0, WrappedChatComponent.fromJson("{\"text\":\"" + bungeeServer + ChatColor.GOLD + "#" + ticket.getId() + " "
-                        + sdf.format(new Date(ticket.getTimestamp() * 1000)) + " by " + ((RTSFunctions.isUserOnline(ticket.getUUID())) ? ChatColor.GREEN : ChatColor.RED)
-                        + ticket.getName() + ChatColor.GOLD + " - " + "\", \"extra\":[{\"text\":\"" + JSONObject.escape(substring) + "\",\"color\":\"gray\",\"hoverEvent\":" +
-                        "{\"action\":\"show_text\",\"value\":\"" + JSONObject.escape(RTSFunctions.separateText(ticket.getMessage(), 6)) + "\"}}]}"));
-                try {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket((Player) sender, chat);
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                    return false;
-                }
+            if(false) {
             } else {
                 sender.sendMessage(ChatColor.GOLD + "#" + ticket.getId() + " " + sdf.format(new Date(ticket.getTimestamp() * 1000))
                         + " by " + (RTSFunctions.isUserOnline(ticket.getUUID()) ? ChatColor.GREEN : ChatColor.RED) + ticket.getName() + ChatColor.GOLD +  " - " + substring);
@@ -460,8 +398,8 @@ public class ReadTicket {
         // Set cursor position.
         int i = (page * plugin.ticketsPerPage) - plugin.ticketsPerPage;
 
-        LinkedHashMap<Integer, Ticket> tickets = data.getOpenedBy(sender instanceof Player ?
-                ((Player) sender).getUniqueId() : plugin.getDataProvider().getConsole().getUuid(), i, plugin.ticketsPerPage);
+        LinkedHashMap<Integer, Ticket> tickets = data.getOpenedBy(sender instanceof ProxiedPlayer ?
+                (Player.getPlayer(sender.getName())).getUniqueId() : plugin.getDataProvider().getConsole().getUuid(), i, plugin.ticketsPerPage);
 
         if(tickets ==  null) {
             sender.sendMessage(Message.error("Can't read closed tickets, see console for errors."));
@@ -480,18 +418,7 @@ public class ReadTicket {
             ChatColor online = (RTSFunctions.isUserOnline(ticket.getUUID()) ? ChatColor.GREEN : ChatColor.RED);
             String bungeeServer = (ticket.getServer().equals(BungeeCord.getServer()) ? "" :  "[" + ChatColor.GREEN + ticket.getServer() + ChatColor.RESET + "] ");
 
-            if(plugin.fancify && (sender instanceof Player) && ticket.getMessage().length() >= 20) {
-                PacketContainer chat = new PacketContainer(PacketType.Play.Server.CHAT);
-                chat.getChatComponents().write(0, WrappedChatComponent.fromJson("{\"text\":\"" + bungeeServer + ChatColor.GOLD + "#" + ticket.getId() + " "
-                        + sdf.format(new Date(ticket.getTimestamp() * 1000)) + " by " + (RTSFunctions.isUserOnline(ticket.getUUID()) ? ChatColor.GREEN : ChatColor.RED)
-                        + ticket.getName() + ChatColor.GOLD + " - " + "\", \"extra\":[{\"text\":\"" + JSONObject.escape(substring) + "\",\"color\":\"gray\",\"hoverEvent\":" +
-                        "{\"action\":\"show_text\",\"value\":\"" + JSONObject.escape(RTSFunctions.separateText(ticket.getMessage(), 6)) + "\"}}]}"));
-                try {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket((Player) sender, chat);
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                    return false;
-                }
+            if(false) {
             } else {
                 sender.sendMessage(bungeeServer + ChatColor.GOLD + "#" + ticket.getId() + " " + sdf.format(new Date(ticket.getTimestamp() * 1000))
                         + " by " + online + ticket.getName() + ChatColor.GOLD + " - " + ChatColor.GRAY + substring);

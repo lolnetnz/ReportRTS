@@ -5,9 +5,10 @@ import java.util.*;
 
 import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.persistence.DataProvider;
-import org.bukkit.ChatColor;
-import org.bukkit.Sound;
-import org.bukkit.entity.Player;
+import net.md_5.bungee.BungeeCord;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import nz.co.lolnet.Player;
 
 public class RTSFunctions {
 
@@ -47,31 +48,45 @@ public class RTSFunctions {
         }
         return out;
     }
-    /***
+
+    /**
+     * *
      * Message all online staff on the server
+     *
      * @param message - message to be displayed
      * @param playSound - boolean play sound or not.
      */
+    
     public static void messageStaff(String message, boolean playSound) {
+        messageStaff(message, playSound, false);
+    }
+    
+    public static void messageStaff(String message, boolean playSound, boolean localBungeeOnly) {
 
-        for(UUID uuid : ReportRTS.getPlugin().staff) {
+        for (UUID uuid : ReportRTS.getPlugin().staff.getAll()) {
 
-            Player player = ReportRTS.getPlugin().getServer().getPlayer(uuid);
+            if (localBungeeOnly) {
+                ProxiedPlayer player = BungeeCord.getInstance().getPlayer(uuid);
+                if (player != null) {
+                    player.sendMessage(message);
+                }
+            } else {
+                Player player = Player.getPlayer(uuid);
+                if (player != null) {
+                    player.sendMessage(message);
+                }
+            }
 
-            if(player == null) return;
-
-            player.sendMessage(message);
-
-            if(ReportRTS.getPlugin().notificationSound && playSound) player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 0);
         }
 
         // Make sure Console sees this too!
-        plugin.getServer().getConsoleSender().sendMessage(message);
+        plugin.getProxy().getConsole().sendMessage(message);
 
     }
 
     /**
      * Synchronizes ticket data from the given ticket ID.
+     *
      * @param ticketId - ticket ID to be synchronized.
      */
     public static boolean syncTicket(int ticketId) {
@@ -97,68 +112,92 @@ public class RTSFunctions {
         RTSFunctions.populateStaffMap();
     }
 
+    public static void sync(boolean updateStaff) {
+        ReportRTS.getPlugin().tickets.clear();
+        ReportRTS.getPlugin().notifications.clear();
+        if (updateStaff) {
+            ReportRTS.getPlugin().staff.clear();
+        }
+
+        data.load();
+
+        if (updateStaff) {
+            RTSFunctions.populateStaffMap();
+        }
+    }
+
     /**
      * Returns true if the person is online.
+     *
      * @param uuid - UUID of player
      * @return boolean
      */
-    public static boolean isUserOnline(UUID uuid){
-        return plugin.getServer().getPlayer(uuid) != null;
+    public static boolean isUserOnline(UUID uuid) {
+        return Player.getPlayer(uuid) != null;
     }
 
     /**
      * Get number of open request by the specified user.
+     *
      * @param uuid - UUID of user that sent the command.
      * @return amount of open requests by a specific user
      */
-    public static int getOpenTicketsByUser(UUID uuid){
+    public static int getOpenTicketsByUser(UUID uuid) {
         int i = 0;
-        for(Map.Entry<Integer, Ticket> entry : ReportRTS.getPlugin().tickets.entrySet()){
-            if(entry.getValue().getUUID().equals(uuid)) i++;
+        for (Map.Entry<Integer, Ticket> entry : ReportRTS.getPlugin().tickets.entrySet()) {
+            if (entry.getValue().getUUID().equals(uuid)) {
+                i++;
+            }
         }
         return i;
     }
 
-    public static long checkTimeBetweenTickets(UUID uuid){
-        for(Map.Entry<Integer, Ticket> entry : ReportRTS.getPlugin().tickets.entrySet()){
-            if(entry.getValue().getUUID().equals(uuid)){
-                if(entry.getValue().getTimestamp() > ((System.currentTimeMillis() / 1000) - ReportRTS.getPlugin().ticketDelay)) return entry.getValue().getTimestamp() - (System.currentTimeMillis() / 1000 - ReportRTS.getPlugin().ticketDelay);
+    public static long checkTimeBetweenTickets(UUID uuid) {
+        for (Map.Entry<Integer, Ticket> entry : ReportRTS.getPlugin().tickets.entrySet()) {
+            if (entry.getValue().getUUID().equals(uuid)) {
+                if (entry.getValue().getTimestamp() > ((System.currentTimeMillis() / 1000) - ReportRTS.getPlugin().ticketDelay)) {
+                    return entry.getValue().getTimestamp() - (System.currentTimeMillis() / 1000 - ReportRTS.getPlugin().ticketDelay);
+                }
             }
         }
         return 0;
     }
 
-    public static String getTimeSpent(double start){
+    public static String getTimeSpent(double start) {
         DecimalFormat decimal = new DecimalFormat("##.###");
         return decimal.format((System.nanoTime() - start) / 1000000);
     }
 
-    public static String shortenMessage(String message){
+    public static String shortenMessage(String message) {
         if (message.length() >= 20) {
             message = message.substring(0, 20) + "...";
         }
         return message;
     }
 
-    public static void populateStaffMap(){
-        for(Player player : ReportRTS.getPlugin().getServer().getOnlinePlayers()){
-            if(RTSPermissions.isStaff(player)) ReportRTS.getPlugin().staff.add(player.getUniqueId());
+    public static void populateStaffMap() {
+        for (Player player : Player.getOnlinePlayers()) {
+            if (RTSPermissions.isStaff(player)) {
+                ReportRTS.getPlugin().staff.add(player.getUniqueId(), true);
+            }
         }
     }
 
     /**
      * Check if the provided String is a number or not.
+     *
      * @param number as a String
      * @return true if String is a number
      */
-    public static boolean isNumber(String number){
+    public static boolean isNumber(String number) {
         return (number.matches("-?\\d+") && !(Long.parseLong((number)) <= 0L) && (Long.parseLong((number)) < Integer.MAX_VALUE));
     }
 
     /**
-     * Separate text whenever a certain amount of words are reached.
-     * PS: If you know how to stop Windows servers from printing the CR (Carriage Return)
+     * Separate text whenever a certain amount of words are reached. PS: If you
+     * know how to stop Windows servers from printing the CR (Carriage Return)
      * character, please let me know!
+     *
      * @param text that you want to separate.
      * @param when X amount of words have been displayed.
      * @return String with line separators.
@@ -166,8 +205,8 @@ public class RTSFunctions {
     public static String separateText(String text, int when) {
         int i = 0;
         StringBuilder message = new StringBuilder();
-        for(String t : text.split(" ")) {
-            if(i >= when) {
+        for (String t : text.split(" ")) {
+            if (i >= when) {
                 i = 0;
                 message.append(ReportRTS.getPlugin().lineSeparator);
             }
@@ -179,6 +218,7 @@ public class RTSFunctions {
 
     /**
      * Retrieves relative time for use in /ticket read.
+     *
      * @param time Since specified time
      * @return String with relative time
      */
@@ -189,7 +229,9 @@ public class RTSFunctions {
         }
 
         long now = System.currentTimeMillis();
-        if (time > now || time <= 0) return null;
+        if (time > now || time <= 0) {
+            return null;
+        }
 
         final long diff = now - time;
         if (diff < MINUTE_MILLIS) {

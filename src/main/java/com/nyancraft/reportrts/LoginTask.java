@@ -4,15 +4,14 @@ import com.nyancraft.reportrts.data.Comment;
 import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.Message;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.UUID;
+import nz.co.lolnet.Player;
 
-public class LoginTask extends BukkitRunnable {
+public class LoginTask implements Runnable {
 
     private final ReportRTS plugin;
     private final UUID uuid;
@@ -26,19 +25,20 @@ public class LoginTask extends BukkitRunnable {
         this.data = plugin.getDataProvider();
     }
 
+    @Override
     public void run() {
 
         Ticket ticket = data.getTicket(entry.getKey());
 
-        boolean online = plugin.getServer().getPlayer(uuid) != null;
+        boolean online = Player.getPlayer(uuid) != null;
 
-        if(online) plugin.getServer().getPlayer(uuid).sendMessage(Message.ticketCloseOffline());
+        if(online) Player.getPlayer(uuid).sendMessage(Message.ticketCloseOffline());
 
         // Prevent duplicate notifications (especially across multiple servers)
         if(ticket.isNotified()) return;
 
         if(online) {
-            Player player = plugin.getServer().getPlayer(uuid);
+            Player player = Player.getPlayer(uuid);
 
             player.sendMessage(Message.ticketCloseText(ticket.getMessage()));
 

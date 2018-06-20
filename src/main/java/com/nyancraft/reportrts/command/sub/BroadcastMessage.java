@@ -7,9 +7,10 @@ import com.nyancraft.reportrts.data.NotificationType;
 import com.nyancraft.reportrts.event.TicketBroadcastEvent;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
-import org.bukkit.command.CommandSender;
+
 
 import java.io.IOException;
+import net.md_5.bungee.api.CommandSender;
 
 public class BroadcastMessage {
 
@@ -34,7 +35,7 @@ public class BroadcastMessage {
         }
         RTSFunctions.messageStaff(Message.broadcast(sender.getName(), message), false);
         // Let other plugins know about the broadcast
-        plugin.getServer().getPluginManager().callEvent(new TicketBroadcastEvent(sender, message));
+        plugin.getProxy().getPluginManager().callEvent(new TicketBroadcastEvent(sender, message));
         return true;
     }
 }

@@ -2,21 +2,22 @@ package com.nyancraft.reportrts.util;
 
 import java.text.MessageFormat;
 
-import org.bukkit.ChatColor;
+
 
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.ReportRTS;
+import net.md_5.bungee.api.ChatColor;
 
 public class Message {
 
     private static String parse(String key, Object ... params ){
         Object prop = ReportRTS.getMessageHandler().messageMap.get(key);
         if(prop == null) {
-            if(!ReportRTS.getMessageHandler().getMessageConfig().getDefaults().contains(key))
+            if(ReportRTS.getMessageHandler().getMessageConfig().getString(key) == null)
                 return "Missing message <" + key + "> in ReportRTS/messages.yml, no default found.";
-            ReportRTS.getMessageHandler().messageMap.put(key, ReportRTS.getMessageHandler().getMessageConfig().getDefaults().getString(key));
-            ReportRTS.getMessageHandler().getMessageConfig().set(key, ReportRTS.getMessageHandler().getMessageConfig().getDefaults().getString(key));
-            prop = ReportRTS.getMessageHandler().getMessageConfig().getDefaults().getString(key);
+            ReportRTS.getMessageHandler().messageMap.put(key, ReportRTS.getMessageHandler().getMessageConfig().getString(key));
+            ReportRTS.getMessageHandler().getMessageConfig().set(key, ReportRTS.getMessageHandler().getMessageConfig().getString(key));
+            prop = ReportRTS.getMessageHandler().getMessageConfig().getString(key);
             ReportRTS.getMessageHandler().saveMessageConfig();
         }
         return MessageFormat.format(parseColors((String) prop), params);

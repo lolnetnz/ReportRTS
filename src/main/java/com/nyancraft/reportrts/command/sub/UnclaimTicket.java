@@ -8,10 +8,11 @@ import com.nyancraft.reportrts.event.TicketUnclaimEvent;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.io.IOException;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import nz.co.lolnet.Player;
 
 public class UnclaimTicket {
 
@@ -39,11 +40,11 @@ public class UnclaimTicket {
             return true;
         }
         // CONSOLE overrides all.
-        if(sender instanceof Player) {
-            if(!((Player)sender).getUniqueId().equals(plugin.tickets.get(ticketId).getStaffUuid()) && !RTSPermissions.canBypassClaim(sender)) return true;
+        if(sender instanceof ProxiedPlayer) {
+            if(!(Player.getPlayer(sender.getName())).getUniqueId().equals(plugin.tickets.get(ticketId).getStaffUuid()) && !RTSPermissions.canBypassClaim(sender)) return true;
         }
 
-        switch(data.setTicketStatus(ticketId, (sender instanceof Player) ? ((Player) sender).getUniqueId() : data.getConsole().getUuid(),
+        switch(data.setTicketStatus(ticketId, (sender instanceof ProxiedPlayer) ? (Player.getPlayer(sender.getName())).getUniqueId() : data.getConsole().getUuid(),
                 sender.getName(), 0, false, System.currentTimeMillis() / 1000)) {
 
             case -3:
@@ -77,7 +78,7 @@ public class UnclaimTicket {
 
         }
 
-        Player player = sender.getServer().getPlayer(plugin.tickets.get(ticketId).getUUID());
+        Player player = Player.getPlayer(plugin.tickets.get(ticketId).getUUID());
         if(player != null) {
             player.sendMessage(Message.ticketUnclaimUser(plugin.tickets.get(ticketId).getStaffName(), ticketId));
             player.sendMessage(Message.ticketText(plugin.tickets.get(ticketId).getMessage()));
@@ -91,7 +92,7 @@ public class UnclaimTicket {
 
         RTSFunctions.messageStaff(Message.ticketUnclaim(plugin.tickets.get(ticketId).getStaffName(), args[1]), false);
 
-        plugin.getServer().getPluginManager().callEvent(new TicketUnclaimEvent(plugin.tickets.get(ticketId), plugin.tickets.get(ticketId).getStaffName(), sender));
+        plugin.getProxy().getPluginManager().callEvent(new TicketUnclaimEvent(plugin.tickets.get(ticketId), plugin.tickets.get(ticketId).getStaffName(), sender));
         plugin.tickets.get(ticketId).setStaffName(null);
 
         return true;

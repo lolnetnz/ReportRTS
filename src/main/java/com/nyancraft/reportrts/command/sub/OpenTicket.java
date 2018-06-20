@@ -3,7 +3,6 @@ package com.nyancraft.reportrts.command.sub;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
-import com.nyancraft.reportrts.data.Comment;
 import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.data.NotificationType;
 import com.nyancraft.reportrts.data.User;
@@ -11,13 +10,14 @@ import com.nyancraft.reportrts.event.TicketOpenEvent;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.Location;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.logging.Level;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import nz.co.lolnet.PlayerTicketLocation;
+import nz.co.lolnet.Player;
 
 public class OpenTicket {
 
@@ -33,7 +33,7 @@ public class OpenTicket {
     public static boolean handleCommand(CommandSender sender, String[] args) {
 
         if(!RTSPermissions.canOpenTicket(sender)) return true;
-        if(args.length < 2) return false;
+        //if(args.length < 2) return false;
 
         // Check if ticket message is too short.
         if(plugin.ticketMinimumWords > (args.length - 1)) {
@@ -44,18 +44,17 @@ public class OpenTicket {
         // Store these variables, we're gonna need them.
         User user = new User();
         user.setUsername(sender.getName());
-        Location location;
-
-        if(!(sender instanceof Player)) {
+        PlayerTicketLocation location = null;
+        if(!(sender instanceof ProxiedPlayer)) {
             // Sender is more than likely Console.
             user = data.getConsole();
-            location = plugin.getServer().getWorlds().get(0).getSpawnLocation();
+            location = new PlayerTicketLocation(Player.getPlayer(sender.getName()));
         }
         else {
             // Sender is a Player.
-            Player player = (Player) sender;
+            ProxiedPlayer player = (ProxiedPlayer) sender;
             user = data.getUser(player.getUniqueId(), 0, true);
-            location = player.getLocation();
+            location = new PlayerTicketLocation(Player.getPlayer(player));
         }
 
         // The user is banned and can not create a ticket.
@@ -115,8 +114,16 @@ public class OpenTicket {
             RTSFunctions.messageStaff(Message.ticketOpen(user.getUsername(), Integer.toString(ticketId)), true);
         }
 
-        Ticket ticket = new Ticket(user.getUsername(), user.getUuid(), ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch(), location.getWorld().getName(), BungeeCord.getServer());
-        plugin.getServer().getPluginManager().callEvent(new TicketOpenEvent(ticket));
+        Ticket ticket;
+        String serverName = "";
+        if (sender instanceof ProxiedPlayer) {
+            try {
+                serverName = ((ProxiedPlayer) sender).getServer().getInfo().getName();
+            } catch (Exception e) {
+            }
+        }
+        ticket = new Ticket(user.getUsername(), user.getUuid(), ticketId, System.currentTimeMillis()/1000, message, 0, location , serverName ,null);
+        plugin.getProxy().getPluginManager().callEvent(new TicketOpenEvent(ticket));
         plugin.tickets.put(ticketId, ticket);
 
         return true;

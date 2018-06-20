@@ -9,10 +9,6 @@ import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.data.User;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
@@ -20,9 +16,13 @@ import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.NotificationType;
 import com.nyancraft.reportrts.util.Message;
 import com.nyancraft.reportrts.util.BungeeCord;
-import org.bukkit.entity.Player;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.plugin.Command;
+import nz.co.lolnet.Player;
 
-public class ReportRTSCommand implements CommandExecutor{
+public class ReportRTSCommand extends Command{
 
     private ReportRTS plugin;
     private DataProvider data;
@@ -35,11 +35,16 @@ public class ReportRTSCommand implements CommandExecutor{
     private boolean storageRefresh = false;
 
     public ReportRTSCommand(ReportRTS plugin) {
+        super("reportrts");
         this.plugin = plugin;
         this.data = plugin.getDataProvider();
     }
+    @Override
+    public void execute(CommandSender cs, String[] strings) {
+        onCommand(cs, strings);
+    }
 
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, String[] args) {
         if(args.length == 0) return false;
         switch(args[0].toUpperCase()) {
 
@@ -59,7 +64,7 @@ public class ReportRTSCommand implements CommandExecutor{
                 }
 
                 // Attempt to get the target that you wish to ban.
-                Player target = plugin.getServer().getPlayer(args[1]);
+                Player target = Player.getPlayer(args[1]);
 
                 if(target == null) {
 
@@ -114,7 +119,7 @@ public class ReportRTSCommand implements CommandExecutor{
 
                 RTSFunctions.messageStaff(Message.banUser(sender.getName(), args[1]), false);
                 try {
-                    BungeeCord.globalNotify(Message.banUser(sender.getName(), args[1]), -1, NotificationType.NOTIFYONLY);
+                BungeeCord.globalNotify(Message.banUser(sender.getName(), args[1]), -1, NotificationType.NOTIFYONLY);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -131,7 +136,7 @@ public class ReportRTSCommand implements CommandExecutor{
                 }
 
                 // Attempt to get the target that you wish to un-ban.
-                Player target1 = plugin.getServer().getPlayer(args[1]);
+                Player target1 = Player.getPlayer(args[1]);
 
                 if(target1 == null) {
 
@@ -329,12 +334,12 @@ public class ReportRTSCommand implements CommandExecutor{
                 break;
 
             case "DUTY":
-                if(!(sender instanceof Player)){
+                if(!(sender instanceof ProxiedPlayer)){
                     sender.sendMessage("[ReportRTS] You cannot change your duty status from the console.");
                     return true;
                 }
-                Player player1 = (Player) sender;
-                if(!RTSPermissions.isStaff((Player) sender)) return true;
+                Player player1 = Player.getPlayer(sender.getName());
+                if(!RTSPermissions.isStaff(player1)) return true;
                 if(args.length <= 1){
                     if(plugin.staff.contains(player1.getUniqueId()))
                         sender.sendMessage(ChatColor.GREEN + "You are currently on duty.");
@@ -348,168 +353,12 @@ public class ReportRTSCommand implements CommandExecutor{
                     return true;
                 }
                 if(duty.equalsIgnoreCase("on")){
-                    if(!plugin.staff.contains(player1.getUniqueId())) plugin.staff.add(player1.getUniqueId());
+                    if(!plugin.staff.contains(player1.getUniqueId())) plugin.staff.add(player1.getUniqueId(),true);
                     sender.sendMessage(ChatColor.YELLOW + "You are now on duty.");
                 }else{
-                    if(plugin.staff.contains(player1.getUniqueId())) plugin.staff.remove(player1.getUniqueId());
+                    if(plugin.staff.contains(player1.getUniqueId())) plugin.staff.remove(player1.getUniqueId(),true);
                     sender.sendMessage(ChatColor.YELLOW + "You are now off duty.");
                 }
-                break;
-
-            case "SETUP":
-                if(!sender.isOp()) return false;
-                if(args.length <= 1){
-                    sender.sendMessage(ChatColor.RED + "Missing argument! Arguments: HOSTNAME, PORT, DATABASE, USERNAME, PASSWORD, PREFIX, REFRESH");
-                    return true;
-                }
-                if(args[1].equalsIgnoreCase("HOSTNAME")){
-                    if(args.length < 3 || args[2] == null || args[2].isEmpty()){
-                        sender.sendMessage(ChatColor.RED + "Hostname cannot be empty or null! Default is localhost or 127.0.0.1");
-                        return true;
-                    }
-                    plugin.getConfig().set("storage.hostname", args[2]);
-                    plugin.saveConfig();
-                    plugin.reloadConfig();
-                    this.storageHostname = true;
-                    sender.sendMessage(ChatColor.GREEN + "Hostname set to " + args[2] + ", you should configure PORT next.");
-
-                    if(storageHostname && storagePort && storageDatabase && storageUsername && storagePassword && storageRefresh){
-                        plugin.setupDone = true;
-                        plugin.reloadSettings();
-                        if(data.load()){
-                            sender.sendMessage(ChatColor.GREEN + "ReportRTS should be set up now! Restart for the plugin to work correctly.");
-                            plugin.getServer().getPluginManager().disablePlugin(plugin);
-                        }
-                    }
-                    return true;
-                }
-                if(args[1].equalsIgnoreCase("PORT")){
-                    if(args.length < 3 || args[2] == null || !StringUtils.isNumeric(args[2])){
-                        sender.sendMessage(ChatColor.RED + "Port can only contain numbers and may not be left blank! Default is 3306.");
-                        return true;
-                    }
-                    plugin.getConfig().set("storage.port", args[2]);
-                    plugin.saveConfig();
-                    plugin.reloadConfig();
-                    this.storagePort = true;
-                    sender.sendMessage(ChatColor.GREEN + "Port set to " + args[2] + ", you should configure DATABASE next.");
-
-                    if(storageHostname && storagePort && storageDatabase && storageUsername && storagePassword && storageRefresh){
-                        plugin.setupDone = true;
-                        plugin.reloadSettings();
-                        if(data.load()){
-                            sender.sendMessage(ChatColor.GREEN + "ReportRTS should be set up now! Restart for the plugin to work correctly.");
-                            plugin.getServer().getPluginManager().disablePlugin(plugin);
-                        }
-                    }
-                    return true;
-                }
-                if(args[1].equalsIgnoreCase("DATABASE")){
-                    if(args.length < 3 || args[2] == null || args[2].isEmpty()){
-                        sender.sendMessage(ChatColor.RED + "Database cannot be empty or null!");
-                        return true;
-                    }
-                    plugin.getConfig().set("storage.database", args[2]);
-                    plugin.saveConfig();
-                    plugin.reloadConfig();
-                    this.storageDatabase = true;
-                    sender.sendMessage(ChatColor.GREEN + "Database set to " + args[2] + ", you should configure USERNAME next.");
-
-                    if(storageHostname && storagePort && storageDatabase && storageUsername && storagePassword && storageRefresh){
-                        plugin.setupDone = true;
-                        plugin.reloadSettings();
-                        if(data.load()){
-                            sender.sendMessage(ChatColor.GREEN + "ReportRTS should be set up now! Restart for the plugin to work correctly.");
-                            plugin.getServer().getPluginManager().disablePlugin(plugin);
-                        }
-                    }
-                    return true;
-                }
-                if(args[1].equalsIgnoreCase("USERNAME")){
-                    if(args.length < 3 || args[2] == null || args[2].isEmpty()){
-                        sender.sendMessage(ChatColor.RED + "Username cannot be empty or null!");
-                        return true;
-                    }
-                    plugin.getConfig().set("storage.username", args[2]);
-                    plugin.saveConfig();
-                    plugin.reloadConfig();
-                    this.storageUsername = true;
-                    sender.sendMessage(ChatColor.GREEN + "Username set to " + args[2] + ", you should configure PASSWORD next.");
-
-                    if(storageHostname && storagePort && storageDatabase && storageUsername && storagePassword && storageRefresh){
-                        plugin.setupDone = true;
-                        plugin.reloadSettings();
-                        if(data.load()){
-                            sender.sendMessage(ChatColor.GREEN + "ReportRTS should be set up now! Restart for the plugin to work correctly.");
-                            plugin.getServer().getPluginManager().disablePlugin(plugin);
-                        }
-                    }
-                    return true;
-                }
-                if(args[1].equalsIgnoreCase("PASSWORD")){
-                    if(args.length < 3 || args[2] == null || args[2].isEmpty()){
-                        sender.sendMessage(ChatColor.RED + "Password cannot be empty or null!");
-                        return true;
-                    }
-                    plugin.getConfig().set("storage.password", args[2]);
-                    plugin.saveConfig();
-                    plugin.reloadConfig();
-                    this.storagePassword = true;
-                    sender.sendMessage(ChatColor.GREEN + "Password set to " + args[2] + ", next up is PREFIX. Prefix is optional, if you want to have no prefix, do NOT configure it! You may skip PREFIX and jump straight to REFRESH.");
-
-                    if(storageHostname && storagePort && storageDatabase && storageUsername && storagePassword && storageRefresh){
-                        plugin.setupDone = true;
-                        plugin.reloadSettings();
-                        if(data.load()){
-                            sender.sendMessage(ChatColor.GREEN + "ReportRTS should be set up now! Restart for the plugin to work correctly.");
-                            plugin.getServer().getPluginManager().disablePlugin(plugin);
-                        }
-                    }
-                    return true;
-                }
-                if(args[1].equalsIgnoreCase("PREFIX")){
-                    if(args.length < 3 || args[2] == null || args[2].isEmpty()){
-                        plugin.getConfig().set("storage.prefix", "");
-                    }else{
-                        plugin.getConfig().set("storage.prefix", args[2]);
-                    }
-                    plugin.saveConfig();
-                    plugin.reloadConfig();
-                    sender.sendMessage(ChatColor.GREEN + "Prefix set to " + args[2] + ", you should configure REFRESH next.");
-
-                    if(storageHostname && storagePort && storageDatabase && storageUsername && storagePassword && storageRefresh){
-                        plugin.setupDone = true;
-                        plugin.reloadSettings();
-                        if(data.load()){
-                            sender.sendMessage(ChatColor.GREEN + "ReportRTS should be set up now! Restart for the plugin to work correctly.");
-                            plugin.getServer().getPluginManager().disablePlugin(plugin);
-                        }
-                    }
-                    return true;
-                }
-                if(args[1].equalsIgnoreCase("REFRESH")){
-                    if(args.length < 3 || args[2] == null || !StringUtils.isNumeric(args[2])){
-                        sender.sendMessage(ChatColor.RED + "Refresh time can only contain numbers and may not be left blank! Default is 600 seconds.");
-                        return true;
-                    }
-                    plugin.getConfig().set("storage.refreshTime", args[2]);
-                    plugin.saveConfig();
-                    plugin.reloadConfig();
-                    this.storageRefresh = true;
-                    sender.sendMessage(ChatColor.GREEN + "Refresh set to " + args[2] + ", if you have followed the instructions you should now be done!");
-
-                    if(storageHostname && storagePort && storageDatabase && storageUsername && storagePassword && storageRefresh){
-                        plugin.setupDone = true;
-                        plugin.reloadSettings();
-                        if(data.load()){
-                            sender.sendMessage(ChatColor.GREEN + "ReportRTS should be set up now! Restart for the plugin to work correctly.");
-                            plugin.getServer().getPluginManager().disablePlugin(plugin);
-                        }
-                    }
-                    return true;
-                }
-
-                sender.sendMessage(ChatColor.RED + "Wrong argument! Valid arguments: HOSTNAME, PORT, DATABASE, USERNAME, PASSWORD, PREFIX, REFRESH");
                 break;
 
             case "BANLIST":
@@ -545,4 +394,6 @@ public class ReportRTSCommand implements CommandExecutor{
         }
         return true;
     }
+
+    
 }

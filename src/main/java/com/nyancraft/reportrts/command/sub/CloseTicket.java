@@ -11,11 +11,13 @@ import com.nyancraft.reportrts.event.TicketCloseEvent;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.io.IOException;
 import java.util.TreeSet;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import nz.co.lolnet.MuiltServerSupport;
+import nz.co.lolnet.Player;
 
 public class CloseTicket {
 
@@ -45,7 +47,7 @@ public class CloseTicket {
                     sender.sendMessage(Message.ticketNotExists(ticketId));
                     return true;
                 }
-                Player player = (Player) sender;
+                Player player = Player.getPlayer(sender.getName());
                 if(!plugin.tickets.get(ticketId).getUUID().equals(player.getUniqueId())){
                     sender.sendMessage(Message.errorTicketOwner());
                     return true;
@@ -59,7 +61,7 @@ public class CloseTicket {
                 }
                 RTSFunctions.messageStaff(Message.ticketClose(args[1],"Cancellation System"), false);
                 sender.sendMessage(Message.ticketCloseUser(args[1], "Cancellation System"));
-
+                MuiltServerSupport.syncDatabase();
                 return true;
             } else {
                 sender.sendMessage(Message.errorPermission("reportrts.command.close or reportrts.command.close.self"));
@@ -67,7 +69,7 @@ public class CloseTicket {
             }
         }
 
-        User user = sender instanceof Player ? data.getUser(((Player) sender).getUniqueId(), 0, true) : data.getConsole();
+        User user = sender instanceof ProxiedPlayer ? data.getUser((Player.getPlayer(sender.getName())).getUniqueId(), 0, true) : data.getConsole();
         if(user.getUsername() == null) {
             sender.sendMessage(Message.error("user.getUsername() returned NULL! Are you using plugins to modify names?"));
             return true;
@@ -86,7 +88,7 @@ public class CloseTicket {
         } else {
             comment = comment.substring(args[1].length()).trim();
 
-            name = sender instanceof Player ? plugin.staff.contains(user.getUuid()) ? sender.getName() + " - Staff" : sender.getName() : sender.getName();
+            name = sender instanceof ProxiedPlayer ? plugin.staff.contains(user.getUuid()) ? sender.getName() + " - Staff" : sender.getName() : sender.getName();
 
             // Create a comment and store the comment ID.
             commentId = data.createComment(name, timestamp, comment, ticketId);
@@ -105,7 +107,7 @@ public class CloseTicket {
             online = (RTSFunctions.isUserOnline(plugin.tickets.get(ticketId).getUUID())) ? 1 : 0;
             if(plugin.tickets.get(ticketId).getStatus() == 1) {
                 // Holy shit.
-                isClaimedByOther = (!plugin.tickets.get(ticketId).getStaffUuid().equals((sender instanceof Player ? ((Player) sender).getUniqueId() : data.getConsole())));
+                isClaimedByOther = (!plugin.tickets.get(ticketId).getStaffUuid().equals((sender instanceof ProxiedPlayer ? (Player.getPlayer(sender.getName())).getUniqueId() : data.getConsole())));
             }
         }
 
@@ -122,7 +124,7 @@ public class CloseTicket {
         Ticket ticket = null;
         if(plugin.tickets.containsKey(ticketId)) {
 
-            Player player = sender.getServer().getPlayer(plugin.tickets.get(ticketId).getUUID());
+            Player player = Player.getPlayer(plugin.tickets.get(ticketId).getUUID());
 
             if(online == 0) plugin.notifications.put(ticketId, plugin.tickets.get(ticketId).getUUID());
 
@@ -158,11 +160,11 @@ public class CloseTicket {
                 ticket.setComments(comments);
             }
 
-            if (ticket.getStaffName() == null) {
-                ticket.setStaffName(sender.getName());
-            }
-            plugin.getServer().getPluginManager().callEvent(new TicketCloseEvent(ticket, sender));
+            ticket.setStaffName(sender.getName());
+            
+            plugin.getProxy().getPluginManager().callEvent(new TicketCloseEvent(ticket, sender));
         }
+        MuiltServerSupport.syncDatabase();
         return true;
     }
 }

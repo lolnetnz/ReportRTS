@@ -8,10 +8,11 @@ import com.nyancraft.reportrts.event.TicketClaimEvent;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.io.IOException;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import nz.co.lolnet.Player;
 
 public class ClaimTicket {
 
@@ -49,7 +50,7 @@ public class ClaimTicket {
 
         long timestamp = System.currentTimeMillis() / 1000;
 
-        switch(data.setTicketStatus(ticketId, (sender instanceof Player) ? ((Player) sender).getUniqueId() : data.getConsole().getUuid(),
+        switch(data.setTicketStatus(ticketId, (sender instanceof ProxiedPlayer) ? (Player.getPlayer(sender.getName())).getUniqueId() : data.getConsole().getUuid(),
                 sender.getName(), 1, false, System.currentTimeMillis() / 1000)) {
 
             case -3:
@@ -82,7 +83,7 @@ public class ClaimTicket {
 
         }
 
-        Player player = plugin.getServer().getPlayer(plugin.tickets.get(ticketId).getUUID());
+        Player player = Player.getPlayer(plugin.tickets.get(ticketId).getUUID());
         if(player != null) {
             player.sendMessage(Message.ticketClaimUser(name));
             player.sendMessage(Message.ticketText(plugin.tickets.get(ticketId).getMessage()));
@@ -90,7 +91,7 @@ public class ClaimTicket {
 
         plugin.tickets.get(ticketId).setStatus(1);
         // Workaround for CONSOLE.
-        plugin.tickets.get(ticketId).setStaffUuid((!(sender instanceof Player) ? data.getConsole().getUuid() : ((Player) sender).getUniqueId()));
+        plugin.tickets.get(ticketId).setStaffUuid((!(sender instanceof ProxiedPlayer) ? data.getConsole().getUuid() : (Player.getPlayer(sender.getName())).getUniqueId()));
         plugin.tickets.get(ticketId).setStaffTime(timestamp);
         plugin.tickets.get(ticketId).setStaffName(name);
 
@@ -102,7 +103,7 @@ public class ClaimTicket {
         RTSFunctions.messageStaff(Message.ticketClaim(name, args[1]), false);
 
         // Let other plugins know the request was claimed
-        plugin.getServer().getPluginManager().callEvent(new TicketClaimEvent(plugin.tickets.get(ticketId)));
+        plugin.getProxy().getPluginManager().callEvent(new TicketClaimEvent(plugin.tickets.get(ticketId)));
 
         return true;
     }

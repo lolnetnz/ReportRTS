@@ -10,10 +10,11 @@ import com.nyancraft.reportrts.event.TicketHoldEvent;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.io.IOException;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import nz.co.lolnet.Player;
 
 public class HoldTicket {
 
@@ -41,7 +42,7 @@ public class HoldTicket {
             reason = reason.substring(args[1].length()).trim();
         }
 
-        User user = sender instanceof Player ? data.getUser(((Player) sender).getUniqueId(), 0, true) : data.getConsole();
+        User user = sender instanceof ProxiedPlayer ? data.getUser((Player.getPlayer(sender.getName())).getUniqueId(), 0, true) : data.getConsole();
         if(user.getUsername() == null) {
             sender.sendMessage(Message.error("user.getUsername() returned NULL! Are you using plugins to modify names?"));
             return true;
@@ -54,13 +55,13 @@ public class HoldTicket {
 
         if(plugin.tickets.containsKey(ticketId)) {
 
-            Player player = sender.getServer().getPlayer(plugin.tickets.get(ticketId).getUUID());
+            Player player = Player.getPlayer(plugin.tickets.get(ticketId).getUUID());
             if(player != null) {
                 player.sendMessage(Message.ticketHoldUser(sender.getName(), ticketId));
                 player.sendMessage(Message.ticketHoldText(plugin.tickets.get(ticketId).getMessage(), reason.trim()));
             }
 
-            plugin.getServer().getPluginManager().callEvent(new TicketHoldEvent(plugin.tickets.get(ticketId), reason, sender));
+            plugin.getProxy().getPluginManager().callEvent(new TicketHoldEvent(plugin.tickets.get(ticketId), reason, sender));
 
             plugin.tickets.remove(ticketId);
         }

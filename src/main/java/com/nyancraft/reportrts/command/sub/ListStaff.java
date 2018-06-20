@@ -3,10 +3,11 @@ package com.nyancraft.reportrts.command.sub;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.util.Message;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.UUID;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import nz.co.lolnet.Player;
 
 public class ListStaff {
 
@@ -24,15 +25,15 @@ public class ListStaff {
         String staff = "";
         String separator = Message.staffListSeparator();
 
-        for(UUID uuid : plugin.staff) {
-            Player player = plugin.getServer().getPlayer(uuid);
+        for(UUID uuid : plugin.staff.getAll()) {
+            Player player = Player.getPlayer(uuid);
             if(player == null) return false;
-            if(plugin.vanishSupport && sender instanceof Player) {
-                if(!((Player) sender).canSee(player)) continue;
+            if(plugin.vanishSupport && sender instanceof ProxiedPlayer) {
+                if(!(Player.getPlayer(sender.getName())).canSee(player)) continue;
             }
             staff = staff + player.getDisplayName() + separator;
         }
-        if(staff.isEmpty()) {
+        if(staff.length() == 0) {
             sender.sendMessage(Message.staffListEmpty());
             return true;
         }
