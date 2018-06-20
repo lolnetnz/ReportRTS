@@ -12,49 +12,49 @@ import java.util.Map;
 import java.util.UUID;
 
 public class RTSFunctions {
-
+    
     private static ReportRTS plugin = ReportRTS.getPlugin();
     private static DataProvider data = plugin.getDataProvider();
-
+    
     private static final int SECOND_MILLIS = 1000;
     private static final int MINUTE_MILLIS = 60 * SECOND_MILLIS;
     private static final int HOUR_MILLIS = 60 * MINUTE_MILLIS;
     private static final int DAY_MILLIS = 24 * HOUR_MILLIS;
-
+    
     /**
      * Join a String[] into a single string with a joiner
      */
-    public static String implode( String[] array, String glue ) {
-
-    String out = "";
-
-    if( array.length == 0 ) {
+    public static String implode(String[] array, String glue) {
+        
+        String out = "";
+        
+        if (array.length == 0) {
+            return out;
+        }
+        
+        for (String part : array) {
+            if (part == null) continue;
+            out = out + part + glue;
+        }
+        out = out.substring(0, out.length() - glue.length());
+        
         return out;
     }
-
-    for( String part : array ) {
-        if(part == null) continue;
-        out = out + part + glue;
-    }
-    out = out.substring(0, out.length() - glue.length() );
-
-    return out;
-    }
-
+    
     public static String cleanUpSign(String[] lines) {
-
+        
         String out = "";
-        for(String part : lines) {
-            if(!part.isEmpty()) out = out + part.trim() + " ";
+        for (String part : lines) {
+            if (!part.isEmpty()) out = out + part.trim() + " ";
         }
         return out;
     }
-
+    
     /**
      * *
      * Message all online staff on the server
      *
-     * @param message - message to be displayed
+     * @param message   - message to be displayed
      * @param playSound - boolean play sound or not.
      */
     
@@ -63,9 +63,9 @@ public class RTSFunctions {
     }
     
     public static void messageStaff(String message, boolean playSound, boolean localBungeeOnly) {
-
+        
         for (UUID uuid : ReportRTS.getPlugin().staff.getAll()) {
-
+            
             if (localBungeeOnly) {
                 ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
                 if (player != null) {
@@ -77,29 +77,29 @@ public class RTSFunctions {
                     player.sendMessage(message);
                 }
             }
-
+            
         }
-
+        
         // Make sure Console sees this too!
         plugin.getProxy().getConsole().sendMessage(message);
-
+        
     }
-
+    
     /**
      * Synchronizes ticket data from the given ticket ID.
      *
      * @param ticketId - ticket ID to be synchronized.
      */
     public static boolean syncTicket(int ticketId) {
-
+        
         Ticket ticket = ReportRTS.getPlugin().getDataProvider().getTicket(ticketId);
-
+        
         plugin.tickets.put(ticketId, ticket);
-
+        
         return plugin.tickets.get(ticketId).equals(ticket);
-
+        
     }
-
+    
     /**
      * Synchronizes everything.
      */
@@ -107,26 +107,26 @@ public class RTSFunctions {
         ReportRTS.getPlugin().tickets.clear();
         ReportRTS.getPlugin().notifications.clear();
         ReportRTS.getPlugin().staff.clear();
-
+        
         data.load();
-
+        
         RTSFunctions.populateStaffMap();
     }
-
+    
     public static void sync(boolean updateStaff) {
         ReportRTS.getPlugin().tickets.clear();
         ReportRTS.getPlugin().notifications.clear();
         if (updateStaff) {
             ReportRTS.getPlugin().staff.clear();
         }
-
+        
         data.load();
-
+        
         if (updateStaff) {
             RTSFunctions.populateStaffMap();
         }
     }
-
+    
     /**
      * Returns true if the person is online.
      *
@@ -136,7 +136,7 @@ public class RTSFunctions {
     public static boolean isUserOnline(UUID uuid) {
         return Player.getPlayer(uuid) != null;
     }
-
+    
     /**
      * Get number of open request by the specified user.
      *
@@ -152,7 +152,7 @@ public class RTSFunctions {
         }
         return i;
     }
-
+    
     public static long checkTimeBetweenTickets(UUID uuid) {
         for (Map.Entry<Integer, Ticket> entry : ReportRTS.getPlugin().tickets.entrySet()) {
             if (entry.getValue().getUUID().equals(uuid)) {
@@ -163,19 +163,19 @@ public class RTSFunctions {
         }
         return 0;
     }
-
+    
     public static String getTimeSpent(double start) {
         DecimalFormat decimal = new DecimalFormat("##.###");
         return decimal.format((System.nanoTime() - start) / 1000000);
     }
-
+    
     public static String shortenMessage(String message) {
         if (message.length() >= 20) {
             message = message.substring(0, 20) + "...";
         }
         return message;
     }
-
+    
     public static void populateStaffMap() {
         for (Player player : Player.getOnlinePlayers()) {
             if (RTSPermissions.isStaff(player)) {
@@ -183,7 +183,7 @@ public class RTSFunctions {
             }
         }
     }
-
+    
     /**
      * Check if the provided String is a number or not.
      *
@@ -193,7 +193,7 @@ public class RTSFunctions {
     public static boolean isNumber(String number) {
         return (number.matches("-?\\d+") && !(Long.parseLong((number)) <= 0L) && (Long.parseLong((number)) < Integer.MAX_VALUE));
     }
-
+    
     /**
      * Separate text whenever a certain amount of words are reached. PS: If you
      * know how to stop Windows servers from printing the CR (Carriage Return)
@@ -216,7 +216,7 @@ public class RTSFunctions {
         }
         return message.toString().trim();
     }
-
+    
     /**
      * Retrieves relative time for use in /ticket read.
      *
@@ -228,12 +228,12 @@ public class RTSFunctions {
             // if timestamp given in seconds, convert to millis
             time *= 1000;
         }
-
+        
         long now = System.currentTimeMillis();
         if (time > now || time <= 0) {
             return null;
         }
-
+        
         final long diff = now - time;
         if (diff < MINUTE_MILLIS) {
             return ChatColor.GREEN + "just now" + ChatColor.GOLD;

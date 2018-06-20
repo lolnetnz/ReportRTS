@@ -15,71 +15,73 @@ import nz.co.lolnet.Player;
 import java.io.IOException;
 
 public class UnclaimTicket {
-
+    
     private static ReportRTS plugin = ReportRTS.getPlugin();
     private static DataProvider data = plugin.getDataProvider();
-
+    
     /**
      * Initial handling of the Unclaim sub-command.
+     *
      * @param sender player that sent the command
-     * @param args arguments
+     * @param args   arguments
      * @return true if command handled correctly
      */
     public static boolean handleCommand(CommandSender sender, String[] args) {
-
-        if(args.length < 2) return false;
-        if(!RTSPermissions.canClaimTicket(sender)) return true;
-        if(!RTSFunctions.isNumber(args[1])) {
+        
+        if (args.length < 2) return false;
+        if (!RTSPermissions.canClaimTicket(sender)) return true;
+        if (!RTSFunctions.isNumber(args[1])) {
             sender.sendMessage(Message.errorTicketNaN(args[1]));
             return true;
         }
         int ticketId = Integer.parseInt(args[1]);
-
-        if(!plugin.tickets.containsKey(ticketId) || plugin.tickets.get(ticketId).getStatus() != 1) {
+        
+        if (!plugin.tickets.containsKey(ticketId) || plugin.tickets.get(ticketId).getStatus() != 1) {
             sender.sendMessage(Message.ticketNotClaimed(ticketId));
             return true;
         }
         // CONSOLE overrides all.
-        if(sender instanceof ProxiedPlayer) {
-            if(!(Player.getPlayer(sender.getName())).getUniqueId().equals(plugin.tickets.get(ticketId).getStaffUuid()) && !RTSPermissions.canBypassClaim(sender)) return true;
+        if (sender instanceof ProxiedPlayer) {
+            if (!(Player.getPlayer(sender.getName())).getUniqueId().equals(plugin.tickets.get(ticketId).getStaffUuid()) && !RTSPermissions.canBypassClaim(sender))
+                return true;
         }
-
-        switch(data.setTicketStatus(ticketId, (sender instanceof ProxiedPlayer) ? (Player.getPlayer(sender.getName())).getUniqueId() : data.getConsole().getUuid(),
+        
+        switch (data.setTicketStatus(ticketId, (sender instanceof ProxiedPlayer) ? (Player.getPlayer(sender.getName())).getUniqueId() : data.getConsole().getUuid(),
                 sender.getName(), 0, false, System.currentTimeMillis() / 1000)) {
-
+            
             case -3:
                 // Ticket does not exist.
                 sender.sendMessage(Message.ticketNotExists(ticketId));
                 return true;
-
+            
             case -2:
                 // Ticket status incompatibilities.
                 sender.sendMessage(Message.errorTicketStatus());
                 return true;
-
+            
             case -1:
                 // Username is invalid or does not exist.
                 sender.sendMessage(Message.error("Your user does not exist in the user table and was not successfully created."));
                 return true;
-
+            
             case 0:
                 // No row was affected...
                 sender.sendMessage(Message.error("No entries were affected. Check console for errors."));
                 return true;
-
+            
             case 1:
                 // Everything went swimmingly if case is 1.
                 break;
-
-
+            
+            
             default:
                 sender.sendMessage(Message.error("A invalid result code has occurred."));
                 return true;
-
+            
         }
-
+        
         Player player = Player.getPlayer(plugin.tickets.get(ticketId).getUUID());
-        if(player != null) {
+        if (player != null) {
             player.sendMessage(Message.ticketUnclaimUser(plugin.tickets.get(ticketId).getStaffName(), ticketId));
             player.sendMessage(Message.ticketText(plugin.tickets.get(ticketId).getMessage()));
         }
@@ -89,12 +91,12 @@ public class UnclaimTicket {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        
         RTSFunctions.messageStaff(Message.ticketUnclaim(plugin.tickets.get(ticketId).getStaffName(), args[1]), false);
-
+        
         plugin.getProxy().getPluginManager().callEvent(new TicketUnclaimEvent(plugin.tickets.get(ticketId), plugin.tickets.get(ticketId).getStaffName(), sender));
         plugin.tickets.get(ticketId).setStaffName(null);
-
+        
         return true;
     }
 }

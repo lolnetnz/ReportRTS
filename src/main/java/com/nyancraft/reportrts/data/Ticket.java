@@ -13,28 +13,28 @@ public class Ticket {
     private int y;
     private int z;
     private int staffId;
-
+    
     private float yaw;
     private float pitch;
-
+    
     private long timestamp;
     private long staffTime;
-
+    
     private String text;
     private String name;
     private String world;
     private String staffName;
     private String server;
-
+    
     private UUID uuid;
     private UUID staffUuid;
     private boolean notified;
     
     private User staff;
-
+    
     private TreeSet<Comment> comments;
-
-    public Ticket(String name, UUID uuid, int id, long timestamp, String text, int status, int x, int y, int z, float yaw, float pitch, String world, String server, User staff){
+    
+    public Ticket(String name, UUID uuid, int id, long timestamp, String text, int status, int x, int y, int z, float yaw, float pitch, String world, String server, User staff) {
         this.name = name;
         this.uuid = uuid;
         this.id = id;
@@ -52,7 +52,7 @@ public class Ticket {
         comments = new TreeSet<>();
         this.staff = staff;
     }
-
+    
     public Ticket(String name, UUID uuid, int id, long timestamp, String text, int status, PlayerTicketLocation location, String server, User staff) {
         this.name = name;
         this.uuid = uuid;
@@ -73,208 +73,220 @@ public class Ticket {
         this.pitch = (float) location.getPitch();
         this.staff = staff;
     }
-
+    
     /**
      * Retrieves the ticket message
+     *
      * @return String Message of ticket
      */
-    public String getMessage(){
+    public String getMessage() {
         return this.text;
     }
-
+    
     /**
      * Retrieves UUID of player
+     *
      * @return UUID unique user id of player
      */
-    public UUID getUUID(){
+    public UUID getUUID() {
         return this.uuid;
     }
-
+    
     /**
      * Retrieves name of player
+     *
      * @return String username
      */
-    public String getName(){
+    public String getName() {
         return this.name;
     }
-
+    
     /**
      * Retrieves id of ticket
+     *
      * @return int id of ticket
      */
-    public int getId(){
+    public int getId() {
         return this.id;
     }
-
+    
     /**
      * Retrieves ticket status
+     *
      * @return int status of ticket
      */
-    public int getStatus(){
+    public int getStatus() {
         return this.status;
     }
-
+    
     /**
      * Retrieves timestamp when ticket was created
+     *
      * @return int timestamp of ticket
      */
-    public long getTimestamp(){
+    public long getTimestamp() {
         return this.timestamp;
     }
-
-
+    
+    
     /**
      * Retrieves timestamp when ticket was last interacted with by staff
+     *
      * @return int modtimestamp of ticket
      */
-    public long getStaffTime(){
+    public long getStaffTime() {
         return this.staffTime;
     }
-
+    
     /**
      * Retrieves X where ticket was created
+     *
      * @return int X of ticket
      */
-    public long getX(){
+    public long getX() {
         return this.x;
     }
-
+    
     /**
      * Retrieves Y where ticket was created
+     *
      * @return int Y of ticket
      */
-    public long getY(){
+    public long getY() {
         return this.y;
     }
-
+    
     /**
      * Retrieves Z where ticket was created
+     *
      * @return int Z of ticket
      */
-    public long getZ(){
+    public long getZ() {
         return this.z;
     }
-
+    
     /**
      * Retrieves Yaw where ticket was created
+     *
      * @return int Yaw of ticket
      */
-    public float getYaw(){
+    public float getYaw() {
         return this.yaw;
     }
-
+    
     /**
      * Retrieves Pitch where ticket was created
+     *
      * @return int Pitch of ticket
      */
-    public float getPitch(){
+    public float getPitch() {
         return this.pitch;
     }
-
+    
     /**
      * Retrieves world where ticket was created
+     *
      * @return String world name
      */
-    public String getWorld(){
+    public String getWorld() {
         return this.world;
     }
-
+    
     /**
      * Retrieves the BungeeCord server where the ticket was created
+     *
      * @return String BungeeCord server name
      */
-    public String getServer() { return this.server; }
-
+    public String getServer() {
+        return this.server;
+    }
+    
     /**
      * Retrieves the UUID of the player that handled the ticket, if any
+     *
      * @return UUID staffUuid
      */
-    public UUID getStaffUuid(){
+    public UUID getStaffUuid() {
         return this.staffUuid;
     }
-
+    
     /**
      * Retrieves name of the player that handled the ticket, if any
+     *
      * @return String staffName
      */
-    public String getStaffName(){
+    public String getStaffName() {
         return this.staffName;
     }
-
-    public int getStaffId(){
+    
+    public int getStaffId() {
         return this.staffId;
     }
-
+    
     /**
      * Retrieves the comments on the ticket
+     *
      * @return TreeSet comment
      */
-    public TreeSet<Comment> getComments(){
+    public TreeSet<Comment> getComments() {
         return this.comments;
     }
-
+    
     /**
-     * @param status
-     * Sets the status of the ticket
+     * @param status Sets the status of the ticket
      */
-    public void setStatus(int status){
+    public void setStatus(int status) {
         this.status = status;
     }
-
+    
     /**
-     * @param staffUuid
-     * Sets the player UUID that handled this ticket
+     * @param staffUuid Sets the player UUID that handled this ticket
      */
-    public void setStaffUuid(UUID staffUuid){
+    public void setStaffUuid(UUID staffUuid) {
         this.staffUuid = staffUuid;
     }
-
+    
     /**
-     * @param name
-     * Sets the name of the player who filed the ticket
+     * @param name Sets the name of the player who filed the ticket
      */
-    public void setName(String name){
+    public void setName(String name) {
         this.name = name;
     }
-
+    
     public User getStaff() {
         return staff;
     }
-
+    
     /**
-     * @param staffName
-     * Sets the staff name that handled this ticket
+     * @param staffName Sets the staff name that handled this ticket
      */
-    public void setStaffName(String staffName){
+    public void setStaffName(String staffName) {
         this.staffName = staffName;
     }
-
+    
     /**
-     * @param staffTime
-     * Sets timestamp when ticket was created
+     * @param staffTime Sets timestamp when ticket was created
      */
-    public void setStaffTime(long staffTime){
+    public void setStaffTime(long staffTime) {
         this.staffTime = staffTime;
     }
     
     /**
-     * @param comments
-     * Sets the comments on the ticket
+     * @param comments Sets the comments on the ticket
      */
-    public void setComments(TreeSet<Comment> comments){
+    public void setComments(TreeSet<Comment> comments) {
         this.comments = comments;
     }
-
+    
     /**
      * @return Whether the player is notified of the ticket or not.
      */
     public boolean isNotified() {
         return this.notified;
     }
-
+    
     /**
-     * @param notified
-     * Set whether a player has been notified or not.
+     * @param notified Set whether a player has been notified or not.
      */
     public void setNotified(boolean notified) {
         this.notified = notified;

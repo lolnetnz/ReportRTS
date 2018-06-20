@@ -2,20 +2,20 @@ package com.nyancraft.reportrts.event;
 
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Event;
+
 /**
  * Event that is called when staff broadcasts a message.
- *
  */
 public class TicketBroadcastEvent extends Event {
-
+    
     String message;
     CommandSender sender;
-
+    
     public TicketBroadcastEvent(CommandSender sender, String message) {
         this.sender = sender;
         this.message = message;
     }
-
+    
     /**
      * Get the broadcast message.
      *
@@ -24,7 +24,7 @@ public class TicketBroadcastEvent extends Event {
     public String getMessage() {
         return message;
     }
-
+    
     /**
      * Get the sender of the broadcast message.
      *
@@ -33,5 +33,5 @@ public class TicketBroadcastEvent extends Event {
     public CommandSender getSender() {
         return sender;
     }
-
+    
 }

@@ -16,48 +16,49 @@ import nz.co.lolnet.Player;
 import java.io.IOException;
 
 public class ReopenTicket {
-
+    
     private static ReportRTS plugin = ReportRTS.getPlugin();
     private static DataProvider data = plugin.getDataProvider();
-
+    
     /**
      * Initial handling of the Reopen sub-command.
+     *
      * @param sender player that sent the command
-     * @param args arguments
+     * @param args   arguments
      * @return true if command handled correctly
      */
     public static boolean handleCommand(CommandSender sender, String[] args) {
-
-        if(args.length < 1 ) {
+        
+        if (args.length < 1) {
             return false;
         }
         
-        if(args.length < 2 || !RTSFunctions.isNumber(args[1])) {
+        if (args.length < 2 || !RTSFunctions.isNumber(args[1])) {
             sender.sendMessage(Message.errorTicketNaN(args[1]));
             return true;
         }
-
-        if(!RTSPermissions.canReopenTicket(sender)) return true;
-
+        
+        if (!RTSPermissions.canReopenTicket(sender)) return true;
+        
         int ticketId = Integer.parseInt(args[1]);
-
+        
         User user = sender instanceof ProxiedPlayer ? data.getUser((Player.getPlayer(sender.getName())).getUniqueId(), 0, true) : data.getConsole();
-
-        if(data.setTicketStatus(ticketId, user.getUuid(), sender.getName(), 0, false, System.currentTimeMillis() / 1000) < 1) {
+        
+        if (data.setTicketStatus(ticketId, user.getUuid(), sender.getName(), 0, false, System.currentTimeMillis() / 1000) < 1) {
             sender.sendMessage(Message.errorTicketNotClosed(args[0]));
             return true;
         }
-
-        if(RTSFunctions.syncTicket(ticketId)) {
+        
+        if (RTSFunctions.syncTicket(ticketId)) {
             try {
                 BungeeCord.globalNotify(Message.ticketReopen(sender.getName(), args[1]), ticketId, NotificationType.NEW);
-            } catch(IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
             RTSFunctions.messageStaff(Message.ticketReopen(sender.getName(), args[1]), true);
             // Let other plugins know the ticket was reopened.
             plugin.getProxy().getPluginManager().callEvent(new TicketReopenEvent(plugin.tickets.get(ticketId), sender));
-
+            
             return true;
         } else {
             sender.sendMessage(Message.error("Unable to reopen request #" + args[1]));

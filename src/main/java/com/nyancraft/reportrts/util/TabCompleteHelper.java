@@ -12,21 +12,21 @@ import java.util.List;
 import java.util.Set;
 
 public class TabCompleteHelper implements Listener {
-
+    
     private ReportRTS plugin;
-
+    
     public TabCompleteHelper(ReportRTS plugin) {
         this.plugin = plugin;
     }
-
+    
     @EventHandler
     public void onTab(TabCompleteEvent event) {
         if (!event.getSuggestions().isEmpty()) {
             return; //If suggestions for this command are handled by other plugin don't add any
         }
-
+        
         String[] args = event.getCursor().split(" ");
-
+        
         //Argument checker, DO NOT LEAVE THIS UNCOMMENTED IN PRODUCTION 
         /*int tempI = -1;
         for (String arg : args) {
@@ -51,20 +51,20 @@ public class TabCompleteHelper implements Listener {
                 }
             }
         }
-
+        
         if ((!args[0].equalsIgnoreCase(plugin.commandMap.get("readTicket")) && !args[0].equalsIgnoreCase(plugin.commandMap.get("closeTicket"))
                 && !args[0].equalsIgnoreCase(plugin.commandMap.get("teleportToTicket")) && !args[0].equalsIgnoreCase(plugin.commandMap.get("holdTicket"))
                 && !args[0].equalsIgnoreCase(plugin.commandMap.get("claimTicket")) && !args[0].equalsIgnoreCase(plugin.commandMap.get("unclaimTicket"))
                 && !args[0].equalsIgnoreCase(plugin.commandMap.get("assignTicket")))) {
             // If you got here then the sub-command you tried to tab-complete does not support it.
-
+            
             return;
-
+            
         }
         if (args.length < 2 || args.length >= 2 && (!RTSFunctions.isNumber(args[1]) || (event.getSender() instanceof ProxiedPlayer && args[1].equalsIgnoreCase(((ProxiedPlayer) event.getSender()).getName()))) || plugin.tickets.size() < 1) {
-
+            
             if (args.length < 2 || args[1].isEmpty()) {
-
+                
                 if (args.length >= 2) {
                     event.getSuggestions().add((args[1].equalsIgnoreCase(" ") ? " " : "") + plugin.tickets.keySet().toArray()[0].toString());
                 } else if (plugin.tickets.keySet().toArray().length != 0) {
@@ -104,5 +104,5 @@ public class TabCompleteHelper implements Listener {
         response.add(Integer.toString(prevKey));
         return;
     }
-
+    
 }

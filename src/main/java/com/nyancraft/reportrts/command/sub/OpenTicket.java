@@ -20,100 +20,100 @@ import java.util.Map;
 import java.util.logging.Level;
 
 public class OpenTicket {
-
+    
     private static ReportRTS plugin = ReportRTS.getPlugin();
     private static DataProvider data = plugin.getDataProvider();
-
+    
     /**
      * Initial handling of the Open sub-command.
+     *
      * @param sender player that sent the command
-     * @param args arguments
+     * @param args   arguments
      * @return true if command handled correctly
      */
     public static boolean handleCommand(CommandSender sender, String[] args) {
-
-        if(!RTSPermissions.canOpenTicket(sender)) return true;
+        
+        if (!RTSPermissions.canOpenTicket(sender)) return true;
         //if(args.length < 2) return false;
-
+        
         // Check if ticket message is too short.
-        if(plugin.ticketMinimumWords > (args.length - 1)) {
+        if (plugin.ticketMinimumWords > (args.length - 1)) {
             sender.sendMessage(Message.ticketTooShort(plugin.ticketMinimumWords));
             return true;
         }
-
+        
         // Store these variables, we're gonna need them.
         User user = new User();
         user.setUsername(sender.getName());
         PlayerTicketLocation location = null;
-        if(!(sender instanceof ProxiedPlayer)) {
+        if (!(sender instanceof ProxiedPlayer)) {
             // Sender is more than likely Console.
             user = data.getConsole();
             location = new PlayerTicketLocation(Player.getPlayer(sender.getName()));
-        }
-        else {
+        } else {
             // Sender is a Player.
             ProxiedPlayer player = (ProxiedPlayer) sender;
             user = data.getUser(player.getUniqueId(), 0, true);
             location = new PlayerTicketLocation(Player.getPlayer(player));
         }
-
+        
         // The user is banned and can not create a ticket.
-        if(user.getBanned()) {
+        if (user.getBanned()) {
             sender.sendMessage(Message.errorBanned());
             return true;
         }
-
-        if(RTSFunctions.getOpenTicketsByUser(user.getUuid()) >= plugin.maxTickets && !RTSPermissions.canBypassLimit(sender)) {
+        
+        if (RTSFunctions.getOpenTicketsByUser(user.getUuid()) >= plugin.maxTickets && !RTSPermissions.canBypassLimit(sender)) {
             sender.sendMessage(Message.ticketTooMany());
             return true;
         }
-
+        
         // Check if the sender can open another ticket yet.
-        if(plugin.ticketDelay > 0) {
-            if(!RTSPermissions.canBypassLimit(sender)){
+        if (plugin.ticketDelay > 0) {
+            if (!RTSPermissions.canBypassLimit(sender)) {
                 long timeBetweenRequest = RTSFunctions.checkTimeBetweenTickets(user.getUuid());
-                if(timeBetweenRequest > 0) {
+                if (timeBetweenRequest > 0) {
                     sender.sendMessage(Message.ticketTooFast(timeBetweenRequest));
                     return true;
                 }
             }
         }
-
+        
         args[0] = null;
         String message = RTSFunctions.implode(args, " ");
-
+        
         // Prevent duplicate requests by comparing UUID and message to other currently open requests.
-        if(plugin.ticketPreventDuplicate) {
-            for(Map.Entry<Integer, Ticket> entry : plugin.tickets.entrySet()){
-                if(!entry.getValue().getUUID().equals(user.getUuid())) continue;
-                if(!entry.getValue().getMessage().equalsIgnoreCase(message)) continue;
+        if (plugin.ticketPreventDuplicate) {
+            for (Map.Entry<Integer, Ticket> entry : plugin.tickets.entrySet()) {
+                if (!entry.getValue().getUUID().equals(user.getUuid())) continue;
+                if (!entry.getValue().getMessage().equalsIgnoreCase(message)) continue;
                 sender.sendMessage(Message.ticketDuplicate());
                 return true;
             }
         }
-
+        
         // Create a ticket and store the ticket ID.
         int ticketId = data.createTicket(user, location, message);
         // If less than 1, then the creation of the ticket failed.
-        if(ticketId < 1) {
+        if (ticketId < 1) {
             sender.sendMessage(Message.error("Ticket could not be opened."));
             return true;
         }
-
+        
         sender.sendMessage(Message.ticketOpenUser(Integer.toString(ticketId)));
         plugin.getLogger().log(Level.INFO, "" + user.getUsername() + " filed a request.");
-
+        
         // Notify staff members about the new request.
-        if(plugin.notifyStaffOnNewRequest) {
+        if (plugin.notifyStaffOnNewRequest) {
             try {
                 // Attempt to notify all servers connected to BungeeCord that run ReportRTS.
                 BungeeCord.globalNotify(Message.ticketOpen(user.getUsername(), Integer.toString(ticketId)), ticketId, NotificationType.NEW);
-            } catch(IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
             RTSFunctions.messageStaff(Message.ticketOpen(user.getUsername(), Integer.toString(ticketId)), true);
         }
-
+        
         Ticket ticket;
         String serverName = "";
         if (sender instanceof ProxiedPlayer) {
@@ -122,10 +122,10 @@ public class OpenTicket {
             } catch (Exception e) {
             }
         }
-        ticket = new Ticket(user.getUsername(), user.getUuid(), ticketId, System.currentTimeMillis()/1000, message, 0, location , serverName ,null);
+        ticket = new Ticket(user.getUsername(), user.getUuid(), ticketId, System.currentTimeMillis() / 1000, message, 0, location, serverName, null);
         plugin.getProxy().getPluginManager().callEvent(new TicketOpenEvent(ticket));
         plugin.tickets.put(ticketId, ticket);
-
+        
         return true;
     }
 }

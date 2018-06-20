@@ -18,13 +18,12 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- *
  * @author James
  */
 public class MuiltServerSupport implements Listener {
-
+    
     public static boolean enabled;
-
+    
     public static void requestPermissionsUpdate(UUID playerUUID) {
         com.imaginarycode.minecraft.redisbungee.RedisBungeeAPI api = com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi();
         JsonObject jsonObject = new JsonObject();
@@ -32,25 +31,25 @@ public class MuiltServerSupport implements Listener {
         jsonObject.addProperty("PlayerUUID", playerUUID.toString());
         api.sendChannelMessage("ReportRTSBC", new Gson().toJson(jsonObject));
     }
-
+    
     public static void syncDatabase() {
         com.imaginarycode.minecraft.redisbungee.RedisBungeeAPI api = com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi();
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("Command", "syncDatabase");
         api.sendChannelMessage("ReportRTSBC", new Gson().toJson(jsonObject));
     }
-
+    
     public void setup() {
         RedisBungee.getApi().registerPubSubChannels("ReportRTSBC");
         ReportRTS.getPlugin().getProxy().getPluginManager().registerListener(ReportRTS.getPlugin(), this);
         enabled = true;
         ReportRTS.getPlugin().getProxy().getPluginManager().registerListener(ReportRTS.getPlugin(), new MyListener());
     }
-
+    
     public static Collection<String> getListOfPlayersOnline() {
         return com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi().getHumanPlayersOnline();
     }
-
+    
     @EventHandler
     public void onPubSubMessageEvent(com.imaginarycode.minecraft.redisbungee.events.PubSubMessageEvent event) {
         if (!event.getChannel().equals("ReportRTSBC")) {
@@ -65,14 +64,13 @@ public class MuiltServerSupport implements Listener {
         }
         
         
-        
         String command = object.get("Command").getAsString();
         if (command == null) {
             return;
         }
         
         if (command.equals("sendMessageToPlayer")) {
-
+            
             UUID playerUUID = UUID.fromString(object.get("PlayerUUID").getAsString());
             String message = object.get("Message").getAsString();
             ProxiedPlayer player = ProxyServer.getInstance().getPlayer(playerUUID);
@@ -98,12 +96,14 @@ public class MuiltServerSupport implements Listener {
         } else if (command.equals("requestPermissionsUpdateReply")) {
             UUID playerUUID = UUID.fromString(object.get("PlayerUUID").getAsString());
             if (RedisPlayer.redisPlayers.containsKey(playerUUID)) {
-                RedisPlayer.redisPlayers.get(playerUUID).playerPermissions = new Gson().fromJson(object.get("Permissions"), new TypeToken<List<String>>() {}.getType());
+                RedisPlayer.redisPlayers.get(playerUUID).playerPermissions = new Gson().fromJson(object.get("Permissions"), new TypeToken<List<String>>() {
+                }.getType());
             }
         } else if (command.equals("syncDatabase")) {
             RTSFunctions.sync(false);
         } else if (command.equals("syncStaffList")) {
-            List<String> staffList = new Gson().fromJson(object.get("StaffList"), new TypeToken<List<String>>() {}.getType());
+            List<String> staffList = new Gson().fromJson(object.get("StaffList"), new TypeToken<List<String>>() {
+            }.getType());
             for (String uuid : staffList) {
                 Staff.add(UUID.fromString(uuid), false);
             }

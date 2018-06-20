@@ -1,9 +1,9 @@
 package com.nyancraft.reportrts.util;
 
 public class VersionChecker {
-
-    public boolean upToDate(){
-
+    
+    public boolean upToDate() {
+        
         // TODO: Rewrite this for Spigot.
         return true;
         // Return true because Bukkit.org is unsupported.

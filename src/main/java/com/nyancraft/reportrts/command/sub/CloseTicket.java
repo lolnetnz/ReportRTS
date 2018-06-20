@@ -20,35 +20,36 @@ import java.io.IOException;
 import java.util.TreeSet;
 
 public class CloseTicket {
-
+    
     private static ReportRTS plugin = ReportRTS.getPlugin();
     private static DataProvider data = plugin.getDataProvider();
-
+    
     /**
      * Initial handling of the Close sub-command.
+     *
      * @param sender player that sent the command
-     * @param args arguments
+     * @param args   arguments
      * @return true if command handled correctly
      */
     public static boolean handleCommand(CommandSender sender, String[] args) {
-
-        if(args.length < 2) return false;
-
-        if(!RTSFunctions.isNumber(args[1])) {
+        
+        if (args.length < 2) return false;
+        
+        if (!RTSFunctions.isNumber(args[1])) {
             sender.sendMessage(Message.errorTicketNaN(args[1]));
             return true;
         }
         int ticketId = Integer.parseInt(args[1]);
-
-        if(!RTSPermissions.canCloseTicket(sender)) {
-            if(RTSPermissions.canCloseOwnTicket(sender)) {
-
-                if(!plugin.tickets.containsKey(ticketId)){
+        
+        if (!RTSPermissions.canCloseTicket(sender)) {
+            if (RTSPermissions.canCloseOwnTicket(sender)) {
+                
+                if (!plugin.tickets.containsKey(ticketId)) {
                     sender.sendMessage(Message.ticketNotExists(ticketId));
                     return true;
                 }
                 Player player = Player.getPlayer(sender.getName());
-                if(!plugin.tickets.get(ticketId).getUUID().equals(player.getUniqueId())){
+                if (!plugin.tickets.get(ticketId).getUUID().equals(player.getUniqueId())) {
                     sender.sendMessage(Message.errorTicketOwner());
                     return true;
                 }
@@ -56,10 +57,10 @@ public class CloseTicket {
                 plugin.tickets.remove(ticketId);
                 try {
                     BungeeCord.globalNotify(Message.ticketClose(args[1], "Cancellation System"), ticketId, NotificationType.DELETE);
-                } catch(IOException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
-                RTSFunctions.messageStaff(Message.ticketClose(args[1],"Cancellation System"), false);
+                RTSFunctions.messageStaff(Message.ticketClose(args[1], "Cancellation System"), false);
                 sender.sendMessage(Message.ticketCloseUser(args[1], "Cancellation System"));
                 MuiltServerSupport.syncDatabase();
                 return true;
@@ -68,98 +69,99 @@ public class CloseTicket {
                 return true;
             }
         }
-
+        
         User user = sender instanceof ProxiedPlayer ? data.getUser((Player.getPlayer(sender.getName())).getUniqueId(), 0, true) : data.getConsole();
-        if(user.getUsername() == null) {
+        if (user.getUsername() == null) {
             sender.sendMessage(Message.error("user.getUsername() returned NULL! Are you using plugins to modify names?"));
             return true;
         }
-
+        
         args[0] = null;
         int commentId = 0;
         String comment = RTSFunctions.implode(args, " ");
         String name = sender.getName();
-
+        
         long timestamp = System.currentTimeMillis() / 1000;
-
-
-        if(args[1].length() == comment.length()) {
+        
+        
+        if (args[1].length() == comment.length()) {
             comment = null;
         } else {
             comment = comment.substring(args[1].length()).trim();
-
+            
             name = sender instanceof ProxiedPlayer ? plugin.staff.contains(user.getUuid()) ? sender.getName() + " - Staff" : sender.getName() : sender.getName();
-
+            
             // Create a comment and store the comment ID.
             commentId = data.createComment(name, timestamp, comment, ticketId);
             // If less than 1, then the creation of the comment failed.
-            if(commentId < 1) {
+            if (commentId < 1) {
                 sender.sendMessage(Message.error("Comment could not be created."));
                 return true;
             }
         }
-
-
+        
+        
         int online = 0;
         boolean isClaimedByOther = false;
-
-        if(plugin.tickets.containsKey(ticketId)) {
+        
+        if (plugin.tickets.containsKey(ticketId)) {
             online = (RTSFunctions.isUserOnline(plugin.tickets.get(ticketId).getUUID())) ? 1 : 0;
-            if(plugin.tickets.get(ticketId).getStatus() == 1) {
+            if (plugin.tickets.get(ticketId).getStatus() == 1) {
                 // Holy shit.
                 isClaimedByOther = (!plugin.tickets.get(ticketId).getStaffUuid().equals((sender instanceof ProxiedPlayer ? (Player.getPlayer(sender.getName())).getUniqueId() : data.getConsole())));
             }
         }
-
-        if(isClaimedByOther && !RTSPermissions.canBypassClaim(sender)) {
+        
+        if (isClaimedByOther && !RTSPermissions.canBypassClaim(sender)) {
             sender.sendMessage(Message.errorTicketClaim(ticketId, plugin.tickets.get(ticketId).getStaffName()));
             return true;
         }
-
-        if(data.setTicketStatus(ticketId, user.getUuid(), sender.getName(), 3, online > 0, timestamp) < 1) {
+        
+        if (data.setTicketStatus(ticketId, user.getUuid(), sender.getName(), 3, online > 0, timestamp) < 1) {
             sender.sendMessage(Message.error("Unable to close ticket #" + args[0]));
             return true;
         }
-
+        
         Ticket ticket = null;
-        if(plugin.tickets.containsKey(ticketId)) {
-
+        if (plugin.tickets.containsKey(ticketId)) {
+            
             Player player = Player.getPlayer(plugin.tickets.get(ticketId).getUUID());
-
-            if(online == 0) plugin.notifications.put(ticketId, plugin.tickets.get(ticketId).getUUID());
-
-            if(player != null) {
+            
+            if (online == 0) plugin.notifications.put(ticketId, plugin.tickets.get(ticketId).getUUID());
+            
+            if (player != null) {
                 // If player is online, send him closing message and comments.
                 player.sendMessage(Message.ticketCloseUser(args[1], user.getUsername()));
                 player.sendMessage(Message.ticketCloseText(plugin.tickets.get(ticketId).getMessage()));
-                if(commentId > 0) player.sendMessage(Message.ticketCommentText(name, comment));
+                if (commentId > 0) player.sendMessage(Message.ticketCommentText(name, comment));
             } else {
                 try {
                     BungeeCord.notifyUser(plugin.tickets.get(ticketId).getUUID(), Message.ticketCloseUser(Integer.toString(ticketId), user.getUsername()), ticketId);
                     BungeeCord.notifyUser(plugin.tickets.get(ticketId).getUUID(), Message.ticketCloseText(plugin.tickets.get(ticketId).getMessage()), ticketId);
-                    if(commentId > 0) BungeeCord.notifyUser(plugin.tickets.get(ticketId).getUUID(), Message.ticketCommentText(name, comment), ticketId);
-                } catch(IOException e) {
+                    if (commentId > 0)
+                        BungeeCord.notifyUser(plugin.tickets.get(ticketId).getUUID(), Message.ticketCommentText(name, comment), ticketId);
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
             ticket = plugin.tickets.get(ticketId);
             plugin.tickets.remove(ticketId);
         }
-
+        
         try {
             BungeeCord.globalNotify(Message.ticketClose(args[1], user.getUsername()), ticketId, NotificationType.COMPLETE);
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         RTSFunctions.messageStaff(Message.ticketClose(args[1], user.getUsername()), false);
-        if(ticket != null) {
-
-            if(commentId > 0) {
+        if (ticket != null) {
+            
+            if (commentId > 0) {
                 TreeSet<Comment> comments = ticket.getComments();
                 comments.add(new Comment(timestamp, ticketId, commentId, name, comment));
                 ticket.setComments(comments);
             }
-
+            
             ticket.setStaffName(sender.getName());
             
             plugin.getProxy().getPluginManager().callEvent(new TicketCloseEvent(ticket, sender));

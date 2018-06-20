@@ -15,11 +15,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
  * @author James
  */
 public class ConfigManager {
-
+    
     public static Configuration reloadConfig(String fileName) {
         Configuration config = null;
         if (!fileName.contains(".yml")) {
@@ -36,7 +35,7 @@ public class ConfigManager {
                     System.out.println("Failed to obtain " + fileName + " from jar file");
                 }
                 try (InputStream is = ReportRTS.getPlugin().getResourceAsStream(fileName);
-                        OutputStream os = new FileOutputStream(configFile)) {
+                     OutputStream os = new FileOutputStream(configFile)) {
                     ByteStreams.copy(is, os);
                 }
             } catch (IOException e) {
@@ -52,7 +51,7 @@ public class ConfigManager {
         saveConfig(config, fileName);
         return config;
     }
-
+    
     public static void saveConfig(Configuration config, String fileName) {
         try {
             ConfigurationProvider.getProvider(YamlConfiguration.class).save(config, new File(ReportRTS.getPlugin().getDataFolder(), fileName));

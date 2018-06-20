@@ -34,19 +34,19 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 public class ReportRTS extends Plugin {
-
+    
     private static ReportRTS plugin;
     private final Logger log = Logger.getLogger("Minecraft");
     private static MessageHandler messageHandler = new MessageHandler();
     private VersionChecker versionChecker = new VersionChecker();
     private DataProvider provider;
-
+    
     public Map<Integer, Ticket> tickets = new TreeMap<>();
     public Map<Integer, UUID> notifications = new HashMap<>();
     public Map<UUID, Integer> teleportMap = new HashMap<>();
     public Map<String, String> commandMap = new HashMap<>();
     public static Staff staff = new Staff();
-
+    
     public boolean notifyStaffOnNewRequest;
     public boolean hideNotification;
     public boolean hideWhenOffline;
@@ -58,7 +58,7 @@ public class ReportRTS extends Plugin {
     public boolean ticketPreventDuplicate;
     public boolean apiEnabled;
     public boolean legacyCommands;
-
+    
     public int maxTickets;
     public int ticketDelay;
     public int ticketMinimumWords;
@@ -76,22 +76,22 @@ public class ReportRTS extends Plugin {
     public String versionString;
     public String bungeeCordServerPrefix;
     public String lineSeparator = System.lineSeparator();
-
+    
     public static Permission permission = null;
-
+    
     private ApiServer apiServer;
     private int apiPort;
     private String apiPassword;
     private List<String> apiAllowedIPs = new ArrayList<>();
-
+    
     private String serverIP;
-
+    
     public void onDisable() {
         if (provider != null) {
             provider.close();
         }
-        if(apiEnabled) {
-            try{
+        if (apiEnabled) {
+            try {
                 apiServer.getListener().close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -99,17 +99,17 @@ public class ReportRTS extends Plugin {
         }
         messageHandler.saveMessageConfig();
     }
-
+    
     public void onEnable() {
         permission = new Permission();
         plugin = this;
         reloadSettings();
-
+        
         final PluginManager pm = plugin.getProxy().getPluginManager();
-
+        
         // Register events that ReportRTS listens to.
         pm.registerListener(plugin, new RTSListener(plugin));
-
+        
         // Ensure that storage information is not default as that may not work.
         if (assertConfigIsDefault("STORAGE")) {
             setupDone = false;
@@ -126,26 +126,26 @@ public class ReportRTS extends Plugin {
             reloadSettings();
             RTSFunctions.populateStaffMap();
         }
-
+        
         // Check if plugin is up to date. TODO: This has to be updated for Spigot's website.
         outdated = !versionChecker.upToDate();
-
+        
         // Enable fancier tickets if enabled and if ProtocolLib is enabled on the server.
         // Register commands.
         if (debugMode) {
             getLogger().info("legacyCommands =" + legacyCommands);
         }
         if (legacyCommands) {
-
+            
             pm.registerListener(plugin, new LegacyCommandListener(commandMap.get("readTicket"), commandMap.get("openTicket"), commandMap.get("closeTicket"), commandMap.get("reopenTicket"),
                     commandMap.get("claimTicket"), commandMap.get("unclaimTicket"), commandMap.get("holdTicket"), commandMap.get("teleportToTicket"), commandMap.get("broadcastToStaff"),
                     commandMap.get("listStaff"), commandMap.get("commentTicket")));
         }
-
+        
         plugin.getProxy().getPluginManager().registerCommand(plugin, new ReportRTSCommand(plugin));
         plugin.getProxy().getPluginManager().registerCommand(plugin, new TicketCommand(plugin));
         plugin.getProxy().getPluginManager().registerListener(plugin, new TabCompleteHelper(plugin));
-
+        
         // Enable API. (Not recommended since it is very incomplete!)
         apiEnabled = false; // TODO: Remove hard-coded false when this works!
         if (apiEnabled) {
@@ -177,7 +177,7 @@ public class ReportRTS extends Plugin {
             }
             apiServer.start();
         }
-
+        
         // Enable nagging, staff will be reminded of unresolved tickets.
         if (ticketNagging > 0) {
             plugin.getProxy().getScheduler().schedule(plugin, new Runnable() {
@@ -200,12 +200,12 @@ public class ReportRTS extends Plugin {
         }
         new MuiltServerSupport().setup();
     }
-
+    
     public void reloadPlugin() {
         reloadSettings();
         RTSFunctions.sync();
     }
-
+    
     public void reloadSettings() {
         reloadConfig();
         assertConfigUpToDate();
@@ -255,33 +255,33 @@ public class ReportRTS extends Plugin {
         commandMap.put("commentTicket", getConfig().getString("command.commentTicket"));
         // Commands registered!
     }
-
+    
     public static ReportRTS getPlugin() {
         return plugin;
     }
-
+    
     public static MessageHandler getMessageHandler() {
         return messageHandler;
     }
-
+    
     public DataProvider getDataProvider() {
         return provider;
     }
-
+    
     public void setDataProvider(DataProvider provider) {
         if (this.provider != null) {
             this.provider.close();
         }
         this.provider = provider;
     }
-
+    
     private void assertConfigUpToDate() {
         /**
          * What it does: - - - - - Checks if the mapping "requests" is located
          * in the config and replaces it with "ticket". - - - - - Since version:
          * 1.2.3
          */
-
+        
         //disabled for now...
         /*
         if(getConfig().getConfigurationSection("request") != null) {
@@ -294,36 +294,36 @@ public class ReportRTS extends Plugin {
         saveConfig(getConfig());
          */
     }
-
+    
     private boolean assertConfigIsDefault(String path) {
         /**
          * What it does: - - - - - Checks if the specified configuration section
          * is default, returns a boolean depending on the result.
          */
-
+        
         switch (path.toUpperCase()) {
-
+            
             case "STORAGE":
-
+                
                 return (storageHostname.equalsIgnoreCase("localhost") && storagePort == 3306 && storageDatabase.equalsIgnoreCase("minecraft")
                         && storageUsername.equalsIgnoreCase("username") && storagePassword.equalsIgnoreCase("password")
                         && storagePrefix.equalsIgnoreCase("") && storageRefreshTime == 600);
         }
         return false;
     }
-
+    
     public String getConsoleName() {
         return "console";
     }
-
+    
     private Configuration reloadConfig() {
         return ConfigManager.reloadConfig("config.yml");
     }
-
+    
     private Configuration getConfig() {
         return ConfigManager.reloadConfig("config.yml");
     }
-
+    
     private void saveConfig(Configuration config) {
         ConfigManager.saveConfig(config, "config.yml");
     }

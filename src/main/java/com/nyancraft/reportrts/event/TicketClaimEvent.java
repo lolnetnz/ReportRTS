@@ -7,9 +7,9 @@ import com.nyancraft.reportrts.data.Ticket;
  * a ticket for handling.
  */
 public class TicketClaimEvent extends TicketEvent {
-
-	public TicketClaimEvent(Ticket ticket) {
-		super(ticket);
-	}
-
+    
+    public TicketClaimEvent(Ticket ticket) {
+        super(ticket);
+    }
+    
 }

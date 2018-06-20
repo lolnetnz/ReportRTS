@@ -1,7 +1,6 @@
 package nz.co.lolnet;
 
 /**
- *
  * @author James
  */
 public class PlayerTicketLocation {
@@ -14,7 +13,7 @@ public class PlayerTicketLocation {
     private int yaw;
     private int dimension;
     private String server;
-
+    
     public PlayerTicketLocation(Player player) {
         this.player = player;
         populate();

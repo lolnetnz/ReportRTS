@@ -6,16 +6,16 @@ import com.nyancraft.reportrts.data.Ticket;
 import java.util.Map;
 
 public class Response {
-
-    public static String getTickets(){
-
+    
+    public static String getTickets() {
+        
         StringBuilder resp = new StringBuilder();
         resp.append("{");
         resp.append("\"openTickets\":");
         resp.append("{");
         int i = 1;
-        for(Map.Entry<Integer, Ticket> entry: ReportRTS.getPlugin().tickets.entrySet()){
-
+        for (Map.Entry<Integer, Ticket> entry : ReportRTS.getPlugin().tickets.entrySet()) {
+            
             resp.append("\"" + entry.getKey().toString() + "\":[");
             resp.append("{\"status\":").append(entry.getValue().getStatus()).append(",");
             resp.append("\"x\":").append(entry.getValue().getX()).append(",");
@@ -31,46 +31,47 @@ public class Response {
             //resp.append("\"comment\":").append("\"").append(entry.getValue().getComment()).append("\"").append(",");
             resp.append("\"server\":").append("\"").append(entry.getValue().getServer()).append("\"").append("}");
             resp.append("]");
-
-            if(ReportRTS.getPlugin().tickets.size() > i ) resp.append(",");
+            
+            if (ReportRTS.getPlugin().tickets.size() > i) resp.append(",");
             i++;
         }
         resp.append("}");
         resp.append("}\n");
-
+        
         return resp.toString();
     }
-
-    public static String getRequest(int n){
-       if(!ReportRTS.getPlugin().tickets.containsKey(n)) return "{\"success\":\"false\",\"message\":\"Ticket not found\"}";
+    
+    public static String getRequest(int n) {
+        if (!ReportRTS.getPlugin().tickets.containsKey(n))
+            return "{\"success\":\"false\",\"message\":\"Ticket not found\"}";
         Ticket request = ReportRTS.getPlugin().tickets.get(n);
-       return "{\"success\":\"true\",\"data\":[{\"status\":\"" + request.getStatus() + "\"," +
-               "\"x\":\"" + request.getX() + "\"," + "\"y\":\"" + request.getY() + "\"," +
-               "\"z\":\"" + request.getZ() + "\"," + "\"yaw\":\"" + request.getYaw() + "\"," +
-               "\"pitch\":\"" + request.getPitch() + "\"," + "\"timestamp\":\"" + request.getTimestamp() + "\"," +
-               "\"modtimestamp\":\"" + request.getStaffTime() + "\"," + "\"message\":\"" + request.getMessage() + "\"," +
-               "\"uuid\":\"" + request.getUUID() + "\"," + "\"moduuid\":\"" + request.getStaffUuid() + "\"," +
-               //"\"comment\":\"" + request.getComment() + "\"," + "\"server\":\"" + request.getServer() + "\"," +
-               "]}";
+        return "{\"success\":\"true\",\"data\":[{\"status\":\"" + request.getStatus() + "\"," +
+                "\"x\":\"" + request.getX() + "\"," + "\"y\":\"" + request.getY() + "\"," +
+                "\"z\":\"" + request.getZ() + "\"," + "\"yaw\":\"" + request.getYaw() + "\"," +
+                "\"pitch\":\"" + request.getPitch() + "\"," + "\"timestamp\":\"" + request.getTimestamp() + "\"," +
+                "\"modtimestamp\":\"" + request.getStaffTime() + "\"," + "\"message\":\"" + request.getMessage() + "\"," +
+                "\"uuid\":\"" + request.getUUID() + "\"," + "\"moduuid\":\"" + request.getStaffUuid() + "\"," +
+                //"\"comment\":\"" + request.getComment() + "\"," + "\"server\":\"" + request.getServer() + "\"," +
+                "]}";
     }
-
-    public static String uncheckedResult(){
+    
+    public static String uncheckedResult() {
         return "{\"success\":\"true\",\"message\":\"Action was performed, unable to check result\"}";
     }
-
-    public static String noAction(){
+    
+    public static String noAction() {
         return "{\"success\":\"false\",\"message\":\"No action specified\"}";
     }
-
-    public static String loginRequired(){
+    
+    public static String loginRequired() {
         return "{\"success\":\"false\",\"message\":\"Authentication missing or incorrect\"}";
     }
-
-    public static String moreArgumentsExpected(String n){
+    
+    public static String moreArgumentsExpected(String n) {
         return "{\"success\":\"false\",\"message\":\"Not enough arguments, " + n + " required\"}";
     }
-
-    public static String invalidArgument(){
+    
+    public static String invalidArgument() {
         return "{\"success\":\"false\",\"message\":\"One of the provided arguments are invalid\"}";
     }
 }

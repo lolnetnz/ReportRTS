@@ -6,21 +6,20 @@ import net.md_5.bungee.api.CommandSender;
 /**
  * Event that is called when a comment is added
  * to a ticket by a player.
- *
+ * <p>
  * The commenter is the user that sends the command.
- *
  */
 public class TicketCommentEvent extends TicketEvent {
-
+    
     private CommandSender sender;
     private String comment;
-
+    
     public TicketCommentEvent(Ticket ticket, CommandSender sender, String comment) {
         super(ticket);
         this.sender = sender;
         this.comment = comment;
     }
-
+    
     /**
      * This will get the user that
      * used the comment command.
@@ -30,7 +29,7 @@ public class TicketCommentEvent extends TicketEvent {
     public CommandSender getSender() {
         return sender;
     }
-
+    
     /**
      * This will get the comment that
      * the user made.
@@ -40,5 +39,5 @@ public class TicketCommentEvent extends TicketEvent {
     public String getComment() {
         return this.comment;
     }
-
+    
 }

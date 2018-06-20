@@ -10,35 +10,36 @@ import nz.co.lolnet.Player;
 import java.util.UUID;
 
 public class ListStaff {
-
+    
     private static ReportRTS plugin = ReportRTS.getPlugin();
-
+    
     /**
      * Initial handling of the Staff sub-command.
+     *
      * @param sender player that sent the command
      * @return true if command handled correctly
      */
     public static boolean handleCommand(CommandSender sender) {
-
+        
         // TODO: Possible to-do. No cross server functionality!
-        if(!RTSPermissions.canListStaff(sender)) return true;
+        if (!RTSPermissions.canListStaff(sender)) return true;
         String staff = "";
         String separator = Message.staffListSeparator();
-
-        for(UUID uuid : plugin.staff.getAll()) {
+        
+        for (UUID uuid : plugin.staff.getAll()) {
             Player player = Player.getPlayer(uuid);
-            if(player == null) return false;
-            if(plugin.vanishSupport && sender instanceof ProxiedPlayer) {
-                if(!(Player.getPlayer(sender.getName())).canSee(player)) continue;
+            if (player == null) return false;
+            if (plugin.vanishSupport && sender instanceof ProxiedPlayer) {
+                if (!(Player.getPlayer(sender.getName())).canSee(player)) continue;
             }
             staff = staff + player.getDisplayName() + separator;
         }
-        if(staff.length() == 0) {
+        if (staff.length() == 0) {
             sender.sendMessage(Message.staffListEmpty());
             return true;
         }
         staff = staff.substring(0, staff.length() - separator.length());
-
+        
         sender.sendMessage(Message.staffListOnline(staff));
         return true;
     }

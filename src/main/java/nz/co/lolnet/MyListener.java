@@ -13,23 +13,22 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
 /**
- *
  * @author James
  */
 public class MyListener implements Listener {
-
+    
     @EventHandler
     public void onTicketClose(TicketCloseEvent event) {
         System.out.println("TicketCloseEvent");
         sendMessage(event.getTicket(), "TicketClosed");
     }
-
+    
     @EventHandler
     public void onTicketOpen(TicketOpenEvent event) {
         System.out.println("TicketOpenEvent");
         sendMessage(event.getTicket(), "TicketOpen");
     }
-
+    
     public void sendMessage(Ticket ticket, String eventName) {
         RedisBungeeAPI api = RedisBungee.getApi();
         JsonObject jsonObject = new JsonObject();

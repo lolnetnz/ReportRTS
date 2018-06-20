@@ -1,280 +1,279 @@
 package com.nyancraft.reportrts;
 
 
-
 import com.nyancraft.reportrts.util.Message;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import nz.co.lolnet.Player;
 
 public class RTSPermissions {
-
+    
     public static boolean isStaff(Player player) {
-        if(ReportRTS.permission != null) return ReportRTS.permission.playerHas(player, "reportrts.staff");
+        if (ReportRTS.permission != null) return ReportRTS.permission.playerHas(player, "reportrts.staff");
         return player.hasPermission("reportrts.staff");
     }
-
+    
     public static boolean canOpenTicket(CommandSender sender) {
-        if(ReportRTS.permission != null) {
-            if(!ReportRTS.permission.has(sender, "reportrts.command.open")) {
+        if (ReportRTS.permission != null) {
+            if (!ReportRTS.permission.has(sender, "reportrts.command.open")) {
                 sender.sendMessage(Message.errorPermission("reportrts.command.open"));
                 return false;
             }
             return true;
         }
-        if(!sender.hasPermission("reportrts.command.open")) {
+        if (!sender.hasPermission("reportrts.command.open")) {
             sender.sendMessage(Message.errorPermission("reportrts.command.open"));
             return false;
         }
         return true;
     }
-
+    
     public static boolean canReadAll(CommandSender sender) {
-        if(ReportRTS.permission != null) return ReportRTS.permission.has(sender, "reportrts.command.read");
+        if (ReportRTS.permission != null) return ReportRTS.permission.has(sender, "reportrts.command.read");
         return sender.hasPermission("reportrts.command.read");
     }
-
+    
     public static boolean canReadOwn(CommandSender sender) {
-        if(ReportRTS.permission != null) return ReportRTS.permission.has(sender, "reportrts.command.read.self");
+        if (ReportRTS.permission != null) return ReportRTS.permission.has(sender, "reportrts.command.read.self");
         return sender.hasPermission("reportrts.command.read.self");
     }
-
+    
     public static boolean canReadOwnClosed(CommandSender sender) {
-        if(ReportRTS.permission != null) return ReportRTS.permission.has(sender, "reportrts.command.read.self.open");
+        if (ReportRTS.permission != null) return ReportRTS.permission.has(sender, "reportrts.command.read.self.open");
         return sender.hasPermission("reportrts.command.read.self.open");
     }
-
+    
     public static boolean canCloseTicket(CommandSender sender) {
-        if(ReportRTS.permission != null) return ReportRTS.permission.has(sender, "reportrts.command.close");
+        if (ReportRTS.permission != null) return ReportRTS.permission.has(sender, "reportrts.command.close");
         return sender.hasPermission("reportrts.command.close");
     }
-
+    
     public static boolean canCloseOwnTicket(CommandSender sender) {
-        if(!(sender instanceof ProxiedPlayer)) return false;
-        if(ReportRTS.permission != null) return ReportRTS.permission.has(sender, "reportrts.command.close.self");
+        if (!(sender instanceof ProxiedPlayer)) return false;
+        if (ReportRTS.permission != null) return ReportRTS.permission.has(sender, "reportrts.command.close.self");
         return sender.hasPermission("reportrts.command.close.self");
     }
-
+    
     public static boolean canTeleport(CommandSender sender) {
-        if(ReportRTS.permission != null) {
-            if(!ReportRTS.permission.has(sender, "reportrts.command.teleport")) {
+        if (ReportRTS.permission != null) {
+            if (!ReportRTS.permission.has(sender, "reportrts.command.teleport")) {
                 sender.sendMessage(Message.errorPermission("reportrts.command.teleport"));
                 return false;
             }
             return true;
         }
-        if(!sender.hasPermission("reportrts.command.teleport")) {
+        if (!sender.hasPermission("reportrts.command.teleport")) {
             sender.sendMessage(Message.errorPermission("reportrts.command.teleport"));
             return false;
         }
         return true;
     }
-
+    
     public static boolean canReloadPlugin(CommandSender sender) {
-        if(ReportRTS.permission != null) {
-            if(!ReportRTS.permission.has(sender, "reportrts.command.reload")) {
+        if (ReportRTS.permission != null) {
+            if (!ReportRTS.permission.has(sender, "reportrts.command.reload")) {
                 sender.sendMessage(Message.errorPermission("reportrts.command.reload"));
                 return false;
             }
             return true;
         }
-        if(!sender.hasPermission("reportrts.command.reload")) {
+        if (!sender.hasPermission("reportrts.command.reload")) {
             sender.sendMessage(Message.errorPermission("reportrts.command.reload"));
             return false;
         }
         return true;
     }
-
+    
     public static boolean canBanUser(CommandSender sender) {
-        if(ReportRTS.permission != null){
-            if(!ReportRTS.permission.has(sender, "reportrts.command.ban")) {
+        if (ReportRTS.permission != null) {
+            if (!ReportRTS.permission.has(sender, "reportrts.command.ban")) {
                 sender.sendMessage(Message.errorPermission("reportrts.command.ban"));
                 return false;
             }
             return true;
         }
-        if(!sender.hasPermission("reportrts.command.ban")) {
+        if (!sender.hasPermission("reportrts.command.ban")) {
             sender.sendMessage(Message.errorPermission("reportrts.command.ban"));
             return false;
         }
         return true;
     }
-
+    
     public static boolean canResetPlugin(CommandSender sender) {
-        if(ReportRTS.permission != null){
-            if(!ReportRTS.permission.has(sender, "reportrts.command.reset")) {
+        if (ReportRTS.permission != null) {
+            if (!ReportRTS.permission.has(sender, "reportrts.command.reset")) {
                 sender.sendMessage(Message.errorPermission("reportrts.command.reset"));
                 return false;
             }
             return true;
         }
-        if(!sender.hasPermission("reportrts.command.reset")) {
+        if (!sender.hasPermission("reportrts.command.reset")) {
             sender.sendMessage(Message.errorPermission("reportrts.command.reset"));
             return false;
         }
         return true;
     }
-
+    
     public static boolean canPutTicketOnHold(CommandSender sender) {
-        if(ReportRTS.permission != null) {
-            if(!ReportRTS.permission.has(sender, "reportrts.command.hold")) {
+        if (ReportRTS.permission != null) {
+            if (!ReportRTS.permission.has(sender, "reportrts.command.hold")) {
                 sender.sendMessage(Message.errorPermission("reportrts.command.hold"));
                 return false;
             }
             return true;
         }
-        if(!sender.hasPermission("reportrts.command.hold")) {
+        if (!sender.hasPermission("reportrts.command.hold")) {
             sender.sendMessage(Message.errorPermission("reportrts.command.hold"));
             return false;
         }
         return true;
     }
-
+    
     public static boolean canClaimTicket(CommandSender sender) {
-        if(ReportRTS.permission != null){
-            if(!ReportRTS.permission.has(sender, "reportrts.command.claim")) {
+        if (ReportRTS.permission != null) {
+            if (!ReportRTS.permission.has(sender, "reportrts.command.claim")) {
                 sender.sendMessage(Message.errorPermission("reportrts.command.claim"));
                 return false;
             }
             return true;
         }
-        if(!sender.hasPermission("reportrts.command.claim")) {
+        if (!sender.hasPermission("reportrts.command.claim")) {
             sender.sendMessage(Message.errorPermission("reportrts.command.claim"));
             return false;
         }
         return true;
     }
-
+    
     public static boolean canListStaff(CommandSender sender) {
-        if(ReportRTS.permission != null) {
-            if(!ReportRTS.permission.has(sender, "reportrts.command.list")){
+        if (ReportRTS.permission != null) {
+            if (!ReportRTS.permission.has(sender, "reportrts.command.list")) {
                 sender.sendMessage(Message.errorPermission("reportrts.command.list"));
                 return false;
             }
             return true;
         }
-        if(!sender.hasPermission("reportrts.command.list")) {
+        if (!sender.hasPermission("reportrts.command.list")) {
             sender.sendMessage(Message.errorPermission("reportrts.command.list"));
             return false;
         }
         return true;
     }
-
+    
     public static boolean canBroadcast(CommandSender sender) {
-        if(ReportRTS.permission != null) {
-            if(!ReportRTS.permission.has(sender, "reportrts.command.broadcast")) {
+        if (ReportRTS.permission != null) {
+            if (!ReportRTS.permission.has(sender, "reportrts.command.broadcast")) {
                 sender.sendMessage(Message.errorPermission("reportrts.command.broadcast"));
                 return false;
             }
             return true;
         }
-        if(!sender.hasPermission("reportrts.command.broadcast")) {
+        if (!sender.hasPermission("reportrts.command.broadcast")) {
             sender.sendMessage(Message.errorPermission("reportrts.command.broadcast"));
             return false;
         }
         return true;
     }
-
+    
     public static boolean canCheckStats(CommandSender sender) {
-        if(ReportRTS.permission != null) {
-            if(!ReportRTS.permission.has(sender, "reportrts.command.stats")) {
+        if (ReportRTS.permission != null) {
+            if (!ReportRTS.permission.has(sender, "reportrts.command.stats")) {
                 sender.sendMessage(Message.errorPermission("reportrts.command.stats"));
                 return false;
             }
             return true;
         }
-        if(!sender.hasPermission("reportrts.command.stats")) {
+        if (!sender.hasPermission("reportrts.command.stats")) {
             sender.sendMessage(Message.errorPermission("reportrts.command.stats"));
             return false;
         }
         return true;
     }
-
+    
     public static boolean canComment(CommandSender sender) {
-        if(ReportRTS.permission != null) {
-            if(!ReportRTS.permission.has(sender, "reportrts.command.comment")) {
+        if (ReportRTS.permission != null) {
+            if (!ReportRTS.permission.has(sender, "reportrts.command.comment")) {
                 sender.sendMessage(Message.errorPermission("reportrts.command.comment"));
                 return false;
             }
             return true;
         }
-        if(!sender.hasPermission("reportrts.command.comment")) {
+        if (!sender.hasPermission("reportrts.command.comment")) {
             sender.sendMessage(Message.errorPermission("reportrts.command.comment"));
             return false;
         }
         return true;
     }
-
+    
     public static boolean canBypassClaim(CommandSender sender) {
-
-        if(ReportRTS.permission != null) return ReportRTS.permission.has(sender, "reportrts.bypass.claim");
-
+        
+        if (ReportRTS.permission != null) return ReportRTS.permission.has(sender, "reportrts.bypass.claim");
+        
         return sender.hasPermission("reportrts.bypass.claim");
-
+        
     }
-
+    
     public static boolean canBypassLimit(CommandSender sender) {
-
-        if(ReportRTS.permission != null) return ReportRTS.permission.has(sender, "reportrts.bypass.limit");
-
+        
+        if (ReportRTS.permission != null) return ReportRTS.permission.has(sender, "reportrts.bypass.limit");
+        
         return sender.hasPermission("reportrts.bypass.limit");
-
+        
     }
-
+    
     public static boolean canSeeHelpPage(CommandSender sender) {
-        if(ReportRTS.permission != null) {
-            if(!ReportRTS.permission.has(sender, "reportrts.command.help")) {
+        if (ReportRTS.permission != null) {
+            if (!ReportRTS.permission.has(sender, "reportrts.command.help")) {
                 sender.sendMessage(Message.errorPermission("reportrts.command.help"));
                 return false;
             }
             return true;
         }
-        if(!sender.hasPermission("reportrts.command.help")) {
+        if (!sender.hasPermission("reportrts.command.help")) {
             sender.sendMessage(Message.errorPermission("reportrts.command.help"));
             return false;
         }
         return true;
     }
-
+    
     public static boolean canManageNotifications(CommandSender sender) {
-        if(ReportRTS.permission != null) {
-            if(!ReportRTS.permission.has(sender, "reportrts.command.notifications")) {
+        if (ReportRTS.permission != null) {
+            if (!ReportRTS.permission.has(sender, "reportrts.command.notifications")) {
                 sender.sendMessage(Message.errorPermission("reportrts.command.notifications"));
                 return false;
             }
             return true;
         }
-        if(!sender.hasPermission("reportrts.command.notifications")) {
+        if (!sender.hasPermission("reportrts.command.notifications")) {
             sender.sendMessage(Message.errorPermission("reportrts.command.notifications"));
             return false;
         }
         return true;
     }
-
+    
     public static boolean canAssignTickets(CommandSender sender) {
-        if(ReportRTS.permission != null) {
-            if(!ReportRTS.permission.has(sender, "reportrts.command.assign")) {
+        if (ReportRTS.permission != null) {
+            if (!ReportRTS.permission.has(sender, "reportrts.command.assign")) {
                 sender.sendMessage(Message.errorPermission("reportrts.command.assign"));
                 return false;
             }
             return true;
         }
-        if(!sender.hasPermission("reportrts.command.assign")) {
+        if (!sender.hasPermission("reportrts.command.assign")) {
             sender.sendMessage(Message.errorPermission("reportrts.command.assign"));
             return false;
         }
         return true;
     }
-
+    
     public static boolean canReopenTicket(CommandSender sender) {
-        if(ReportRTS.permission != null) {
-            if(!ReportRTS.permission.has(sender, "reportrts.command.reopen")) {
+        if (ReportRTS.permission != null) {
+            if (!ReportRTS.permission.has(sender, "reportrts.command.reopen")) {
                 sender.sendMessage(Message.errorPermission("reportrts.command.reopen"));
                 return false;
             }
             return true;
         }
-        if(!sender.hasPermission("reportrts.command.reopen")) {
+        if (!sender.hasPermission("reportrts.command.reopen")) {
             sender.sendMessage(Message.errorPermission("reportrts.command.reopen"));
             return false;
         }

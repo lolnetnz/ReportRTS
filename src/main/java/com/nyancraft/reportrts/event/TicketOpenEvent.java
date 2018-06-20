@@ -7,8 +7,8 @@ import com.nyancraft.reportrts.data.Ticket;
  * Ticket to the staff for handling.
  */
 public class TicketOpenEvent extends TicketEvent {
-	
-	public TicketOpenEvent(Ticket ticket){
-		super(ticket);
-	}
+    
+    public TicketOpenEvent(Ticket ticket) {
+        super(ticket);
+    }
 }
