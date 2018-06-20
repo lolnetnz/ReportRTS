@@ -1244,9 +1244,9 @@ public class MySQLDataProvider implements DataProvider {
         
         if (!isLoaded()) return 0;
         
-        try (PreparedStatement ps = db.prepareStatement("UPDATE `" + plugin.storagePrefix + "reportrts_user` SET `username` = ? WHERE `uuid` = ?")) {
-            ps.setString(0, username);
-            ps.setString(1, uuid.toString());
+        try (PreparedStatement ps = db.prepareStatement("UPDATE `" + plugin.storagePrefix + "reportrts_user` SET `name` = ? WHERE `uuid` = ?")) {
+            ps.setString(1, username);
+            ps.setString(2, uuid.toString());
             
             int result = ps.executeUpdate();
             

@@ -99,6 +99,7 @@ public class RTSListener implements Listener {
         if (Staff.contains(event.getPlayer().getUniqueId())) {
             Staff.remove(event.getPlayer().getUniqueId(), true);
         }
+        
         RedisPlayer.removePlayer(event.getPlayer().getUniqueId());
     }
 }
