@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.imaginarycode.minecraft.redisbungee.RedisBungee;
+import com.imaginarycode.minecraft.redisbungee.events.PubSubMessageEvent;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.ReportRTS;
 import net.md_5.bungee.api.ProxyServer;
@@ -25,33 +26,36 @@ public class MuiltServerSupport implements Listener {
     public static boolean enabled;
     
     public static void requestPermissionsUpdate(UUID playerUUID) {
-        com.imaginarycode.minecraft.redisbungee.RedisBungeeAPI api = com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi();
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("Command", "requestPermissionsUpdate");
         jsonObject.addProperty("PlayerUUID", playerUUID.toString());
-        api.sendChannelMessage("ReportRTSBC", new Gson().toJson(jsonObject));
+        RedisBungee.getApi().sendChannelMessage("ReportRTSBC", new Gson().toJson(jsonObject));
     }
     
     public static void syncDatabase() {
-        com.imaginarycode.minecraft.redisbungee.RedisBungeeAPI api = com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi();
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("Command", "syncDatabase");
-        api.sendChannelMessage("ReportRTSBC", new Gson().toJson(jsonObject));
+        RedisBungee.getApi().sendChannelMessage("ReportRTSBC", new Gson().toJson(jsonObject));
     }
     
     public void setup() {
+        if (ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") == null) {
+            enabled = false;
+            return;
+        }
+        
+        enabled = true;
         RedisBungee.getApi().registerPubSubChannels("ReportRTSBC");
         ReportRTS.getPlugin().getProxy().getPluginManager().registerListener(ReportRTS.getPlugin(), this);
-        enabled = true;
         ReportRTS.getPlugin().getProxy().getPluginManager().registerListener(ReportRTS.getPlugin(), new MyListener());
     }
     
     public static Collection<String> getListOfPlayersOnline() {
-        return com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi().getHumanPlayersOnline();
+        return RedisBungee.getApi().getHumanPlayersOnline();
     }
     
     @EventHandler
-    public void onPubSubMessageEvent(com.imaginarycode.minecraft.redisbungee.events.PubSubMessageEvent event) {
+    public void onPubSubMessageEvent(PubSubMessageEvent event) {
         if (!event.getChannel().equals("ReportRTSBC")) {
             return;
         }
@@ -81,7 +85,6 @@ public class MuiltServerSupport implements Listener {
             UUID playerUUID = UUID.fromString(object.get("PlayerUUID").getAsString());
             ProxiedPlayer player = ProxyServer.getInstance().getPlayer(playerUUID);
             if (player != null) {
-                com.imaginarycode.minecraft.redisbungee.RedisBungeeAPI api = com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi();
                 JsonObject jsonObject = new JsonObject();
                 jsonObject.addProperty("Command", "requestPermissionsUpdateReply");
                 jsonObject.addProperty("PlayerUUID", playerUUID.toString());
@@ -91,7 +94,7 @@ public class MuiltServerSupport implements Listener {
                 }
                 
                 jsonObject.add("Permissions", jsonArray);
-                api.sendChannelMessage("ReportRTSBC", new Gson().toJson(jsonObject));
+                RedisBungee.getApi().sendChannelMessage("ReportRTSBC", new Gson().toJson(jsonObject));
             }
         } else if (command.equals("requestPermissionsUpdateReply")) {
             UUID playerUUID = UUID.fromString(object.get("PlayerUUID").getAsString());

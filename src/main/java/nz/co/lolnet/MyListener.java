@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.imaginarycode.minecraft.redisbungee.RedisBungee;
-import com.imaginarycode.minecraft.redisbungee.RedisBungeeAPI;
 import com.nyancraft.reportrts.data.Comment;
 import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.event.TicketCloseEvent;
@@ -30,7 +29,6 @@ public class MyListener implements Listener {
     }
     
     public void sendMessage(Ticket ticket, String eventName) {
-        RedisBungeeAPI api = RedisBungee.getApi();
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("Command", "sendToDiscord");
         jsonObject.addProperty("Event", eventName);
@@ -47,6 +45,6 @@ public class MyListener implements Listener {
         jsonObject.addProperty("PlayerUUID", ticket.getUUID().toString());
         jsonObject.addProperty("Name", ticket.getName());
         jsonObject.addProperty("ServerName", ticket.getServer());
-        api.sendChannelMessage("ReportRTSBC", new Gson().toJson(jsonObject));
+        RedisBungee.getApi().sendChannelMessage("ReportRTSBC", new Gson().toJson(jsonObject));
     }
 }

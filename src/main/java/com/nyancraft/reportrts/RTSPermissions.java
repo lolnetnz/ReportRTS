@@ -9,7 +9,10 @@ import nz.co.lolnet.Player;
 public class RTSPermissions {
     
     public static boolean isStaff(Player player) {
-        if (ReportRTS.permission != null) return ReportRTS.permission.playerHas(player, "reportrts.staff");
+        if (ReportRTS.permission != null) {
+            return ReportRTS.permission.playerHas(player, "reportrts.staff");
+        }
+        
         return player.hasPermission("reportrts.staff");
     }
     

@@ -3,6 +3,7 @@ package nz.co.lolnet;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.imaginarycode.minecraft.redisbungee.RedisBungee;
 
 import java.util.HashSet;
 import java.util.UUID;
@@ -20,11 +21,10 @@ public class Staff {
             jsonArray.add(uniqueId.toString());
         }
         
-        com.imaginarycode.minecraft.redisbungee.RedisBungeeAPI api = com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi();
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("Command", "syncStaffList");
         jsonObject.add("StaffList", jsonArray);
-        api.sendChannelMessage("ReportRTSBC", new Gson().toJson(jsonObject));
+        RedisBungee.getApi().sendChannelMessage("ReportRTSBC", new Gson().toJson(jsonObject));
         
     }
     
@@ -33,13 +33,12 @@ public class Staff {
     }
     
     public static boolean contains(UUID playerUUID) {
-        boolean result = staff.contains(playerUUID);
-        return result;
+        return staff.contains(playerUUID);
     }
     
     public static boolean add(UUID playerUUID, boolean update) {
         boolean result = staff.add(playerUUID);
-        if (update) {
+        if (update && MuiltServerSupport.enabled) {
             updateStaffListToOtherServers();
         }
         
@@ -48,7 +47,7 @@ public class Staff {
     
     public static boolean remove(UUID playerUUID, boolean update) {
         boolean result = staff.remove(playerUUID);
-        if (result && update) {
+        if (result && update && MuiltServerSupport.enabled) {
             updateStaffListToOtherServers();
         }
         
@@ -59,7 +58,7 @@ public class Staff {
         return staff;
     }
     
-    public void clear() {
+    public static void clear() {
         return;
     }
 }

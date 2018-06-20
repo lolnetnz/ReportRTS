@@ -15,6 +15,7 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import nz.co.lolnet.MuiltServerSupport;
 import nz.co.lolnet.Player;
+import nz.co.lolnet.Staff;
 
 import java.io.IOException;
 import java.util.TreeSet;
@@ -89,7 +90,7 @@ public class CloseTicket {
         } else {
             comment = comment.substring(args[1].length()).trim();
             
-            name = sender instanceof ProxiedPlayer ? plugin.staff.contains(user.getUuid()) ? sender.getName() + " - Staff" : sender.getName() : sender.getName();
+            name = sender instanceof ProxiedPlayer ? Staff.contains(user.getUuid()) ? sender.getName() + " - Staff" : sender.getName() : sender.getName();
             
             // Create a comment and store the comment ID.
             commentId = data.createComment(name, timestamp, comment, ticketId);

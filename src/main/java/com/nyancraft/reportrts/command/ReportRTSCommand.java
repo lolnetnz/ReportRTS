@@ -14,6 +14,7 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import nz.co.lolnet.Player;
+import nz.co.lolnet.Staff;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -343,9 +344,12 @@ public class ReportRTSCommand extends Command {
                     return true;
                 }
                 Player player1 = Player.getPlayer(sender.getName());
-                if (!RTSPermissions.isStaff(player1)) return true;
+                if (!RTSPermissions.isStaff(player1)) {
+                    return true;
+                }
+                
                 if (args.length <= 1) {
-                    if (plugin.staff.contains(player1.getUniqueId()))
+                    if (Staff.contains(player1.getUniqueId()))
                         sender.sendMessage(ChatColor.GREEN + "You are currently on duty.");
                     else
                         sender.sendMessage(ChatColor.RED + "You are currently off duty.");
@@ -357,10 +361,10 @@ public class ReportRTSCommand extends Command {
                     return true;
                 }
                 if (duty.equalsIgnoreCase("on")) {
-                    if (!plugin.staff.contains(player1.getUniqueId())) plugin.staff.add(player1.getUniqueId(), true);
+                    if (!Staff.contains(player1.getUniqueId())) Staff.add(player1.getUniqueId(), true);
                     sender.sendMessage(ChatColor.YELLOW + "You are now on duty.");
                 } else {
-                    if (plugin.staff.contains(player1.getUniqueId())) plugin.staff.remove(player1.getUniqueId(), true);
+                    if (Staff.contains(player1.getUniqueId())) Staff.remove(player1.getUniqueId(), true);
                     sender.sendMessage(ChatColor.YELLOW + "You are now off duty.");
                 }
                 break;

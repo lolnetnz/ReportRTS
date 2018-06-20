@@ -14,6 +14,7 @@ import com.nyancraft.reportrts.util.Message;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import nz.co.lolnet.Player;
+import nz.co.lolnet.Staff;
 
 import java.io.IOException;
 import java.util.TreeSet;
@@ -70,7 +71,7 @@ public class CommentTicket {
         
         String comment = RTSFunctions.implode(args, " ").trim();
         
-        String name = sender instanceof ProxiedPlayer ? plugin.staff.contains(user.getUuid()) ? sender.getName() + " - Staff" : sender.getName() : sender.getName();
+        String name = sender instanceof ProxiedPlayer ? Staff.contains(user.getUuid()) ? sender.getName() + " - Staff" : sender.getName() : sender.getName();
         
         long timestamp = System.currentTimeMillis() / 1000;
         

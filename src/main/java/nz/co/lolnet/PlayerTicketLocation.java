@@ -1,5 +1,9 @@
 package nz.co.lolnet;
 
+import io.github.lxgaming.bungeeplayer.BungeePlayer;
+import io.github.lxgaming.bungeeplayer.api.IPlayer;
+import net.md_5.bungee.api.ProxyServer;
+
 /**
  * @author James
  */
@@ -20,19 +24,20 @@ public class PlayerTicketLocation {
     }
     
     private void populate() {
-        try {
-            io.github.lxgaming.bungeeplayer.api.IPlayer bungeePlayer = io.github.lxgaming.bungeeplayer.BungeePlayer.getAPI().getPlayer(player.getUniqueId());
-            if (bungeePlayer != null) {
-                this.x = (int) bungeePlayer.getX();
-                this.y = (int) bungeePlayer.getY();
-                this.z = (int) bungeePlayer.getZ();
-                this.pitch = (int) bungeePlayer.getPitch();
-                this.yaw = (int) bungeePlayer.getYaw();
-                this.dimension = bungeePlayer.getDimension();
-                this.server = bungeePlayer.getServer();
-            }
-        } catch (Exception ex) {
+        if (ProxyServer.getInstance().getPluginManager().getPlugin("BungeePlayer") == null) {
+            this.server = player.getCurrentServerName();
+            return;
+        }
         
+        IPlayer bungeePlayer = BungeePlayer.getAPI().getPlayer(player.getUniqueId());
+        if (bungeePlayer != null) {
+            this.x = (int) bungeePlayer.getX();
+            this.y = (int) bungeePlayer.getY();
+            this.z = (int) bungeePlayer.getZ();
+            this.pitch = (int) bungeePlayer.getPitch();
+            this.yaw = (int) bungeePlayer.getYaw();
+            this.dimension = bungeePlayer.getDimension();
+            this.server = bungeePlayer.getServer();
         }
     }
     
@@ -69,6 +74,6 @@ public class PlayerTicketLocation {
     }
     
     public String getWorld() {
-        return getWorld() + " (" + getDimension() + ")";
+        return getServer() + " (" + getDimension() + ")";
     }
 }

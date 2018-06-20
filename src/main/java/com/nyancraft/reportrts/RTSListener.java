@@ -10,6 +10,7 @@ import net.md_5.bungee.event.EventPriority;
 import nz.co.lolnet.MuiltServerSupport;
 import nz.co.lolnet.Player;
 import nz.co.lolnet.RedisPlayer;
+import nz.co.lolnet.Staff;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +30,7 @@ public class RTSListener implements Listener {
         if (MuiltServerSupport.enabled) {
             MuiltServerSupport.requestPermissionsUpdate(event.getPlayer().getUniqueId());
         }
+        
         int createUser = plugin.getDataProvider().createUser(event.getPlayer().getUniqueId());
         BungeeCord.triggerAutoSync();
         BungeeCord.processPendingRequests();
@@ -70,8 +72,8 @@ public class RTSListener implements Listener {
             return;
         }
         
-        if (!plugin.staff.contains(event.getPlayer().getUniqueId())) {
-            plugin.staff.add(event.getPlayer().getUniqueId(), true);
+        if (!Staff.contains(event.getPlayer().getUniqueId())) {
+            Staff.add(event.getPlayer().getUniqueId(), true);
         }
         
         int openTickets = plugin.tickets.size();
@@ -88,8 +90,8 @@ public class RTSListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerQuit(PlayerDisconnectEvent event) {
         BungeeCord.triggerAutoSync();
-        if (plugin.staff.contains(event.getPlayer().getUniqueId())) {
-            plugin.staff.remove(event.getPlayer().getUniqueId(), true);
+        if (Staff.contains(event.getPlayer().getUniqueId())) {
+            Staff.remove(event.getPlayer().getUniqueId(), true);
         }
         RedisPlayer.removePlayer(event.getPlayer().getUniqueId());
     }

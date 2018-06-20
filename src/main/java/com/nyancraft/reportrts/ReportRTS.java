@@ -17,7 +17,6 @@ import net.md_5.bungee.config.Configuration;
 import nz.co.lolnet.ConfigManager;
 import nz.co.lolnet.MuiltServerSupport;
 import nz.co.lolnet.Permission;
-import nz.co.lolnet.Staff;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -45,7 +44,6 @@ public class ReportRTS extends Plugin {
     public Map<Integer, UUID> notifications = new HashMap<>();
     public Map<UUID, Integer> teleportMap = new HashMap<>();
     public Map<String, String> commandMap = new HashMap<>();
-    public static Staff staff = new Staff();
     
     public boolean notifyStaffOnNewRequest;
     public boolean hideNotification;
@@ -198,6 +196,7 @@ public class ReportRTS extends Plugin {
                 }
             }, 120L, (ticketNagging), TimeUnit.MINUTES);
         }
+        
         new MuiltServerSupport().setup();
     }
     
@@ -272,6 +271,7 @@ public class ReportRTS extends Plugin {
         if (this.provider != null) {
             this.provider.close();
         }
+        
         this.provider = provider;
     }
     

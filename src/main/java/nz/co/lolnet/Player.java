@@ -1,5 +1,6 @@
 package nz.co.lolnet;
 
+import com.imaginarycode.minecraft.redisbungee.RedisBungee;
 import com.nyancraft.reportrts.ReportRTS;
 import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ChatMessageType;
@@ -19,7 +20,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -32,16 +32,12 @@ public class Player implements ProxiedPlayer {
     
     private static void resyncPlayerList() {
         HashMap<UUID, Player> players = new HashMap<>();
-        try {
-            com.imaginarycode.minecraft.redisbungee.RedisBungeeAPI api = com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi();
-            Set<UUID> humanPlayersOnline = api.getPlayersOnline();
-            for (UUID uuid : humanPlayersOnline) {
-                players.put(uuid, getPlayer(uuid));
+        
+        if (MuiltServerSupport.enabled) {
+            for (UUID uniqueId : RedisBungee.getApi().getPlayersOnline()) {
+                players.put(uniqueId, getPlayer(uniqueId));
             }
-        } catch (NoClassDefFoundError e) {
-            redisNotFound = true;
-        }
-        if (redisNotFound) {
+        } else {
             for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
                 players.put(player.getUniqueId(), getPlayer(player.getUniqueId()));
             }
@@ -58,9 +54,9 @@ public class Player implements ProxiedPlayer {
         for (Player player1 : players.values()) {
             if (player1.getName().equals(playerName) && (player1.player != null)) {
                 return player1;
-                
             }
         }
+        
         return new Player(player);
     }
 // sender instanceof ProxiedPlayer has to be true
@@ -75,39 +71,39 @@ public class Player implements ProxiedPlayer {
     }
     
     public Player(String playerName) {
-        this.player = null;
-        this.playerR = new RedisPlayer(playerName);
+        this.player = ProxyServer.getInstance().getPlayer(playerName);
+        
+        if (MuiltServerSupport.enabled) {
+            this.playerR = new RedisPlayer(playerName);
+        }
     }
     
     public Player(UUID playerUUID) {
-        this.player = null;
-        this.playerR = new RedisPlayer(playerUUID);
+        this.player = ProxyServer.getInstance().getPlayer(playerUUID);
+        
+        if (MuiltServerSupport.enabled) {
+            this.playerR = new RedisPlayer(playerUUID);
+        }
     }
     
     public static Player getPlayer(String playerName) {
         for (Player player1 : players.values()) {
             if (player1.getName().equals(playerName)) {
                 return player1;
-                
             }
         }
+        
         if (ReportRTS.getPlugin().getProxy().getPlayer(playerName) != null) {
             return new Player(ReportRTS.getPlugin().getProxy().getPlayer(playerName));
         }
+        
         return null;
     }
     
-    public static Player getPlayer(UUID playerUUID) {
-        Player player = players.get(playerUUID);
-        if (player == null) {
-            if (com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi().isPlayerOnline(playerUUID)) {
-                player = new Player(playerUUID);
-                player.getPermissions();
-                players.put(playerUUID, player);
-            }
-        }
+    public static Player getPlayer(UUID uniqueId) {
+        Player player = players.getOrDefault(uniqueId, new Player(uniqueId));
+        player.getPermissions();
         return player;
-        
     }
     
     @Override

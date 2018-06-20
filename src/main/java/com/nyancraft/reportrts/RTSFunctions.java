@@ -6,6 +6,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import nz.co.lolnet.Player;
+import nz.co.lolnet.Staff;
 
 import java.text.DecimalFormat;
 import java.util.Map;
@@ -64,7 +65,7 @@ public class RTSFunctions {
     
     public static void messageStaff(String message, boolean playSound, boolean localBungeeOnly) {
         
-        for (UUID uuid : ReportRTS.getPlugin().staff.getAll()) {
+        for (UUID uuid : Staff.getAll()) {
             
             if (localBungeeOnly) {
                 ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
@@ -106,7 +107,7 @@ public class RTSFunctions {
     public static void sync() {
         ReportRTS.getPlugin().tickets.clear();
         ReportRTS.getPlugin().notifications.clear();
-        ReportRTS.getPlugin().staff.clear();
+        // Staff.clear();
         
         data.load();
         
@@ -117,7 +118,7 @@ public class RTSFunctions {
         ReportRTS.getPlugin().tickets.clear();
         ReportRTS.getPlugin().notifications.clear();
         if (updateStaff) {
-            ReportRTS.getPlugin().staff.clear();
+            // Staff.clear();
         }
         
         data.load();
@@ -179,7 +180,7 @@ public class RTSFunctions {
     public static void populateStaffMap() {
         for (Player player : Player.getOnlinePlayers()) {
             if (RTSPermissions.isStaff(player)) {
-                ReportRTS.getPlugin().staff.add(player.getUniqueId(), true);
+                Staff.add(player.getUniqueId(), true);
             }
         }
     }

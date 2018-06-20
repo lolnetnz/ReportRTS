@@ -2,6 +2,7 @@ package nz.co.lolnet;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.imaginarycode.minecraft.redisbungee.RedisBungee;
 import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.SkinConfiguration;
@@ -48,7 +49,7 @@ public class RedisPlayer implements ProxiedPlayer {
     }
     
     public boolean isOnline() {
-        return com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi().isPlayerOnline(playerUUID);
+        return RedisBungee.getApi().isPlayerOnline(playerUUID);
     }
     
     @Override
@@ -124,7 +125,7 @@ public class RedisPlayer implements ProxiedPlayer {
     @Override
     public UUID getUniqueId() {
         if (playerUUID == null && playerName != null && isOnline()) {
-            this.playerUUID = com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi().getUuidFromName(playerName);
+            this.playerUUID = RedisBungee.getApi().getUuidFromName(playerName);
         }
         return playerUUID;
     }
@@ -192,20 +193,19 @@ public class RedisPlayer implements ProxiedPlayer {
     @Override
     public String getName() {
         if (playerName == null && playerUUID != null && isOnline()) {
-            this.playerName = com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi().getNameFromUuid(playerUUID);
+            this.playerName = RedisBungee.getApi().getNameFromUuid(playerUUID);
         }
         return playerName;
     }
     
     @Override
     public void sendMessage(String string) {
-        com.imaginarycode.minecraft.redisbungee.RedisBungeeAPI api = com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi();
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("Command", "sendMessageToPlayer");
         jsonObject.addProperty("playerName", playerName);
         jsonObject.addProperty("PlayerUUID", playerUUID.toString());
         jsonObject.addProperty("Message", string);
-        api.sendChannelMessage("ReportRTSBC", new Gson().toJson(jsonObject));
+        RedisBungee.getApi().sendChannelMessage("ReportRTSBC", new Gson().toJson(jsonObject));
         
     }
     
@@ -267,8 +267,8 @@ public class RedisPlayer implements ProxiedPlayer {
     }
     
     String getCurrentServerName() {
-        for (String serverName : com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi().getServerToPlayers().keySet()) {
-            if (com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi().getServerToPlayers().get(serverName).contains(playerUUID)) {
+        for (String serverName : RedisBungee.getApi().getServerToPlayers().keySet()) {
+            if (RedisBungee.getApi().getServerToPlayers().get(serverName).contains(playerUUID)) {
                 return serverName;
             }
         }
