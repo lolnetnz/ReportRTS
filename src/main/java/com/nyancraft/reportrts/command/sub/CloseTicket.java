@@ -167,6 +167,7 @@ public class CloseTicket {
             
             plugin.getProxy().getPluginManager().callEvent(new TicketCloseEvent(ticket, sender));
         }
+        
         MuiltServerSupport.syncDatabase();
         return true;
     }

@@ -1,5 +1,6 @@
 package com.nyancraft.reportrts;
 
+import com.nyancraft.reportrts.data.User;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
@@ -31,7 +32,12 @@ public class RTSListener implements Listener {
             MuiltServerSupport.requestPermissionsUpdate(event.getPlayer().getUniqueId());
         }
         
-        int createUser = plugin.getDataProvider().createUser(event.getPlayer().getUniqueId());
+        User user = plugin.getDataProvider().getUser(event.getPlayer().getUniqueId(), 0, true);
+        if (user != null && !event.getPlayer().getName().equals(user.getUsername())) {
+            plugin.getDataProvider().setUserName(event.getPlayer().getUniqueId(), event.getPlayer().getName());
+        }
+        
+        // int createUser = plugin.getDataProvider().createUser(event.getPlayer().getUniqueId());
         BungeeCord.triggerAutoSync();
         BungeeCord.processPendingRequests();
         

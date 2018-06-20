@@ -26,6 +26,10 @@ public class MuiltServerSupport implements Listener {
     public static boolean enabled;
     
     public static void requestPermissionsUpdate(UUID playerUUID) {
+        if (!enabled) {
+            return;
+        }
+        
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("Command", "requestPermissionsUpdate");
         jsonObject.addProperty("PlayerUUID", playerUUID.toString());
@@ -33,6 +37,10 @@ public class MuiltServerSupport implements Listener {
     }
     
     public static void syncDatabase() {
+        if (!enabled) {
+            return;
+        }
+        
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("Command", "syncDatabase");
         RedisBungee.getApi().sendChannelMessage("ReportRTSBC", new Gson().toJson(jsonObject));

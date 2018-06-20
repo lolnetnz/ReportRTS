@@ -1240,6 +1240,37 @@ public class MySQLDataProvider implements DataProvider {
     }
     
     @Override
+    public int setUserName(UUID uuid, String username) {
+        
+        if (!isLoaded()) return 0;
+        
+        try (PreparedStatement ps = db.prepareStatement("UPDATE `" + plugin.storagePrefix + "reportrts_user` SET `username` = ? WHERE `uuid` = ?")) {
+            ps.setString(0, username);
+            ps.setString(1, uuid.toString());
+            
+            int result = ps.executeUpdate();
+            
+            if (result > 0) {
+                
+                if (userCache.containsKey(uuid)) {
+                    User user = userCache.get(uuid);
+                    user.setUsername(username);
+                    
+                    userCache.put(uuid, user);
+                }
+                
+            }
+            
+            return result;
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return 0;
+    }
+    
+    @Override
     public void deleteTicket(int ticketId) {
         
         if (!isLoaded()) return;

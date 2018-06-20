@@ -232,6 +232,16 @@ public interface DataProvider {
     public int setUserStatus(UUID uuid, boolean status);
     
     /**
+     * Sets the username of a user to the provided username and
+     * returns a result code.
+     *
+     * @param uuid     UUID of the player
+     * @param username Username as String
+     * @return Resultcode as a number
+     */
+    public int setUserName(UUID uuid, String username);
+    
+    /**
      * Delete the specified ticket.
      *
      * @param ticketId ID of ticket
