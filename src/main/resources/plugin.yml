@@ -1,7 +1,8 @@
 name: ${name}
 main: com.nyancraft.reportrts.ReportRTS
 version: ${version}
-author: ProjectInfinity
+author: James137137, LX_Gaming, ProjectInfinity
+softDepends: [BungeePlayer, RedisBungee]
 commands:
   ticket:
     description: General user commands for ReportRTS
