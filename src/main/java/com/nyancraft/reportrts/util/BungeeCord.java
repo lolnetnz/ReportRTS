@@ -1,12 +1,12 @@
 package com.nyancraft.reportrts.util;
 
 import com.nyancraft.reportrts.data.NotificationType;
+import nz.co.lolnet.Player;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
-import nz.co.lolnet.Player;
 
 public class BungeeCord {
 

@@ -9,11 +9,11 @@ import com.nyancraft.reportrts.event.TicketReopenEvent;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
-
-import java.io.IOException;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import nz.co.lolnet.Player;
+
+import java.io.IOException;
 
 public class ReopenTicket {
 

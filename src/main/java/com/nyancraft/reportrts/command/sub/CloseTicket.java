@@ -4,20 +4,20 @@ import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.Comment;
-import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.data.NotificationType;
+import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.data.User;
 import com.nyancraft.reportrts.event.TicketCloseEvent;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
-
-import java.io.IOException;
-import java.util.TreeSet;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import nz.co.lolnet.MuiltServerSupport;
 import nz.co.lolnet.Player;
+
+import java.io.IOException;
+import java.util.TreeSet;
 
 public class CloseTicket {
 

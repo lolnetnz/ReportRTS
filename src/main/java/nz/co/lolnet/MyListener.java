@@ -1,21 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package nz.co.lolnet;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.imaginarycode.minecraft.redisbungee.RedisBungee;
 import com.imaginarycode.minecraft.redisbungee.RedisBungeeAPI;
 import com.nyancraft.reportrts.data.Comment;
 import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.event.TicketCloseEvent;
 import com.nyancraft.reportrts.event.TicketOpenEvent;
-import java.util.ArrayList;
-import java.util.List;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
-import org.json.simple.JSONObject;
 
 /**
  *
@@ -37,24 +32,22 @@ public class MyListener implements Listener {
 
     public void sendMessage(Ticket ticket, String eventName) {
         RedisBungeeAPI api = RedisBungee.getApi();
-        JSONObject dataToSend = new JSONObject();
-
-        dataToSend.put("Command", "sendToDiscord");
-        dataToSend.put("Event", eventName);
-        dataToSend.put("StaffName", ticket.getStaffName());
-        dataToSend.put("Message", ticket.getMessage());
-        List<String> commentList = new ArrayList<>();
-        if (!ticket.getComments().isEmpty()) {
-            for (Comment comment : ticket.getComments()) {
-                commentList.add(comment.getComment());
-            }
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("Command", "sendToDiscord");
+        jsonObject.addProperty("Event", eventName);
+        jsonObject.addProperty("StaffName", ticket.getStaffName());
+        jsonObject.addProperty("Message", ticket.getMessage());
+        
+        JsonArray jsonArray = new JsonArray();
+        for (Comment comment : ticket.getComments()) {
+            jsonArray.add(comment.getComment());
         }
-        dataToSend.put("Comment", commentList);
-        dataToSend.put("TicketID", ticket.getId());
-        dataToSend.put("PlayerUUID", ticket.getUUID());
-        dataToSend.put("Name", ticket.getName());
-        dataToSend.put("ServerName", ticket.getServer());
-        api.sendChannelMessage("ReportRTSBC", dataToSend.toJSONString());
+        
+        jsonObject.add("Comment", jsonArray);
+        jsonObject.addProperty("TicketID", ticket.getId());
+        jsonObject.addProperty("PlayerUUID", ticket.getUUID().toString());
+        jsonObject.addProperty("Name", ticket.getName());
+        jsonObject.addProperty("ServerName", ticket.getServer());
+        api.sendChannelMessage("ReportRTSBC", new Gson().toJson(jsonObject));
     }
-
 }

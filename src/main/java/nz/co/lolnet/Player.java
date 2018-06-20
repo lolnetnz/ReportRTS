@@ -1,11 +1,19 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package nz.co.lolnet;
 
 import com.nyancraft.reportrts.ReportRTS;
+import net.md_5.bungee.api.Callback;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.SkinConfiguration;
+import net.md_5.bungee.api.Title;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.connection.PendingConnection;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.connection.Server;
+import net.md_5.bungee.api.event.ServerConnectEvent;
+import net.md_5.bungee.api.score.Scoreboard;
+
 import java.net.InetSocketAddress;
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,15 +21,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import net.md_5.bungee.BungeeCord;
-import net.md_5.bungee.api.Callback;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.Title;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.config.ServerInfo;
-import net.md_5.bungee.api.connection.PendingConnection;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.connection.Server;
 
 /**
  *
@@ -44,7 +43,7 @@ public class Player implements ProxiedPlayer {
             redisNotFound = true;
         }
         if (redisNotFound) {
-            for (ProxiedPlayer player : BungeeCord.getInstance().getPlayers()) {
+            for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
                 players.put(player.getUniqueId(), getPlayer(player.getUniqueId()));
             }
         }
@@ -354,5 +353,44 @@ public class Player implements ProxiedPlayer {
         return RedisBungee.getApi().getPlayersOnline().contains(getUniqueId());
     }
      */
-
+    
+    @Override
+    public void connect(ServerInfo target, ServerConnectEvent.Reason reason) {
+    
+    }
+    
+    @Override
+    public void connect(ServerInfo target, Callback<Boolean> callback, ServerConnectEvent.Reason reason) {
+    
+    }
+    
+    @Override
+    public byte getViewDistance() {
+        return 0;
+    }
+    
+    @Override
+    public ChatMode getChatMode() {
+        return null;
+    }
+    
+    @Override
+    public boolean hasChatColors() {
+        return false;
+    }
+    
+    @Override
+    public SkinConfiguration getSkinParts() {
+        return null;
+    }
+    
+    @Override
+    public MainHand getMainHand() {
+        return null;
+    }
+    
+    @Override
+    public Scoreboard getScoreboard() {
+        return null;
+    }
 }

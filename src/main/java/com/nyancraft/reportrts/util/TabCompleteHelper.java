@@ -2,14 +2,14 @@ package com.nyancraft.reportrts.util;
 
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.ReportRTS;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.TabCompleteEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class TabCompleteHelper implements Listener {
 

@@ -7,10 +7,9 @@ import com.nyancraft.reportrts.data.NotificationType;
 import com.nyancraft.reportrts.event.TicketBroadcastEvent;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
-
+import net.md_5.bungee.api.CommandSender;
 
 import java.io.IOException;
-import net.md_5.bungee.api.CommandSender;
 
 public class BroadcastMessage {
 

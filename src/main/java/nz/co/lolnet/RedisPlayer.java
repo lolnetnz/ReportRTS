@@ -1,26 +1,25 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package nz.co.lolnet;
 
-import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.SkinConfiguration;
 import net.md_5.bungee.api.Title;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
-import org.json.simple.JSONObject;
+import net.md_5.bungee.api.event.ServerConnectEvent;
+import net.md_5.bungee.api.score.Scoreboard;
+
+import java.net.InetSocketAddress;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  *
@@ -202,12 +201,12 @@ public class RedisPlayer implements ProxiedPlayer {
     @Override
     public void sendMessage(String string) {
         com.imaginarycode.minecraft.redisbungee.RedisBungeeAPI api = com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi();
-        JSONObject dataToSend = new JSONObject();
-        dataToSend.put("Command", "sendMessageToPlayer");
-        dataToSend.put("playerName", playerName);
-        dataToSend.put("PlayerUUID", playerUUID.toString());
-        dataToSend.put("Message", string);
-        api.sendChannelMessage("ReportRTSBC", dataToSend.toJSONString());
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("Command", "sendMessageToPlayer");
+        jsonObject.addProperty("playerName", playerName);
+        jsonObject.addProperty("PlayerUUID", playerUUID.toString());
+        jsonObject.addProperty("Message", string);
+        api.sendChannelMessage("ReportRTSBC", new Gson().toJson(jsonObject));
 
     }
 
@@ -276,5 +275,44 @@ public class RedisPlayer implements ProxiedPlayer {
         }
         return null;
     }
-
+    
+    @Override
+    public void connect(ServerInfo target, ServerConnectEvent.Reason reason) {
+    
+    }
+    
+    @Override
+    public void connect(ServerInfo target, Callback<Boolean> callback, ServerConnectEvent.Reason reason) {
+    
+    }
+    
+    @Override
+    public byte getViewDistance() {
+        return 0;
+    }
+    
+    @Override
+    public ChatMode getChatMode() {
+        return null;
+    }
+    
+    @Override
+    public boolean hasChatColors() {
+        return false;
+    }
+    
+    @Override
+    public SkinConfiguration getSkinParts() {
+        return null;
+    }
+    
+    @Override
+    public MainHand getMainHand() {
+        return null;
+    }
+    
+    @Override
+    public Scoreboard getScoreboard() {
+        return null;
+    }
 }

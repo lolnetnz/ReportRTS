@@ -1,7 +1,17 @@
 package com.nyancraft.reportrts.command;
 
 import com.nyancraft.reportrts.ReportRTS;
-import com.nyancraft.reportrts.command.sub.*;
+import com.nyancraft.reportrts.command.sub.AssignTicket;
+import com.nyancraft.reportrts.command.sub.BroadcastMessage;
+import com.nyancraft.reportrts.command.sub.ClaimTicket;
+import com.nyancraft.reportrts.command.sub.CloseTicket;
+import com.nyancraft.reportrts.command.sub.CommentTicket;
+import com.nyancraft.reportrts.command.sub.HoldTicket;
+import com.nyancraft.reportrts.command.sub.ListStaff;
+import com.nyancraft.reportrts.command.sub.OpenTicket;
+import com.nyancraft.reportrts.command.sub.ReadTicket;
+import com.nyancraft.reportrts.command.sub.ReopenTicket;
+import com.nyancraft.reportrts.command.sub.UnclaimTicket;
 import com.nyancraft.reportrts.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;

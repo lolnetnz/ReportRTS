@@ -1,28 +1,37 @@
 package com.nyancraft.reportrts;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.*;
-import java.util.logging.Logger;
-
 import com.nyancraft.reportrts.api.ApiServer;
-import com.nyancraft.reportrts.command.*;
+import com.nyancraft.reportrts.command.LegacyCommandListener;
+import com.nyancraft.reportrts.command.ReportRTSCommand;
+import com.nyancraft.reportrts.command.TicketCommand;
 import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.persistence.MySQLDataProvider;
-import com.nyancraft.reportrts.util.*;
-import java.util.concurrent.TimeUnit;
+import com.nyancraft.reportrts.util.Message;
+import com.nyancraft.reportrts.util.MessageHandler;
+import com.nyancraft.reportrts.util.TabCompleteHelper;
+import com.nyancraft.reportrts.util.VersionChecker;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
 import net.md_5.bungee.config.Configuration;
 import nz.co.lolnet.ConfigManager;
 import nz.co.lolnet.MuiltServerSupport;
-
 import nz.co.lolnet.Permission;
-import nz.co.lolnet.Player;
 import nz.co.lolnet.Staff;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.TreeMap;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 public class ReportRTS extends Plugin {
 

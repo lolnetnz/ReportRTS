@@ -1,12 +1,10 @@
 package com.nyancraft.reportrts.util;
 
-import java.text.MessageFormat;
-
-
-
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.ReportRTS;
 import net.md_5.bungee.api.ChatColor;
+
+import java.text.MessageFormat;
 
 public class Message {
 

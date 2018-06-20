@@ -1,9 +1,9 @@
 package com.nyancraft.reportrts.data;
 
-import java.util.SortedSet;
+import nz.co.lolnet.PlayerTicketLocation;
+
 import java.util.TreeSet;
 import java.util.UUID;
-import nz.co.lolnet.PlayerTicketLocation;
 
 public class Ticket {
     

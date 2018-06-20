@@ -1,25 +1,21 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package nz.co.lolnet;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import com.imaginarycode.minecraft.redisbungee.RedisBungee;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.ReportRTS;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 /**
  *
@@ -31,17 +27,17 @@ public class MuiltServerSupport implements Listener {
 
     public static void requestPermissionsUpdate(UUID playerUUID) {
         com.imaginarycode.minecraft.redisbungee.RedisBungeeAPI api = com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi();
-        JSONObject dataToSend = new JSONObject();
-        dataToSend.put("Command", "requestPermissionsUpdate");
-        dataToSend.put("PlayerUUID", playerUUID.toString());
-        api.sendChannelMessage("ReportRTSBC", dataToSend.toJSONString());
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("Command", "requestPermissionsUpdate");
+        jsonObject.addProperty("PlayerUUID", playerUUID.toString());
+        api.sendChannelMessage("ReportRTSBC", new Gson().toJson(jsonObject));
     }
 
     public static void syncDatabase() {
         com.imaginarycode.minecraft.redisbungee.RedisBungeeAPI api = com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi();
-        JSONObject dataToSend = new JSONObject();
-        dataToSend.put("Command", "syncDatabase");
-        api.sendChannelMessage("ReportRTSBC", dataToSend.toJSONString());
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("Command", "syncDatabase");
+        api.sendChannelMessage("ReportRTSBC", new Gson().toJson(jsonObject));
     }
 
     public void setup() {
@@ -60,46 +56,54 @@ public class MuiltServerSupport implements Listener {
         if (!event.getChannel().equals("ReportRTSBC")) {
             return;
         }
-        JSONParser parser = new JSONParser();
-        JSONObject object;
+        
+        JsonObject object;
         try {
-            object = (JSONObject) parser.parse(event.getMessage());
-        } catch (ParseException ex) {
+            object = new Gson().fromJson(event.getMessage(), JsonObject.class);
+        } catch (JsonSyntaxException ex) {
             return;
         }
-        String command = (String) object.get("Command");
+        
+        
+        
+        String command = object.get("Command").getAsString();
         if (command == null) {
             return;
         }
+        
         if (command.equals("sendMessageToPlayer")) {
 
-            UUID playerUUID = UUID.fromString((String) object.get("PlayerUUID"));
-            String message = (String) object.get("Message");
-            ProxiedPlayer player = net.md_5.bungee.BungeeCord.getInstance().getPlayer(playerUUID);
+            UUID playerUUID = UUID.fromString(object.get("PlayerUUID").getAsString());
+            String message = object.get("Message").getAsString();
+            ProxiedPlayer player = ProxyServer.getInstance().getPlayer(playerUUID);
             if (player != null) {
-                net.md_5.bungee.BungeeCord.getInstance().getPlayer(playerUUID).sendMessage(message);
+                ProxyServer.getInstance().getPlayer(playerUUID).sendMessage(message);
             }
         } else if (command.equals("requestPermissionsUpdate")) {
-            UUID playerUUID = UUID.fromString((String) object.get("PlayerUUID"));
-            ProxiedPlayer player = net.md_5.bungee.BungeeCord.getInstance().getPlayer(playerUUID);
+            UUID playerUUID = UUID.fromString(object.get("PlayerUUID").getAsString());
+            ProxiedPlayer player = ProxyServer.getInstance().getPlayer(playerUUID);
             if (player != null) {
                 com.imaginarycode.minecraft.redisbungee.RedisBungeeAPI api = com.imaginarycode.minecraft.redisbungee.RedisBungee.getApi();
-                JSONObject dataToSend = new JSONObject();
-                dataToSend.put("Command", "requestPermissionsUpdateReply");
-                dataToSend.put("PlayerUUID", playerUUID.toString());
-                List<String> permissions = new ArrayList<>(player.getPermissions());
-                dataToSend.put("Permissions", permissions);
-                api.sendChannelMessage("ReportRTSBC", dataToSend.toJSONString());
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("Command", "requestPermissionsUpdateReply");
+                jsonObject.addProperty("PlayerUUID", playerUUID.toString());
+                JsonArray jsonArray = new JsonArray();
+                for (String permission : player.getPermissions()) {
+                    jsonArray.add(permission);
+                }
+                
+                jsonObject.add("Permissions", jsonArray);
+                api.sendChannelMessage("ReportRTSBC", new Gson().toJson(jsonObject));
             }
         } else if (command.equals("requestPermissionsUpdateReply")) {
-            UUID playerUUID = UUID.fromString((String) object.get("PlayerUUID"));
+            UUID playerUUID = UUID.fromString(object.get("PlayerUUID").getAsString());
             if (RedisPlayer.redisPlayers.containsKey(playerUUID)) {
-                RedisPlayer.redisPlayers.get(playerUUID).playerPermissions = (ArrayList<String>) object.get("Permissions");
+                RedisPlayer.redisPlayers.get(playerUUID).playerPermissions = new Gson().fromJson(object.get("Permissions"), new TypeToken<List<String>>() {}.getType());
             }
         } else if (command.equals("syncDatabase")) {
             RTSFunctions.sync(false);
         } else if (command.equals("syncStaffList")) {
-            List<String> staffList = (ArrayList<String>) object.get("StaffList");
+            List<String> staffList = new Gson().fromJson(object.get("StaffList"), new TypeToken<List<String>>() {}.getType());
             for (String uuid : staffList) {
                 Staff.add(UUID.fromString(uuid), false);
             }

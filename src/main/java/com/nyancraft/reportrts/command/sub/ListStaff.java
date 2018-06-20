@@ -3,11 +3,11 @@ package com.nyancraft.reportrts.command.sub;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.util.Message;
-
-import java.util.UUID;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import nz.co.lolnet.Player;
+
+import java.util.UUID;
 
 public class ListStaff {
 

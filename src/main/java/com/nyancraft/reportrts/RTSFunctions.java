@@ -1,14 +1,15 @@
 package com.nyancraft.reportrts;
 
-import java.text.DecimalFormat;
-import java.util.*;
-
 import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.persistence.DataProvider;
-import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import nz.co.lolnet.Player;
+
+import java.text.DecimalFormat;
+import java.util.Map;
+import java.util.UUID;
 
 public class RTSFunctions {
 
@@ -66,7 +67,7 @@ public class RTSFunctions {
         for (UUID uuid : ReportRTS.getPlugin().staff.getAll()) {
 
             if (localBungeeOnly) {
-                ProxiedPlayer player = BungeeCord.getInstance().getPlayer(uuid);
+                ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
                 if (player != null) {
                     player.sendMessage(message);
                 }

@@ -4,12 +4,12 @@ import com.nyancraft.reportrts.data.Comment;
 import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.Message;
+import nz.co.lolnet.Player;
 
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.UUID;
-import nz.co.lolnet.Player;
 
 public class LoginTask implements Runnable {
 
