@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package nz.co.lolnet;
 
 /**
@@ -10,60 +5,71 @@ package nz.co.lolnet;
  * @author James
  */
 public class PlayerTicketLocation {
-
-    Player player;
-    int dimension = 0;
-    double x = 0;
-    double y = 0;
-    double z = 0;
-    double yaw = 0;
-    double pitch = 0;
+    
+    private final Player player;
+    private int x;
+    private int y;
+    private int z;
+    private int pitch;
+    private int yaw;
+    private int dimension;
+    private String server;
 
     public PlayerTicketLocation(Player player) {
         this.player = player;
+        populate();
+    }
+    
+    private void populate() {
         try {
-            if (io.github.lxgaming.bungeeplayer.BungeePlayer.getApi().getData().getPlayer(player) != null) {
-                io.github.lxgaming.bungeeplayer.Location location = io.github.lxgaming.bungeeplayer.BungeePlayer.getApi().getData().getPlayer(player).getLocation();
-                if (location != null) {
-                    this.dimension = location.getDimension();
-                    this.x = location.getX();
-                    this.y = location.getY();
-                    this.z = location.getZ();
-                    this.yaw = location.getYaw();
-                    this.pitch = location.getPitch();
-                }
+            io.github.lxgaming.bungeeplayer.api.IPlayer bungeePlayer = io.github.lxgaming.bungeeplayer.BungeePlayer.getAPI().getPlayer(player.getUniqueId());
+            if (bungeePlayer != null) {
+                this.x = (int) bungeePlayer.getX();
+                this.y = (int) bungeePlayer.getY();
+                this.z = (int) bungeePlayer.getZ();
+                this.pitch = (int) bungeePlayer.getPitch();
+                this.yaw = (int) bungeePlayer.getYaw();
+                this.dimension = bungeePlayer.getDimension();
+                this.server = bungeePlayer.getServer();
             }
-        } catch (Exception e) { //This is here incaase the plugin is not installed
+        } catch (Exception ex) {
+        
         }
-
     }
-
-    public String getWorld() {
-        return player.getCurrentServerName() + "(" + this.dimension + ")";
+    
+    public Player getPlayer() {
+        return player;
     }
-
-    public double getY() {
-        return this.y;
+    
+    public int getX() {
+        return x;
     }
-
-    public double getX() {
-        return this.y;
+    
+    public int getY() {
+        return y;
     }
-
-    public double getZ() {
-        return this.z;
+    
+    public int getZ() {
+        return z;
     }
-
-    public double getYaw() {
-        return this.yaw;
+    
+    public int getPitch() {
+        return pitch;
     }
-
-    public double getPitch() {
-        return this.pitch;
+    
+    public int getYaw() {
+        return yaw;
     }
-
+    
+    public int getDimension() {
+        return dimension;
+    }
+    
     public String getServer() {
-        return player.getCurrentServerName();
+        return server;
     }
-
+    
+    public String getWorld() {
+        return getWorld() + " (" + getDimension() + ")";
+    }
 }
