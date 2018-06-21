@@ -4,8 +4,8 @@ import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.Comment;
 import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.data.User;
-import nz.co.lolnet.Player;
-import nz.co.lolnet.PlayerTicketLocation;
+import nz.co.lolnet.reportrts.Player;
+import nz.co.lolnet.reportrts.PlayerTicketLocation;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

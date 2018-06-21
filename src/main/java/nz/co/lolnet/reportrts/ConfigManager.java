@@ -1,4 +1,4 @@
-package nz.co.lolnet;
+package nz.co.lolnet.reportrts;
 
 import com.google.common.io.ByteStreams;
 import com.nyancraft.reportrts.ReportRTS;

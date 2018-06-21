@@ -1,4 +1,4 @@
-package nz.co.lolnet;
+package nz.co.lolnet.reportrts;
 
 import net.md_5.bungee.api.CommandSender;
 

@@ -1,6 +1,6 @@
 package com.nyancraft.reportrts.data;
 
-import nz.co.lolnet.PlayerTicketLocation;
+import nz.co.lolnet.reportrts.PlayerTicketLocation;
 
 import java.util.TreeSet;
 import java.util.UUID;

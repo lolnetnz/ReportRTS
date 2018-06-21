@@ -1,4 +1,4 @@
-package nz.co.lolnet;
+package nz.co.lolnet.reportrts;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;

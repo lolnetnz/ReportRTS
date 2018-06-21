@@ -10,7 +10,7 @@ import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
 import net.md_5.bungee.api.CommandSender;
-import nz.co.lolnet.Player;
+import nz.co.lolnet.reportrts.Player;
 
 import java.io.IOException;
 

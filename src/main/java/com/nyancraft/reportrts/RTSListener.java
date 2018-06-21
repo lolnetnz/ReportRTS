@@ -8,10 +8,10 @@ import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
-import nz.co.lolnet.MuiltServerSupport;
-import nz.co.lolnet.Player;
-import nz.co.lolnet.RedisPlayer;
-import nz.co.lolnet.Staff;
+import nz.co.lolnet.reportrts.MuiltServerSupport;
+import nz.co.lolnet.reportrts.Player;
+import nz.co.lolnet.reportrts.RedisPlayer;
+import nz.co.lolnet.reportrts.Staff;
 
 import java.util.HashMap;
 import java.util.Map;

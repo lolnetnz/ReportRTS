@@ -5,8 +5,8 @@ import com.nyancraft.reportrts.persistence.DataProvider;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import nz.co.lolnet.Player;
-import nz.co.lolnet.Staff;
+import nz.co.lolnet.reportrts.Player;
+import nz.co.lolnet.reportrts.Staff;
 
 import java.text.DecimalFormat;
 import java.util.Map;

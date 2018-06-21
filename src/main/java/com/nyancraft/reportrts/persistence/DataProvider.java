@@ -3,7 +3,7 @@ package com.nyancraft.reportrts.persistence;
 import com.nyancraft.reportrts.data.Comment;
 import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.data.User;
-import nz.co.lolnet.PlayerTicketLocation;
+import nz.co.lolnet.reportrts.PlayerTicketLocation;
 
 import java.util.ArrayList;
 import java.util.HashMap;

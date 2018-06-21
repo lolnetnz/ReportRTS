@@ -4,7 +4,7 @@ import com.nyancraft.reportrts.data.Comment;
 import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.Message;
-import nz.co.lolnet.Player;
+import nz.co.lolnet.reportrts.Player;
 
 import java.util.Iterator;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package nz.co.lolnet;
+package nz.co.lolnet.reportrts;
 
 import io.github.lxgaming.bungeeplayer.BungeePlayer;
 import io.github.lxgaming.bungeeplayer.api.IPlayer;

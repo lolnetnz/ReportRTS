@@ -14,9 +14,9 @@ import com.nyancraft.reportrts.util.VersionChecker;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
 import net.md_5.bungee.config.Configuration;
-import nz.co.lolnet.ConfigManager;
-import nz.co.lolnet.MuiltServerSupport;
-import nz.co.lolnet.Permission;
+import nz.co.lolnet.reportrts.ConfigManager;
+import nz.co.lolnet.reportrts.MuiltServerSupport;
+import nz.co.lolnet.reportrts.Permission;
 
 import java.io.FileReader;
 import java.io.IOException;

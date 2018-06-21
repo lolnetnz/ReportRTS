@@ -1,7 +1,7 @@
 package com.nyancraft.reportrts.util;
 
 import com.nyancraft.reportrts.data.NotificationType;
-import nz.co.lolnet.Player;
+import nz.co.lolnet.reportrts.Player;
 
 import java.io.IOException;
 import java.util.List;

@@ -4,7 +4,7 @@ package com.nyancraft.reportrts;
 import com.nyancraft.reportrts.util.Message;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import nz.co.lolnet.Player;
+import nz.co.lolnet.reportrts.Player;
 
 public class RTSPermissions {
     

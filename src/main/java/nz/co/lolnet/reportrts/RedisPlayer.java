@@ -1,10 +1,10 @@
-package nz.co.lolnet;
+package nz.co.lolnet.reportrts;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.imaginarycode.minecraft.redisbungee.RedisBungee;
-import com.nyancraft.reportrts.ReportRTS;
 import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.SkinConfiguration;
 import net.md_5.bungee.api.Title;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -25,90 +25,36 @@ import java.util.UUID;
 /**
  * @author James
  */
-public class Player implements ProxiedPlayer {
+public class RedisPlayer implements ProxiedPlayer {
     
-    static boolean redisNotFound = false;
-    private static HashMap<UUID, Player> players = new HashMap<>();
+    public static HashMap<UUID, RedisPlayer> redisPlayers = new HashMap<>();
+    String playerName;
+    UUID playerUUID;
+    Collection<String> playerPermissions;
     
-    private static void resyncPlayerList() {
-        HashMap<UUID, Player> players = new HashMap<>();
-        
-        if (MuiltServerSupport.enabled) {
-            for (UUID uniqueId : RedisBungee.getApi().getPlayersOnline()) {
-                players.put(uniqueId, getPlayer(uniqueId));
-            }
-        } else {
-            for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
-                players.put(player.getUniqueId(), getPlayer(player.getUniqueId()));
-            }
-        }
-        
-        Player.players = players;
+    public RedisPlayer(String playerName) {
+        this.playerName = playerName;
+        this.playerUUID = getUniqueId();
+        redisPlayers.put(playerUUID, this);
     }
     
-    ProxiedPlayer player;
-    RedisPlayer playerR;
-    
-    public static Player getPlayer(ProxiedPlayer player) {
-        String playerName = player.getName();
-        for (Player player1 : players.values()) {
-            if (player1.getName().equals(playerName) && (player1.player != null)) {
-                return player1;
-            }
-        }
-        
-        return new Player(player);
-    }
-// sender instanceof ProxiedPlayer has to be true
-    
-    public static Collection<Player> getOnlinePlayers() {
-        resyncPlayerList();
-        return players.values();
+    public RedisPlayer(UUID playerUUID) {
+        this.playerUUID = playerUUID;
+        playerName = getName();
+        redisPlayers.put(playerUUID, this);
     }
     
-    public Player(ProxiedPlayer player) {
-        this.player = player;
+    public static void removePlayer(UUID playerUUID) {
+        redisPlayers.remove(playerUUID);
     }
     
-    public Player(String playerName) {
-        this.player = ProxyServer.getInstance().getPlayer(playerName);
-        
-        if (MuiltServerSupport.enabled) {
-            this.playerR = new RedisPlayer(playerName);
-        }
-    }
-    
-    public Player(UUID playerUUID) {
-        this.player = ProxyServer.getInstance().getPlayer(playerUUID);
-        
-        if (MuiltServerSupport.enabled) {
-            this.playerR = new RedisPlayer(playerUUID);
-        }
-    }
-    
-    public static Player getPlayer(String playerName) {
-        for (Player player1 : players.values()) {
-            if (player1.getName().equals(playerName)) {
-                return player1;
-            }
-        }
-        
-        if (ReportRTS.getPlugin().getProxy().getPlayer(playerName) != null) {
-            return new Player(ReportRTS.getPlugin().getProxy().getPlayer(playerName));
-        }
-        
-        return null;
-    }
-    
-    public static Player getPlayer(UUID uniqueId) {
-        Player player = players.getOrDefault(uniqueId, new Player(uniqueId));
-        player.getPermissions();
-        return player;
+    public boolean isOnline() {
+        return RedisBungee.getApi().isPlayerOnline(playerUUID);
     }
     
     @Override
     public String getDisplayName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getName();
     }
     
     @Override
@@ -171,20 +117,17 @@ public class Player implements ProxiedPlayer {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    @Deprecated
     @Override
     public String getUUID() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getUniqueId().toString();
     }
     
     @Override
     public UUID getUniqueId() {
-        if (player != null) {
-            return player.getUniqueId();
-        } else if (playerR != null) {
-            return playerR.getUniqueId();
+        if (playerUUID == null && playerName != null && isOnline()) {
+            this.playerUUID = RedisBungee.getApi().getUuidFromName(playerName);
         }
-        return null;
+        return playerUUID;
     }
     
     @Override
@@ -249,21 +192,20 @@ public class Player implements ProxiedPlayer {
     
     @Override
     public String getName() {
-        if (player != null) {
-            return player.getName();
-        } else if (playerR != null) {
-            return playerR.getName();
+        if (playerName == null && playerUUID != null && isOnline()) {
+            this.playerName = RedisBungee.getApi().getNameFromUuid(playerUUID);
         }
-        return null;
+        return playerName;
     }
     
     @Override
     public void sendMessage(String string) {
-        if (player != null) {
-            player.sendMessage(string);
-        } else if (playerR != null) {
-            playerR.sendMessage(string);
-        }
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("Command", "sendMessageToPlayer");
+        jsonObject.addProperty("playerName", playerName);
+        jsonObject.addProperty("PlayerUUID", playerUUID.toString());
+        jsonObject.addProperty("Message", string);
+        RedisBungee.getApi().sendChannelMessage("ReportRTSBC", new Gson().toJson(jsonObject));
         
     }
     
@@ -299,15 +241,7 @@ public class Player implements ProxiedPlayer {
     
     @Override
     public boolean hasPermission(String string) {
-        if (Permission.debug) {
-            return true;
-        }
-        if (player != null) {
-            return player.hasPermission(string);
-        } else if (playerR != null) {
-            return playerR.hasPermission(string);
-        }
-        return false;
+        return playerPermissions.contains(string);
     }
     
     @Override
@@ -322,32 +256,24 @@ public class Player implements ProxiedPlayer {
     
     @Override
     public Collection<String> getPermissions() {
-        if (player != null) {
-            return player.getPermissions();
-        } else if (playerR != null) {
-            return playerR.getPermissions();
+        if (playerPermissions == null) {
+            updatePermissions();
         }
-        return null;
+        return playerPermissions;
+    }
+    
+    private void updatePermissions() {
+        MuiltServerSupport.requestPermissionsUpdate(playerUUID);
     }
     
     String getCurrentServerName() {
-        if (player != null) {
-            return player.getServer().getInfo().getName();
-        } else if (playerR != null) {
-            return playerR.getCurrentServerName();
+        for (String serverName : RedisBungee.getApi().getServerToPlayers().keySet()) {
+            if (RedisBungee.getApi().getServerToPlayers().get(serverName).contains(playerUUID)) {
+                return serverName;
+            }
         }
         return null;
     }
-    
-    public boolean canSee(Player player) {
-        return true;
-    }
-    
-    /*
-    private boolean isOnline() {
-        return RedisBungee.getApi().getPlayersOnline().contains(getUniqueId());
-    }
-     */
     
     @Override
     public void connect(ServerInfo target, ServerConnectEvent.Reason reason) {

@@ -2,7 +2,7 @@ package com.nyancraft.reportrts.util;
 
 import com.nyancraft.reportrts.ReportRTS;
 import net.md_5.bungee.config.Configuration;
-import nz.co.lolnet.ConfigManager;
+import nz.co.lolnet.reportrts.ConfigManager;
 
 import java.io.File;
 import java.util.Collection;
