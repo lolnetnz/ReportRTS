@@ -11,13 +11,16 @@ public class Message {
     private static String parse(String key, Object... params) {
         Object prop = ReportRTS.getMessageHandler().messageMap.get(key);
         if (prop == null) {
-            if (ReportRTS.getMessageHandler().getMessageConfig().getString(key) == null)
+            if (ReportRTS.getMessageHandler().getMessageConfig().getString(key) == null) {
                 return "Missing message <" + key + "> in ReportRTS/messages.yml, no default found.";
+            }
+            
             ReportRTS.getMessageHandler().messageMap.put(key, ReportRTS.getMessageHandler().getMessageConfig().getString(key));
             ReportRTS.getMessageHandler().getMessageConfig().set(key, ReportRTS.getMessageHandler().getMessageConfig().getString(key));
             prop = ReportRTS.getMessageHandler().getMessageConfig().getString(key);
             ReportRTS.getMessageHandler().saveMessageConfig();
         }
+        
         return MessageFormat.format(parseColors((String) prop), params);
     }
     
@@ -70,7 +73,7 @@ public class Message {
     }
     
     public static String errorPermission(String... params) {
-        return parse("error-permission", params);
+        return parse("error-permission", (Object[]) params);
     }
     
     public static String errorTicketStatus() {
@@ -158,7 +161,7 @@ public class Message {
     }
     
     public static String ticketHoldText(String... params) {
-        return parse("ticket-hold-text", params);
+        return parse("ticket-hold-text", (Object[]) params);
     }
     
     public static String ticketHoldUser(String player, int ticketId) {
@@ -182,7 +185,7 @@ public class Message {
     }
     
     public static String ticketCloseText(String... params) {
-        return parse("ticket-close-text", params);
+        return parse("ticket-close-text", (Object[]) params);
     }
     
     public static String ticketDuplicate() {
@@ -246,15 +249,15 @@ public class Message {
     }
     
     public static String staffListSeparator(String... params) {
-        return parse("staff-list-separator", params);
+        return parse("staff-list-separator", (Object[]) params);
     }
     
     public static String staffListEmpty(String... params) {
-        return parse("staff-list-empty", params);
+        return parse("staff-list-empty", (Object[]) params);
     }
     
     public static String staffListOnline(String... params) {
-        return parse("staff-list-online", params);
+        return parse("staff-list-online", (Object[]) params);
     }
     
     public static String outdated(String version) {
