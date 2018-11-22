@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.imaginarycode.minecraft.redisbungee.RedisBungee;
 import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.ServerConnectRequest;
 import net.md_5.bungee.api.SkinConfiguration;
 import net.md_5.bungee.api.Title;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -55,6 +56,11 @@ public class RedisPlayer implements ProxiedPlayer {
     @Override
     public String getDisplayName() {
         return getName();
+    }
+    
+    @Override
+    public void connect(ServerConnectRequest request) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
     @Override

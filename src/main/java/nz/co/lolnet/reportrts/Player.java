@@ -5,6 +5,7 @@ import com.nyancraft.reportrts.ReportRTS;
 import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.ServerConnectRequest;
 import net.md_5.bungee.api.SkinConfiguration;
 import net.md_5.bungee.api.Title;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -104,6 +105,11 @@ public class Player implements ProxiedPlayer {
         Player player = players.getOrDefault(uniqueId, new Player(uniqueId));
         player.getPermissions();
         return player;
+    }
+    
+    @Override
+    public void connect(ServerConnectRequest request) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
     @Override

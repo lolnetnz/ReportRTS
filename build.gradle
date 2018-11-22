@@ -32,15 +32,17 @@ repositories {
 
 dependencies {
     provided("com.imaginarycode.minecraft:RedisBungee:0.3.8-INTERIM")
-    provided("io.github.lxgaming:bungeeplayer:1.1.0")
-    provided("net.md-5:bungeecord-api:1.12-SNAPSHOT")
+    provided("io.github.lxgaming:bungeeplayer:1.1.3")
+    provided("net.md-5:bungeecord-api:1.13-SNAPSHOT")
 }
 
 jar {
     from {
-        (configurations.compile - configurations.provided).collect {
+        (configurations.compile - configurations.provided).findAll({
+            it.isDirectory() || it.name.endsWith(".jar")
+        }).collect({
             it.isDirectory() ? it : zipTree(it)
-        }
+        })
     }
 }
 
@@ -49,7 +51,7 @@ processResources {
     rename("LICENSE", "LICENSE-" + archivesBaseName)
 
     from (sourceSets.main.resources.srcDirs) {
-        include("plugin.yml")
+        include("bungee.yml")
         expand("name": archivesBaseName, "version": version)
     }
 }
